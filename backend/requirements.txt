@@ -1,0 +1,30 @@
+# Core Signal Processing
+opencv-python==4.9.0.80
+numpy==1.26.4
+PyWavelets==1.7.0
+
+# Cryptography & Error Correction
+reedsolo==1.7.0
+
+# Video Processing
+ffmpeg-python==0.2.0
+
+# Indexing & Search
+imagehash==4.3.1
+pybktree==1.0.1
+
+# API Layer
+fastapi==0.110.0
+uvicorn[standard]==0.27.1
+python-multipart==0.0.9
+pydantic==2.6.3
+
+# Firebase Admin (for mock blockchain)
+firebase-admin==6.4.0
+
+# Testing
+pytest==8.1.1
+pytest-asyncio==0.23.5
+
+# Utilities
+python-dotenv==1.0.1

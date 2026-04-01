@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "550945986005",
+    "project_id": "indelible-ds",
+    "storage_bucket": "indelible-ds.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:550945986005:android:546af47c8b49f7f0cd195c",
+        "android_client_info": {
+          "package_name": "com.example.indelible"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB4oXdn06nx1QcqcAPGggnX44mhl9F3hE8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
