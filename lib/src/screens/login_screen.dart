@@ -36,8 +36,8 @@ class _LoginScreenState extends State<LoginScreen> {
   // STATE VARIABLES
   // ══════════════════════════════════════════════════════════════════
 
-  bool isSignUp = true;         // true = "Create account" mode, false = "Sign in" mode
-  bool _isLoading = false;       // true while waiting for Firebase response
+  bool isSignUp = true; // true = "Create account" mode, false = "Sign in" mode
+  bool _isLoading = false; // true while waiting for Firebase response
   bool _isPasswordVisible = false; // toggles password field visibility
 
   // Controllers hold the text the user types. You READ from them (controller.text)
@@ -54,10 +54,10 @@ class _LoginScreenState extends State<LoginScreen> {
   // COLOR PALETTE — Your exact design colors
   // ══════════════════════════════════════════════════════════════════
 
-  static const Color _bgColor = Color(0xFF0A0A0A);       // Deepest background
-  static const Color _surfaceColor = Color(0xFF161618);   // Card surface
-  static const Color _inputColor = Color(0xFF1E1E20);     // Input field fill
-  static const Color _borderColor = Color(0xFF2C2C2E);    // Subtle borders
+  static const Color _bgColor = Color(0xFF0A0A0A); // Deepest background
+  static const Color _surfaceColor = Color(0xFF161618); // Card surface
+  static const Color _inputColor = Color(0xFF1E1E20); // Input field fill
+  static const Color _borderColor = Color(0xFF2C2C2E); // Subtle borders
 
   // ══════════════════════════════════════════════════════════════════
   // LIFECYCLE
@@ -96,7 +96,9 @@ class _LoginScreenState extends State<LoginScreen> {
     try {
       if (isSignUp) {
         // SIGN UP FLOW
-        final name = "${_firstNameController.text.trim()} ${_lastNameController.text.trim()}".trim();
+        final name =
+            "${_firstNameController.text.trim()} ${_lastNameController.text.trim()}"
+                .trim();
         await _authService.signUpWithEmail(
           email: email,
           password: password,
@@ -104,10 +106,7 @@ class _LoginScreenState extends State<LoginScreen> {
         );
       } else {
         // SIGN IN FLOW
-        await _authService.signInWithEmail(
-          email: email,
-          password: password,
-        );
+        await _authService.signInWithEmail(email: email, password: password);
       }
       // If we get here, auth succeeded — navigate to dashboard
       _navigateToDashboard();
@@ -165,12 +164,17 @@ class _LoginScreenState extends State<LoginScreen> {
   String _getFirebaseErrorMessage(dynamic error) {
     if (error is Exception) {
       final msg = error.toString();
-      if (msg.contains('email-already-in-use')) return 'This email is already registered';
-      if (msg.contains('weak-password')) return 'Password must be at least 6 characters';
-      if (msg.contains('invalid-email')) return 'Please enter a valid email address';
-      if (msg.contains('user-not-found')) return 'No account found with this email';
+      if (msg.contains('email-already-in-use'))
+        return 'This email is already registered';
+      if (msg.contains('weak-password'))
+        return 'Password must be at least 6 characters';
+      if (msg.contains('invalid-email'))
+        return 'Please enter a valid email address';
+      if (msg.contains('user-not-found'))
+        return 'No account found with this email';
       if (msg.contains('wrong-password')) return 'Incorrect password';
-      if (msg.contains('too-many-requests')) return 'Too many attempts. Please try later';
+      if (msg.contains('too-many-requests'))
+        return 'Too many attempts. Please try later';
     }
     return 'Something went wrong. Please try again.';
   }
@@ -216,13 +220,19 @@ class _LoginScreenState extends State<LoginScreen> {
                         'assets/images/logo.png',
                         height: 120,
                         errorBuilder: (context, error, stackTrace) =>
-                            const Icon(Icons.fingerprint, size: 80, color: Colors.white24),
+                            const Icon(
+                              Icons.fingerprint,
+                              size: 80,
+                              color: Colors.white24,
+                            ),
                       ),
                       const SizedBox(height: 16),
                       Text(
                         "INDELIBLE",
                         style: GoogleFonts.spaceGrotesk(
-                          color: const Color(0xFFC06CFF), // matched the purple from the logo
+                          color: const Color(
+                            0xFFC06CFF,
+                          ), // matched the purple from the logo
                           fontSize: 32,
                           fontWeight: FontWeight.bold,
                           letterSpacing: 2.0,
@@ -231,7 +241,9 @@ class _LoginScreenState extends State<LoginScreen> {
                       Text(
                         "A mark indestructible",
                         style: GoogleFonts.inter(
-                          color: const Color(0xFF00D4FF), // matched the cyan from the logo
+                          color: const Color(
+                            0xFF00D4FF,
+                          ), // matched the cyan from the logo
                           fontSize: 14,
                           fontWeight: FontWeight.w500,
                         ),
@@ -257,9 +269,19 @@ class _LoginScreenState extends State<LoginScreen> {
                 if (isSignUp) ...[
                   Row(
                     children: [
-                      Expanded(child: _buildInputField("First name", controller: _firstNameController)),
+                      Expanded(
+                        child: _buildInputField(
+                          "First name",
+                          controller: _firstNameController,
+                        ),
+                      ),
                       const SizedBox(width: 16),
-                      Expanded(child: _buildInputField("Last name", controller: _lastNameController)),
+                      Expanded(
+                        child: _buildInputField(
+                          "Last name",
+                          controller: _lastNameController,
+                        ),
+                      ),
                     ],
                   ),
                   const SizedBox(height: 16),
@@ -323,15 +345,27 @@ class _LoginScreenState extends State<LoginScreen> {
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          _buildTab("Sign up", isActive: isSignUp, onTap: () => setState(() => isSignUp = true)),
-          _buildTab("Sign in", isActive: !isSignUp, onTap: () => setState(() => isSignUp = false)),
+          _buildTab(
+            "Sign up",
+            isActive: isSignUp,
+            onTap: () => setState(() => isSignUp = true),
+          ),
+          _buildTab(
+            "Sign in",
+            isActive: !isSignUp,
+            onTap: () => setState(() => isSignUp = false),
+          ),
         ],
       ),
     );
   }
 
   /// A single tab in the toggle — AnimatedContainer smoothly transitions colors
-  Widget _buildTab(String text, {required bool isActive, required VoidCallback onTap}) {
+  Widget _buildTab(
+    String text, {
+    required bool isActive,
+    required VoidCallback onTap,
+  }) {
     return GestureDetector(
       onTap: onTap,
       child: AnimatedContainer(
@@ -374,24 +408,34 @@ class _LoginScreenState extends State<LoginScreen> {
         // textInputAction tells the keyboard what the "enter" button does:
         //   TextInputAction.next → moves focus to the next field
         //   TextInputAction.done → closes the keyboard (use on the last field)
-        textInputAction: isPassword ? TextInputAction.done : TextInputAction.next,
+        textInputAction: isPassword
+            ? TextInputAction.done
+            : TextInputAction.next,
         decoration: InputDecoration(
           hintText: hint,
           hintStyle: const TextStyle(color: Colors.white24),
-          prefixIcon: icon != null ? Icon(icon, color: Colors.white54, size: 20) : null,
+          prefixIcon: icon != null
+              ? Icon(icon, color: Colors.white54, size: 20)
+              : null,
           // Show/hide password toggle — only for password fields
           suffixIcon: isPassword
               ? IconButton(
                   icon: Icon(
-                    _isPasswordVisible ? Icons.visibility : Icons.visibility_off,
+                    _isPasswordVisible
+                        ? Icons.visibility
+                        : Icons.visibility_off,
                     color: Colors.white38,
                     size: 20,
                   ),
-                  onPressed: () => setState(() => _isPasswordVisible = !_isPasswordVisible),
+                  onPressed: () =>
+                      setState(() => _isPasswordVisible = !_isPasswordVisible),
                 )
               : null,
           border: InputBorder.none,
-          contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+          contentPadding: const EdgeInsets.symmetric(
+            horizontal: 16,
+            vertical: 16,
+          ),
         ),
       ),
     );
@@ -419,11 +463,17 @@ class _LoginScreenState extends State<LoginScreen> {
             ? const SizedBox(
                 width: 20,
                 height: 20,
-                child: CircularProgressIndicator(strokeWidth: 2, color: Colors.black),
+                child: CircularProgressIndicator(
+                  strokeWidth: 2,
+                  color: Colors.black,
+                ),
               )
             : Text(
                 isSignUp ? "Create an account" : "Sign in",
-                style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                style: const TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
       ),
     );
@@ -436,7 +486,10 @@ class _LoginScreenState extends State<LoginScreen> {
         Expanded(child: Container(height: 1, color: _borderColor)),
         const Padding(
           padding: EdgeInsets.symmetric(horizontal: 16),
-          child: Text("OR SIGN IN WITH", style: TextStyle(color: Colors.white38, fontSize: 12)),
+          child: Text(
+            "OR SIGN IN WITH",
+            style: TextStyle(color: Colors.white38, fontSize: 12),
+          ),
         ),
         Expanded(child: Container(height: 1, color: _borderColor)),
       ],
@@ -449,7 +502,8 @@ class _LoginScreenState extends State<LoginScreen> {
       children: [
         Expanded(
           child: _buildSocialButton(
-            icon: Icons.g_mobiledata, // Placeholder — replace with Google SVG later
+            icon: Icons
+                .g_mobiledata, // Placeholder — replace with Google SVG later
             label: "Google",
             onTap: _handleGoogleSignIn,
           ),
@@ -460,8 +514,6 @@ class _LoginScreenState extends State<LoginScreen> {
             icon: Icons.apple,
             label: "Apple",
             onTap: () {
-              // Apple Sign-In requires an Apple Developer account ($99/year)
-              // Skip for hackathon MVP — just show a coming soon message
               _showError("Apple Sign-In coming soon");
             },
           ),
@@ -490,7 +542,13 @@ class _LoginScreenState extends State<LoginScreen> {
           children: [
             Icon(icon, color: Colors.white, size: 22),
             const SizedBox(width: 8),
-            Text(label, style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w500)),
+            Text(
+              label,
+              style: const TextStyle(
+                color: Colors.white,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
           ],
         ),
       ),
