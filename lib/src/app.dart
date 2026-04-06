@@ -1,20 +1,8 @@
-// =============================================================================
-// APP.DART — The root MaterialApp widget.
-//
-// WHY SEPARATE FROM MAIN.DART?
-// main.dart handles initialization (Firebase, etc.)
-// app.dart handles the VISUAL configuration (theme, routing, etc.)
-//
-// This separation means:
-//   - main.dart is about SETUP (Firebase, analytics, crash reporting)
-//   - app.dart is about DISPLAY (theme, what screen to show first)
-// =============================================================================
-
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'screens/home_screen.dart';
 import 'screens/login_screen.dart';
-import 'screens/dashboard_screen.dart';
 
 class IndelibleApp extends StatelessWidget {
   const IndelibleApp({super.key});
@@ -36,7 +24,7 @@ class IndelibleApp extends StatelessWidget {
       // FirebaseAuth persists login state — if you signed in yesterday
       // and didn't sign out, currentUser will still be set today.
       home: FirebaseAuth.instance.currentUser != null
-          ? DashboardScreen()
+          ? const HomeScreen()
           : const LoginScreen(),
     );
   }

@@ -1,11 +1,4 @@
-// =============================================================================
-// DASHBOARD SCREEN — Where users land after successful login.
-//
-// WHY A SEPARATE SCREEN?
-// The login button needs somewhere to navigate TO. This is the placeholder
-// dashboard that proves auth is working. We'll build the real dashboard later 
-// with video upload, verification, and asset library.
-// =============================================================================
+
 
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';

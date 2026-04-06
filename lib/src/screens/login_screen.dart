@@ -1,17 +1,3 @@
-// =============================================================================
-// LOGIN SCREEN — The first screen users see.
-//
-// ARCHITECTURE NOTES:
-// ─────────────────────────────────────────────────────────────────────
-// This screen is a StatefulWidget because it manages:
-//   1. isSignUp — which tab is active (sign up vs sign in)
-//   2. _isLoading — whether a Firebase call is in progress
-//   3. _isPasswordVisible — eye icon toggle for password field
-//   4. TextEditingControllers — hold form field values
-//
-// It talks to AuthService for all Firebase operations.
-// It does NOT import firebase_auth directly — separation of concerns.
-//
 // PATTERN: Screen → Service → Firebase
 //   LoginScreen._handleSubmit() → AuthService.signUpWithEmail() → Firebase
 // =============================================================================
@@ -20,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../services/auth_service.dart';
 import 'dashboard_screen.dart';
+import '../widgets/app_colors.dart';
 
 // Card width — extracted as a constant so it's easy to find and change
 const double _kCardWidth = 440;
@@ -40,18 +27,16 @@ class _LoginScreenState extends State<LoginScreen> {
   bool _isLoading = false; // true while waiting for Firebase response
   bool _isPasswordVisible = false; // toggles password field visibility
 
-  // Controllers hold the text the user types. You READ from them (controller.text)
-  // and MUST dispose them when the screen is destroyed to prevent memory leaks.
   final _firstNameController = TextEditingController();
   final _lastNameController = TextEditingController();
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
 
-  // The auth service — one instance per screen is fine
+  // The auth service
   final _authService = AuthService();
 
   // ══════════════════════════════════════════════════════════════════
-  // COLOR PALETTE — Your exact design colors
+  /// COLOR PALETTE
   // ══════════════════════════════════════════════════════════════════
 
   static const Color _bgColor = Color(0xFF0A0A0A); // Deepest background
@@ -65,9 +50,6 @@ class _LoginScreenState extends State<LoginScreen> {
 
   @override
   void dispose() {
-    // CRITICAL: Always dispose controllers!
-    // If you forget, the TextEditingController keeps listening to the
-    // text field even after the screen is gone = memory leak.
     _firstNameController.dispose();
     _lastNameController.dispose();
     _emailController.dispose();
@@ -76,21 +58,21 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   // ══════════════════════════════════════════════════════════════════
-  // AUTH HANDLERS — What happens when the user taps buttons
-  // ══════════════════════════════════════════════════════════════════
+  // AUTH HANDLERS
+  // ════════════════════  // ═══════════════════════════════════════════════════════════════════════════════════
 
   /// Called when the user taps "Create an account" or "Sign in"
   Future<void> _handleSubmit() async {
     final email = _emailController.text.trim();
     final password = _passwordController.text.trim();
 
-    // Basic validation — don't hit Firebase with empty fields
+    // Basic validation
     if (email.isEmpty || password.isEmpty) {
       _showError("Please fill in all fields");
       return;
     }
 
-    // Set loading state — this shows a spinner on the button
+    // Set loading state
     setState(() => _isLoading = true);
 
     try {
@@ -164,17 +146,22 @@ class _LoginScreenState extends State<LoginScreen> {
   String _getFirebaseErrorMessage(dynamic error) {
     if (error is Exception) {
       final msg = error.toString();
-      if (msg.contains('email-already-in-use'))
+      if (msg.contains('email-already-in-use')) {
         return 'This email is already registered';
-      if (msg.contains('weak-password'))
+      }
+      if (msg.contains('weak-password')) {
         return 'Password must be at least 6 characters';
-      if (msg.contains('invalid-email'))
+      }
+      if (msg.contains('invalid-email')) {
         return 'Please enter a valid email address';
-      if (msg.contains('user-not-found'))
+      }
+      if (msg.contains('user-not-found')) {
         return 'No account found with this email';
+      }
       if (msg.contains('wrong-password')) return 'Incorrect password';
-      if (msg.contains('too-many-requests'))
+      if (msg.contains('too-many-requests')) {
         return 'Too many attempts. Please try later';
+      }
     }
     return 'Something went wrong. Please try again.';
   }
@@ -186,14 +173,14 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: _bgColor,
+      backgroundColor: AppColors.surface,
       body: Center(
         child: SingleChildScrollView(
           child: Container(
             width: _kCardWidth,
             padding: const EdgeInsets.all(32),
             decoration: BoxDecoration(
-              color: _surfaceColor,
+              color: AppColors.surfaceContainer,
               borderRadius: BorderRadius.circular(24),
               border: Border.all(color: _borderColor, width: 1),
               boxShadow: [
@@ -215,18 +202,11 @@ class _LoginScreenState extends State<LoginScreen> {
                 Center(
                   child: Column(
                     children: [
-                      // We will use a fallback icon in case the image isn't saved yet, but we will look for the image
                       Image.asset(
-                        'assets/images/logo.png',
-                        height: 120,
-                        errorBuilder: (context, error, stackTrace) =>
-                            const Icon(
-                              Icons.fingerprint,
-                              size: 80,
-                              color: Colors.white24,
-                            ),
+                        'assets/images/Indelible_logo.png',
+                        height: 230,
                       ),
-                      const SizedBox(height: 16),
+                      /*                      const SizedBox(height: 16),
                       Text(
                         "INDELIBLE",
                         style: GoogleFonts.spaceGrotesk(
@@ -247,11 +227,11 @@ class _LoginScreenState extends State<LoginScreen> {
                           fontSize: 14,
                           fontWeight: FontWeight.w500,
                         ),
-                      ),
+                      ),*/
                     ],
                   ),
                 ),
-                const SizedBox(height: 48),
+                const SizedBox(height: 20),
 
                 // ── Heading ──
                 Text(
@@ -396,9 +376,9 @@ class _LoginScreenState extends State<LoginScreen> {
   }) {
     return Container(
       decoration: BoxDecoration(
-        color: _inputColor,
+        color: AppColors.surfaceContainerLow,
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: _borderColor),
+        border: Border.all(color: AppColors.surface),
       ),
       child: TextField(
         controller: controller,
