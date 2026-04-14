@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Activity Log | THE VAULT v2</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&amp;family=Inter:wght@300;400;500;600&amp;family=Space+Mono&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "primary": "#ffffff",
+                    "on-secondary-fixed": "#1b1c1c",
+                    "tertiary-fixed-dim": "#464747",
+                    "secondary-fixed-dim": "#acabaa",
+                    "on-secondary-fixed-variant": "#3b3b3b",
+                    "tertiary-container": "#919090",
+                    "surface-tint": "#c6c7c5",
+                    "primary-fixed": "#5d5f5d",
+                    "inverse-on-surface": "#313030",
+                    "surface-container-highest": "#353534",
+                    "on-surface-variant": "#c6c6c6",
+                    "surface": "#131313",
+                    "secondary": "#c8c6c6",
+                    "primary-container": "#d4d4d3",
+                    "on-tertiary": "#1b1c1c",
+                    "outline-variant": "#474747",
+                    "on-error-container": "#ffdad6",
+                    "on-tertiary-fixed": "#ffffff",
+                    "background": "#131313",
+                    "surface-container-lowest": "#0e0e0e",
+                    "inverse-primary": "#5d5f5d",
+                    "on-background": "#e5e2e1",
+                    "on-tertiary-fixed-variant": "#e4e2e2",
+                    "on-primary-fixed": "#ffffff",
+                    "tertiary-fixed": "#5e5e5e",
+                    "outline": "#919191",
+                    "tertiary": "#e4e2e2",
+                    "inverse-surface": "#e5e2e1",
+                    "error-container": "#93000a",
+                    "on-secondary-container": "#e4e2e1",
+                    "on-error": "#690005",
+                    "surface-container-high": "#2a2a2a",
+                    "surface-container": "#201f1f",
+                    "surface-dim": "#131313",
+                    "secondary-container": "#474747",
+                    "primary-fixed-dim": "#454746",
+                    "error": "#ffb4ab",
+                    "on-tertiary-container": "#000000",
+                    "on-primary-container": "#000000",
+                    "surface-variant": "#353534",
+                    "surface-container-low": "#1c1b1b",
+                    "on-primary": "#1a1c1b",
+                    "surface-bright": "#3a3939",
+                    "on-surface": "#e5e2e1",
+                    "on-secondary": "#1b1c1c",
+                    "on-primary-fixed-variant": "#e2e3e1",
+                    "secondary-fixed": "#c8c6c6"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.125rem",
+                    "lg": "0.25rem",
+                    "xl": "0.5rem",
+                    "full": "0.75rem"
+            },
+            "fontFamily": {
+                    "headline": ["Space Grotesk"],
+                    "body": ["Inter"],
+                    "label": ["Inter"],
+                    "technical": ["Space Mono"]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 300, 'GRAD' 0, 'opsz' 24;
+        }
+        body {
+            background-color: #131313;
+            color: #e5e2e1;
+            font-family: 'Inter', sans-serif;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background text-on-background min-h-screen pb-24 md:pb-0 md:pl-80">
+<!-- Navigation Drawer (Desktop) -->
+<aside class="fixed inset-y-0 left-0 z-[60] flex flex-col p-8 h-full w-80 border-r border-[#474747]/20 bg-[#131313] shadow-[20px_0_40px_rgba(0,0,0,0.5)] hidden md:flex">
+<div class="mb-12">
+<h1 class="text-xl font-bold tracking-widest text-[#FFFFFF] font-['Space_Grotesk'] uppercase">THE VAULT v2</h1>
+</div>
+<div class="flex items-center gap-4 mb-10">
+<div class="w-12 h-12 bg-surface-container-high rounded-lg flex items-center justify-center border border-outline-variant/20 overflow-hidden">
+<img alt="JD" class="w-full h-full object-cover" data-alt="minimal abstract avatar with ivory and charcoal color palette representing user initials JD" src="https://lh3.googleusercontent.com/aida-public/AB6AXuD8AQuwU8jnFyTp2kHPwzR7qPeYBxASlC7bh3OaqtK1pNPYGvujuTPz7_CRJJaCOPUdt96bU89YcyArUc9V3g3UAe6ZmYGRuWkUhuEYz189cnpmrWBm2WRGa1V99Sym0VTnzYxxlowNmYRTIRlmaQ4eo6fOuVZtPc9NrtrG8VMbNw4IZkBRQ73ZXl4q0EvnUfAPVyGfNjPtODJlHiAbcOa7tKHEmlCiM2G9MLwRN7A4U97pDUkjCvjciBe3zN-bQ6f9I0m5-UJiXJe9"/>
+</div>
+<div>
+<p class="font-['Space_Grotesk'] text-sm uppercase tracking-wider text-[#FFFFFF]">John Doe</p>
+<p class="text-[10px] uppercase tracking-widest text-outline">Tier III Curator</p>
+</div>
+</div>
+<nav class="space-y-2 flex-grow">
+<a class="flex items-center gap-4 px-4 py-3 text-[#919191] hover:bg-[#1C1B1B] transition-all ease-in-out font-['Space_Grotesk'] text-sm uppercase tracking-wider" href="#">
+<span class="material-symbols-outlined">dashboard</span> Overview
+            </a>
+<a class="flex items-center gap-4 px-4 py-3 text-[#919191] hover:bg-[#1C1B1B] transition-all ease-in-out font-['Space_Grotesk'] text-sm uppercase tracking-wider" href="#">
+<span class="material-symbols-outlined">inventory_2</span> Archive
+            </a>
+<a class="flex items-center gap-4 px-4 py-3 text-[#919191] hover:bg-[#1C1B1B] transition-all ease-in-out font-['Space_Grotesk'] text-sm uppercase tracking-wider" href="#">
+<span class="material-symbols-outlined">key</span> Keys
+            </a>
+<a class="flex items-center gap-4 px-4 py-3 bg-[#2A2A2A] text-[#FFFFFF] border-l-2 border-[#FFFFFF] transition-all ease-in-out font-['Space_Grotesk'] text-sm uppercase tracking-wider" href="#">
+<span class="material-symbols-outlined">history</span> Activity
+            </a>
+</nav>
+<div class="pt-8 border-t border-outline-variant/10">
+<a class="flex items-center gap-4 px-4 py-3 text-[#919191] hover:bg-[#1C1B1B] transition-all ease-in-out font-['Space_Grotesk'] text-sm uppercase tracking-wider" href="#">
+<span class="material-symbols-outlined">logout</span> Logout
+            </a>
+<p class="mt-4 px-4 text-[10px] text-outline/50 tracking-widest uppercase">Vault v2.0.4</p>
+</div>
+</aside>
+<!-- Top App Bar -->
+<header class="fixed top-0 w-full z-50 flex justify-between items-center px-6 h-16 bg-[#131313]/70 backdrop-blur-md border-b border-[#474747]/20 md:w-[calc(100%-20rem)] md:ml-80">
+<div class="flex items-center gap-4">
+<span class="material-symbols-outlined text-[#FFFFFF] cursor-pointer active:opacity-70 md:hidden">menu</span>
+<h2 class="text-[#FFFFFF] font-['Space_Grotesk'] tracking-tighter uppercase font-bold text-lg">Activity Log</h2>
+</div>
+<div class="flex items-center gap-4">
+<div class="hidden md:flex items-center gap-6 mr-6">
+<span class="text-[10px] font-technical text-outline tracking-widest uppercase">Uptime: 99.9%</span>
+</div>
+<button class="w-8 h-8 rounded-full bg-surface-container-high flex items-center justify-center text-[10px] font-bold text-[#FFFFFF] border border-outline-variant/20 active:opacity-70">JD</button>
+</div>
+</header>
+<main class="pt-24 px-6 md:px-12 max-w-5xl mx-auto">
+<!-- Status Cards: 2-Column Minimal -->
+<section class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-16">
+<div class="bg-surface-container-low p-8 rounded-lg flex flex-col justify-between h-40 group hover:bg-surface-container-high transition-colors">
+<div class="flex justify-between items-start">
+<span class="text-[11px] uppercase tracking-[0.2em] text-outline">System Integrity</span>
+<span class="material-symbols-outlined text-primary/30 text-sm">analytics</span>
+</div>
+<div class="flex items-baseline gap-2">
+<span class="text-4xl font-headline font-light tracking-tighter text-primary">99.9%</span>
+<span class="text-[10px] font-technical text-outline uppercase tracking-widest mb-1">Stable</span>
+</div>
+</div>
+<div class="bg-surface-container-low p-8 rounded-lg flex flex-col justify-between h-40 group hover:bg-surface-container-high transition-colors">
+<div class="flex justify-between items-start">
+<span class="text-[11px] uppercase tracking-[0.2em] text-outline">Current Status</span>
+<span class="material-symbols-outlined text-primary/30 text-sm">verified_user</span>
+</div>
+<div class="flex items-baseline gap-2">
+<span class="text-4xl font-headline font-light tracking-tighter text-primary uppercase">Secure</span>
+<div class="w-2 h-2 bg-primary rounded-full mb-2 animate-pulse"></div>
+</div>
+</div>
+</section>
+<!-- Activity Timeline -->
+<section class="mb-24">
+<!-- TODAY Section -->
+<div class="mb-10">
+<h3 class="text-[11px] uppercase tracking-[0.3em] text-outline mb-8 pl-4 border-l border-outline-variant/30">TODAY</h3>
+<div class="space-y-4">
+<!-- Timeline Item: Ivory Accent -->
+<div class="group relative flex items-center justify-between p-6 bg-surface-container-lowest border-l-2 border-[#F5F5F5] hover:bg-surface-container-low transition-all">
+<div class="flex items-center gap-6">
+<div class="w-10 h-10 flex items-center justify-center text-primary">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">shield</span>
+</div>
+<div>
+<h4 class="text-sm font-headline tracking-wide uppercase text-primary">Media Protected</h4>
+<p class="text-[11px] text-outline mt-1 font-technical tracking-tight">Vault-4 cluster encrypted and locked</p>
+</div>
+</div>
+<div class="text-right">
+<span class="text-[10px] font-technical text-outline uppercase tracking-widest">14:22:04</span>
+</div>
+</div>
+<!-- Timeline Item: Muted Accent -->
+<div class="group relative flex items-center justify-between p-6 bg-surface-container-lowest border-l-2 border-[#B0B0B0] hover:bg-surface-container-low transition-all">
+<div class="flex items-center gap-6">
+<div class="w-10 h-10 flex items-center justify-center text-outline">
+<span class="material-symbols-outlined">search</span>
+</div>
+<div>
+<h4 class="text-sm font-headline tracking-wide uppercase text-on-surface">Security Scan</h4>
+<p class="text-[11px] text-outline mt-1 font-technical tracking-tight">Full heuristic audit completed (no threats)</p>
+</div>
+</div>
+<div class="text-right">
+<span class="text-[10px] font-technical text-outline uppercase tracking-widest">11:05:12</span>
+</div>
+</div>
+<!-- Timeline Item: Ivory Accent -->
+<div class="group relative flex items-center justify-between p-6 bg-surface-container-lowest border-l-2 border-[#F5F5F5] hover:bg-surface-container-low transition-all">
+<div class="flex items-center gap-6">
+<div class="w-10 h-10 flex items-center justify-center text-primary">
+<span class="material-symbols-outlined">key</span>
+</div>
+<div>
+<h4 class="text-sm font-headline tracking-wide uppercase text-primary">Key Rotation</h4>
+<p class="text-[11px] text-outline mt-1 font-technical tracking-tight">Master access keys cycled successfully</p>
+</div>
+</div>
+<div class="text-right">
+<span class="text-[10px] font-technical text-outline uppercase tracking-widest">09:15:30</span>
+</div>
+</div>
+</div>
+</div>
+<!-- YESTERDAY Section -->
+<div class="mb-10">
+<h3 class="text-[11px] uppercase tracking-[0.3em] text-outline mb-8 pl-4 border-l border-outline-variant/30">YESTERDAY</h3>
+<div class="space-y-4">
+<div class="group relative flex items-center justify-between p-6 bg-surface-container-lowest border-l-2 border-[#B0B0B0] hover:bg-surface-container-low transition-all opacity-80">
+<div class="flex items-center gap-6">
+<div class="w-10 h-10 flex items-center justify-center text-outline">
+<span class="material-symbols-outlined">sync</span>
+</div>
+<div>
+<h4 class="text-sm font-headline tracking-wide uppercase text-on-surface">Cloud Archive Sync</h4>
+<p class="text-[11px] text-outline mt-1 font-technical tracking-tight">Remote node synchronization finalized</p>
+</div>
+</div>
+<div class="text-right">
+<span class="text-[10px] font-technical text-outline uppercase tracking-widest">18:44:11</span>
+</div>
+</div>
+<div class="group relative flex items-center justify-between p-6 bg-surface-container-lowest border-l-2 border-[#B0B0B0] hover:bg-surface-container-low transition-all opacity-80">
+<div class="flex items-center gap-6">
+<div class="w-10 h-10 flex items-center justify-center text-outline">
+<span class="material-symbols-outlined">login</span>
+</div>
+<div>
+<h4 class="text-sm font-headline tracking-wide uppercase text-on-surface">Console Access</h4>
+<p class="text-[11px] text-outline mt-1 font-technical tracking-tight">Authorized session from IP: 192.168.1.44</p>
+</div>
+</div>
+<div class="text-right">
+<span class="text-[10px] font-technical text-outline uppercase tracking-widest">08:02:59</span>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Asymmetric Visual Element -->
+<section class="grid grid-cols-12 gap-8 items-end mb-24">
+<div class="col-span-12 md:col-span-7 bg-surface-container-low h-64 rounded-lg relative overflow-hidden group">
+<div class="absolute inset-0 bg-gradient-to-br from-primary/5 to-transparent"></div>
+<img class="w-full h-full object-cover grayscale opacity-20 group-hover:opacity-30 transition-opacity duration-700" data-alt="close-up of server rack circuitry with glowing white led indicators in a dark technical environment minimal style" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBkwW0aDHauulLyU2DMuNdYTfZyNTx1n-IhuvpeUeEwyXBFIWhJZbQQjNKNdSYmB3KVzyHhMhc6TfIsV05SdjoiN-5x_0LS6PSzVlWPWzY3JZYB1b8BCFUO6G2kRofpDhTMhdXyk4PXc-PNIg29iigoEfc6RpKm8radQKNVtrcA21xD6pTcx8W0GxNFCZ_48HSH5xedmBqOo8Vk2jevir32qgtpHPEesaFB1ScQdT-YD7oQ1hZQ9sAOX6F71vQNQfSH4trAOz2tg-Ss"/>
+<div class="absolute bottom-8 left-8">
+<p class="text-[10px] uppercase tracking-widest text-outline mb-2">Network Topology</p>
+<h3 class="text-2xl font-headline font-bold text-primary tracking-tighter">NODES: ACTIVE</h3>
+</div>
+</div>
+<div class="col-span-12 md:col-span-5 flex flex-col items-end text-right">
+<div class="w-24 h-px bg-outline-variant/30 mb-6"></div>
+<p class="text-outline text-xs leading-relaxed max-w-xs">
+                    Every event within The Vault is mathematically verified and recorded on a private ledger. Integrity is not assumed; it is proven at every timestamp.
+                </p>
+<a class="mt-6 text-[10px] font-headline font-bold uppercase tracking-widest text-primary hover:tracking-[0.2em] transition-all flex items-center gap-2" href="#">
+                    Download Full Audit <span class="material-symbols-outlined text-sm">download</span>
+</a>
+</div>
+</section>
+</main>
+<!-- Bottom Navigation Bar (Mobile Only) -->
+<nav class="fixed bottom-0 left-0 w-full z-50 flex justify-around items-center h-20 px-4 pb-safe bg-[#131313]/70 backdrop-blur-md border-t border-[#474747]/20 md:hidden">
+<div class="flex flex-col items-center justify-center text-[#919191] active:scale-95 duration-200">
+<span class="material-symbols-outlined">lock</span>
+<span class="font-['Inter'] text-[10px] uppercase tracking-widest mt-1">Vault</span>
+</div>
+<div class="flex flex-col items-center justify-center text-[#919191] active:scale-95 duration-200">
+<span class="material-symbols-outlined">account_balance_wallet</span>
+<span class="font-['Inter'] text-[10px] uppercase tracking-widest mt-1">Ledger</span>
+</div>
+<div class="flex flex-col items-center justify-center text-[#FFFFFF] font-bold active:scale-95 duration-200">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">history</span>
+<span class="font-['Inter'] text-[10px] uppercase tracking-widest mt-1">Activity</span>
+</div>
+<div class="flex flex-col items-center justify-center text-[#919191] active:scale-95 duration-200">
+<span class="material-symbols-outlined">settings</span>
+<span class="font-['Inter'] text-[10px] uppercase tracking-widest mt-1">Settings</span>
+</div>
+</nav>
+</body></html>

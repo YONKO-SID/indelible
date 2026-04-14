@@ -1,9 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'screens/home_screen.dart';
-import 'screens/login_screen.dart';
+import 'screens/splash_screen.dart';
+import 'screens/auth/auth_gate.dart';
+import 'config/themes/app_colors.dart';
 
+/// Root widget of the INDELIBLE application.
+///
+/// Routing flow:
+/// 1. App launches → SplashScreen (2s branded animation)
+/// 2. SplashScreen → AuthGate (listens to auth state)
+/// 3. AuthGate routes to: OnBoarding, Login, or Home
 class IndelibleApp extends StatelessWidget {
   const IndelibleApp({super.key});
 
@@ -15,17 +21,13 @@ class IndelibleApp extends StatelessWidget {
       theme: ThemeData(
         useMaterial3: true,
         brightness: Brightness.dark,
-        scaffoldBackgroundColor: const Color(0xFF0A0A0A),
-        colorSchemeSeed: const Color(0xFF00D4FF), // INDELIBLE brand cyan
+        scaffoldBackgroundColor: AppColors.surface,
+        colorSchemeSeed: AppColors.primary,
         textTheme: GoogleFonts.interTextTheme(ThemeData.dark().textTheme),
       ),
-      // ── Auth-Aware Home Screen ──
-      // Check if user is already signed in from a previous session.
-      // FirebaseAuth persists login state — if you signed in yesterday
-      // and didn't sign out, currentUser will still be set today.
-      home: FirebaseAuth.instance.currentUser != null
-          ? const HomeScreen()
-          : const LoginScreen(),
+      // Always starts at splash, hands off to auth route
+      home: const SplashScreen(),
+      routes: {'/auth': (context) => const AuthGate()},
     );
   }
 }

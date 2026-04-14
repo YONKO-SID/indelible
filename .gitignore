@@ -46,4 +46,8 @@ app.*.map.json
 
 # project files
 .venv/
+__pycache__/
 backend_shit/
+firebase.json
+LEARNING_GUIDE.md
+PROJECT_STATUS.md

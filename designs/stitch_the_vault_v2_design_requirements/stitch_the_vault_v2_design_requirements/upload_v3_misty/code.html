@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;800;900&amp;family=JetBrains+Mono:wght@400;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "secondary-container": "#0271a3",
+                    "on-tertiary-container": "#242939",
+                    "tertiary": "#c1c6da",
+                    "on-error-container": "#ffdad6",
+                    "primary-fixed-dim": "#a4c9ff",
+                    "surface-container-low": "#171c21",
+                    "on-secondary": "#00344e",
+                    "error": "#ffb4ab",
+                    "inverse-surface": "#dee3ea",
+                    "tertiary-fixed": "#dee2f7",
+                    "surface-tint": "#a4c9ff",
+                    "error-container": "#93000a",
+                    "primary-container": "#4d93e5",
+                    "secondary-fixed": "#c9e6ff",
+                    "surface-container": "#1b2025",
+                    "on-secondary-fixed-variant": "#004b6f",
+                    "on-primary": "#00315d",
+                    "on-primary-fixed-variant": "#004883",
+                    "on-tertiary-fixed-variant": "#414657",
+                    "on-secondary-container": "#dceeff",
+                    "on-secondary-fixed": "#001e2f",
+                    "surface-container-lowest": "#0a0f14",
+                    "surface-bright": "#353a3f",
+                    "outline": "#8b919d",
+                    "inverse-primary": "#0060ac",
+                    "on-primary-container": "#002a51",
+                    "on-tertiary-fixed": "#161b2a",
+                    "inverse-on-surface": "#2c3136",
+                    "background": "#0f1419",
+                    "on-error": "#690005",
+                    "primary-fixed": "#d4e3ff",
+                    "on-background": "#dee3ea",
+                    "secondary": "#8aceff",
+                    "secondary-fixed-dim": "#8aceff",
+                    "surface-dim": "#0f1419",
+                    "on-tertiary": "#2b3040",
+                    "primary": "#a4c9ff",
+                    "surface-container-highest": "#30353b",
+                    "outline-variant": "#414751",
+                    "surface": "#0f1419",
+                    "surface-variant": "#30353b",
+                    "on-surface-variant": "#c1c7d3",
+                    "surface-container-high": "#252a30",
+                    "on-surface": "#dee3ea",
+                    "tertiary-container": "#8b90a3",
+                    "on-primary-fixed": "#001c39",
+                    "tertiary-fixed-dim": "#c1c6da"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "fontFamily": {
+                    "headline": ["Inter"],
+                    "body": ["Inter"],
+                    "label": ["Inter"],
+                    "technical": ["JetBrains Mono"]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .pulse-glow {
+            box-shadow: 0 0 24px rgba(90, 173, 226, 0.15);
+        }
+        .bg-storm-gradient {
+            background: linear-gradient(135deg, #0f1419 0%, #1a1f2e 100%);
+        }
+        .glass-panel {
+            background: rgba(48, 53, 59, 0.6);
+            backdrop-filter: blur(12px);
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-storm-gradient text-on-surface font-body min-h-screen pb-24">
+<header class="fixed top-0 w-full z-50 bg-[#1A1F2E]/60 backdrop-blur-md shadow-[0_0_24px_rgba(90,173,226,0.15)] flex items-center justify-between px-6 h-16 w-full">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-blue-400 dark:text-[#A4C9FF]" style="font-variation-settings: 'FILL' 1;">shield</span>
+<span class="text-lg font-black tracking-tighter text-[#A4C9FF] font-['Inter']">THE VAULT</span>
+</div>
+<div class="hidden md:flex gap-8 items-center">
+<nav class="flex gap-6">
+<a class="text-[#B0B8C3] hover:opacity-80 transition-opacity font-['Inter'] tracking-tight leading-tight font-bold" href="#">Vault</a>
+<a class="text-[#A4C9FF] hover:opacity-80 transition-opacity font-['Inter'] tracking-tight leading-tight font-bold" href="#">Protect</a>
+<a class="text-[#B0B8C3] hover:opacity-80 transition-opacity font-['Inter'] tracking-tight leading-tight font-bold" href="#">Activity</a>
+<a class="text-[#B0B8C3] hover:opacity-80 transition-opacity font-['Inter'] tracking-tight leading-tight font-bold" href="#">Settings</a>
+</nav>
+</div>
+</header>
+<main class="pt-24 px-6 max-w-4xl mx-auto flex flex-col items-center">
+<div class="text-center mb-12 space-y-3">
+<h1 class="text-3xl md:text-5xl font-black tracking-tight text-on-surface">Secure Ingestion</h1>
+<p class="text-on-surface-variant max-w-md mx-auto text-sm md:text-base leading-relaxed">
+                An invisible pHash watermark will be embedded into your media to ensure persistent chain of custody.
+            </p>
+</div>
+<div class="w-full aspect-[21/9] md:aspect-[21/7] rounded-2xl glass-panel border-2 border-dashed border-primary/30 flex flex-col items-center justify-center gap-4 group cursor-pointer mb-12 hover:border-primary/60 transition-all duration-300">
+<div class="relative">
+<div class="absolute -top-1 -right-1 w-3 h-3 bg-[#4ade80] rounded-full pulse-glow"></div>
+<span class="material-symbols-outlined text-5xl text-primary/80 group-hover:scale-110 transition-transform duration-300">cloud_upload</span>
+</div>
+<div class="text-center">
+<p class="text-xl font-bold tracking-tight">Drag &amp; Drop Media</p>
+<p class="text-xs font-technical text-on-surface-variant uppercase tracking-widest mt-1">Images, Video, or Raw Assets</p>
+</div>
+</div>
+<div class="w-full space-y-4 mb-12">
+<h2 class="font-technical text-xs uppercase tracking-widest text-primary/70 px-2">Processing Queue (2)</h2>
+<div class="bg-surface-container rounded-xl p-4 flex items-center gap-4 transition-all hover:bg-surface-container-high">
+<div class="w-12 h-12 rounded-lg bg-surface-container-highest overflow-hidden relative">
+<img class="w-full h-full object-cover opacity-60" data-alt="vibrant tropical beach with clear blue water and white sand under bright summer sunlight" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBlhUHXksmwGjeRzWMK14enLQhQYWPAoWbRWBrLN5FJ5p_4wrEsdBYAXGULq9dax136JpwQYc8o7QxmRyyqrlAx9sIf5yFyJ0d4tsEh_KzOotaX8hY3dvWJcYHFwDBvFedAuNkSNCvvEnz8uHfnnrDRmW2RhamkX1sQdCNjaFpc5vQt0yC1_HHC2bJJ9Og9YitqA8LVYxGaLjQ4S31F9qml8xN6M1hOsY9ieo7gM0o_5O4mw9qMAE2ix3DlFRs17a5QPeFUbhZadD8_"/>
+<div class="absolute inset-0 flex items-center justify-center">
+<span class="material-symbols-outlined text-primary text-xl">image</span>
+</div>
+</div>
+<div class="flex-1">
+<p class="font-technical text-sm text-on-surface">summer_shoot_04.jpg</p>
+<p class="text-[10px] text-on-surface-variant uppercase tracking-widest">Ready for pHash encoding</p>
+</div>
+<button class="text-on-surface-variant hover:text-error transition-colors">
+<span class="material-symbols-outlined">close</span>
+</button>
+</div>
+<div class="bg-surface-container rounded-xl p-4 transition-all hover:bg-surface-container-high">
+<div class="flex items-center gap-4 mb-3">
+<div class="w-12 h-12 rounded-lg bg-surface-container-highest overflow-hidden relative">
+<img class="w-full h-full object-cover opacity-60" data-alt="professional cinema camera on a gimbal stabilizer in a dimly lit studio environment with blue highlights" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDiq_0K-0rFPcW0JfBYUPsE0q7dk74n7-hIhBrI3Tfqm-weuNkHR23TObL0CxSuTDKGV8fLrq87OaPnY0K29EPhiB8nm6fqYwpJV-gBcDET1dRWmVM4J5t9E-lHY9o_SXcLWPuNgd70CTukyhwyc8y2M7ipzRVjR3g_3evhm5jCh1raOorvYmDIVc9RTRwhd6CPH3KYW6D4cUYlld3S_jY6_kgXQrgWhSGMT80yZjabml3vBA6OSQAB-rq7qrgGQ4dqnQGwa5ZJyZ6G"/>
+<div class="absolute inset-0 flex items-center justify-center">
+<span class="material-symbols-outlined text-primary text-xl">movie</span>
+</div>
+</div>
+<div class="flex-1">
+<p class="font-technical text-sm text-on-surface">promo_reel_v2.mp4</p>
+<div class="flex justify-between items-center">
+<p class="text-[10px] text-primary uppercase tracking-widest">Analyzing bitstream...</p>
+<p class="text-[10px] font-technical text-primary">64%</p>
+</div>
+</div>
+<button class="text-on-surface-variant hover:text-error transition-colors">
+<span class="material-symbols-outlined">close</span>
+</button>
+</div>
+<div class="h-1 w-full bg-surface-container-highest rounded-full overflow-hidden">
+<div class="h-full bg-primary pulse-glow" style="width: 64%"></div>
+</div>
+</div>
+</div>
+<button class="group relative w-full py-4 rounded-xl font-bold text-lg tracking-tight overflow-hidden transition-all duration-300 active:scale-[0.98]">
+<div class="absolute inset-0 bg-gradient-to-r from-[#4A90E2] to-[#6BA3F5] opacity-100 group-hover:opacity-90 transition-opacity"></div>
+<div class="relative flex items-center justify-center gap-3 text-on-primary-container">
+                PROTECT THESE FILES
+                <span class="material-symbols-outlined group-hover:translate-x-1 transition-transform">arrow_forward</span>
+</div>
+</button>
+<div class="mt-8 flex items-center gap-2 text-on-surface-variant/50">
+<span class="material-symbols-outlined text-sm" style="font-variation-settings: 'FILL' 1;">verified_user</span>
+<span class="text-[10px] font-technical uppercase tracking-[0.2em]">AES-256 Encryption active</span>
+</div>
+</main>
+<nav class="fixed bottom-0 left-0 w-full flex justify-around items-center h-20 px-4 pb-4 bg-[#1A1F2E]/60 backdrop-blur-md shadow-[0_-4px_24px_rgba(90,173,226,0.1)] rounded-t-2xl z-50 md:hidden">
+<a class="flex flex-col items-center justify-center text-[#B0B8C3] opacity-60 active:scale-95 transition-all" href="#">
+<span class="material-symbols-outlined">lock</span>
+<span class="font-['Inter'] text-[10px] uppercase tracking-widest mt-1">Vault</span>
+</a>
+<a class="flex flex-col items-center justify-center text-[#A4C9FF] scale-110 transition-transform active:scale-95 transition-all" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">security</span>
+<span class="font-['Inter'] text-[10px] uppercase tracking-widest mt-1">Protect</span>
+</a>
+<a class="flex flex-col items-center justify-center text-[#B0B8C3] opacity-60 active:scale-95 transition-all" href="#">
+<span class="material-symbols-outlined">analytics</span>
+<span class="font-['Inter'] text-[10px] uppercase tracking-widest mt-1">Activity</span>
+</a>
+<a class="flex flex-col items-center justify-center text-[#B0B8C3] opacity-60 active:scale-95 transition-all" href="#">
+<span class="material-symbols-outlined">settings</span>
+<span class="font-['Inter'] text-[10px] uppercase tracking-widest mt-1">Settings</span>
+</a>
+</nav>
+</body></html>

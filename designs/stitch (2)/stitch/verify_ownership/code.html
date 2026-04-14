@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&amp;family=Inter:wght@300;400;500;600;700&amp;family=Space+Mono:wght@400;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "primary": "#ffffff",
+                    "on-secondary-fixed": "#1b1c1c",
+                    "tertiary-fixed-dim": "#464747",
+                    "secondary-fixed-dim": "#acabaa",
+                    "on-secondary-fixed-variant": "#3b3b3b",
+                    "tertiary-container": "#919090",
+                    "surface-tint": "#c6c7c5",
+                    "primary-fixed": "#5d5f5d",
+                    "inverse-on-surface": "#313030",
+                    "surface-container-highest": "#353534",
+                    "on-surface-variant": "#c6c6c6",
+                    "surface": "#131313",
+                    "secondary": "#c8c6c6",
+                    "primary-container": "#d4d4d3",
+                    "on-tertiary": "#1b1c1c",
+                    "outline-variant": "#474747",
+                    "on-error-container": "#ffdad6",
+                    "on-tertiary-fixed": "#ffffff",
+                    "background": "#131313",
+                    "surface-container-lowest": "#0e0e0e",
+                    "inverse-primary": "#5d5f5d",
+                    "on-background": "#e5e2e1",
+                    "on-tertiary-fixed-variant": "#e4e2e2",
+                    "on-primary-fixed": "#ffffff",
+                    "tertiary-fixed": "#5e5e5e",
+                    "outline": "#919191",
+                    "tertiary": "#e4e2e2",
+                    "inverse-surface": "#e5e2e1",
+                    "error-container": "#93000a",
+                    "on-secondary-container": "#e4e2e1",
+                    "on-error": "#690005",
+                    "surface-container-high": "#2a2a2a",
+                    "surface-container": "#201f1f",
+                    "surface-dim": "#131313",
+                    "secondary-container": "#474747",
+                    "primary-fixed-dim": "#454746",
+                    "error": "#ffb4ab",
+                    "on-tertiary-container": "#000000",
+                    "on-primary-container": "#000000",
+                    "surface-variant": "#353534",
+                    "surface-container-low": "#1c1b1b",
+                    "on-primary": "#1a1c1b",
+                    "surface-bright": "#3a3939",
+                    "on-surface": "#e5e2e1",
+                    "on-secondary": "#1b1c1c",
+                    "on-primary-fixed-variant": "#e2e3e1",
+                    "secondary-fixed": "#c8c6c6"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.125rem",
+                    "lg": "0.25rem",
+                    "xl": "0.5rem",
+                    "full": "0.75rem"
+            },
+            "fontFamily": {
+                    "headline": ["Space Grotesk"],
+                    "body": ["Inter"],
+                    "label": ["Inter"],
+                    "mono": ["Space Mono"]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            display: inline-block;
+            line-height: 1;
+        }
+        .zebra-list div:nth-child(even) { background-color: #1c1b1b; }
+        .zebra-list div:nth-child(odd) { background-color: #131313; }
+        .glass-panel {
+            background: rgba(53, 53, 52, 0.7);
+            backdrop-filter: blur(20px);
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background text-on-background font-body selection:bg-primary selection:text-on-primary">
+<!-- TopAppBar -->
+<header class="fixed top-0 w-full z-50 bg-[#131313]/70 backdrop-blur-md border-b border-[#474747]/20 flex justify-between items-center px-6 h-16">
+<div class="flex items-center gap-4">
+<span class="material-symbols-outlined text-[#FFFFFF] cursor-pointer active:opacity-70" data-icon="menu">menu</span>
+<h1 class="font-['Space_Grotesk'] tracking-tighter uppercase font-bold text-xl text-[#FFFFFF]">THE VAULT v2</h1>
+</div>
+<div class="flex items-center gap-6">
+<nav class="hidden md:flex gap-8 text-[10px] uppercase tracking-widest font-bold">
+<a class="text-[#919191] hover:text-[#FFFFFF] transition-colors" href="#">Vault</a>
+<a class="text-[#919191] hover:text-[#FFFFFF] transition-colors" href="#">Ledger</a>
+<a class="text-[#FFFFFF] hover:text-[#FFFFFF] transition-colors" href="#">Security</a>
+<a class="text-[#919191] hover:text-[#FFFFFF] transition-colors" href="#">Settings</a>
+</nav>
+<div class="h-8 w-8 rounded-full bg-surface-container-high border border-outline-variant/20 flex items-center justify-center text-[10px] font-bold text-primary cursor-pointer active:opacity-70">JD</div>
+</div>
+</header>
+<main class="pt-32 pb-40 px-6 max-w-5xl mx-auto min-h-screen">
+<!-- Hero Section -->
+<div class="grid grid-cols-1 md:grid-cols-12 gap-12 mb-16">
+<div class="md:col-span-7">
+<h2 class="font-headline text-5xl md:text-7xl font-bold tracking-tighter leading-none mb-6">
+                    VERIFY <br/> OWNERSHIP
+                </h2>
+<p class="text-outline max-w-md text-lg leading-relaxed">
+                    Cryptographically confirm the provenance of any digital artifact. Our curators cross-reference neural signatures against the Immutable Ledger.
+                </p>
+</div>
+<div class="md:col-span-5 flex flex-col justify-end items-end">
+<div class="text-right">
+<span class="font-mono text-xs text-outline-variant uppercase tracking-widest block mb-2">System Status</span>
+<div class="flex items-center justify-end gap-2 text-primary font-bold">
+<span class="h-2 w-2 rounded-full bg-primary"></span>
+<span class="font-headline text-sm uppercase tracking-tighter">Nodes Synchronized</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Verification Canvas -->
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
+<!-- Upload Zone -->
+<section class="space-y-6">
+<div class="group relative aspect-video w-full border-2 border-dashed border-outline-variant/40 hover:border-primary/40 transition-all rounded-lg flex flex-col items-center justify-center bg-surface-container-lowest/50 cursor-pointer overflow-hidden">
+<div class="absolute inset-0 bg-gradient-to-br from-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
+<span class="material-symbols-outlined text-4xl mb-4 text-outline group-hover:text-primary transition-colors" data-icon="upload_file">upload_file</span>
+<p class="font-headline text-sm uppercase tracking-widest font-bold text-on-background">🔍 Upload Media to Verify</p>
+<p class="font-mono text-[10px] text-outline-variant mt-2">SUPPORTED: RAW, MKV, TIFF, HASH</p>
+</div>
+<div class="bg-surface-container-low p-6 rounded-lg border-l-2 border-outline-variant">
+<h4 class="font-headline text-xs uppercase tracking-widest font-bold mb-4 text-outline">Active Verification Protocol</h4>
+<div class="space-y-3">
+<div class="flex justify-between items-center py-2 border-b border-outline-variant/10">
+<span class="text-xs text-outline">Layer 1</span>
+<span class="font-mono text-xs">METADATA_SCRUB</span>
+</div>
+<div class="flex justify-between items-center py-2 border-b border-outline-variant/10">
+<span class="text-xs text-outline">Layer 2</span>
+<span class="font-mono text-xs">NEURAL_STAMP_MATCH</span>
+</div>
+<div class="flex justify-between items-center py-2 border-b border-outline-variant/10">
+<span class="text-xs text-outline">Layer 3</span>
+<span class="font-mono text-xs">LEDGER_CONSENSUS</span>
+</div>
+</div>
+</div>
+</section>
+<!-- Result Card (Success State) -->
+<section>
+<div class="bg-surface-container-high rounded-lg border-l-4 border-primary shadow-[20px_0_40px_rgba(0,0,0,0.5)] overflow-hidden">
+<div class="p-8">
+<div class="flex justify-between items-start mb-12">
+<div>
+<div class="flex items-center gap-2 text-primary mb-2">
+<span class="material-symbols-outlined text-sm" data-icon="check_circle" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+<span class="font-headline text-xs font-bold uppercase tracking-widest">🟢 ✓ Registered on The Vault</span>
+</div>
+<h3 class="font-headline text-3xl font-bold tracking-tighter">ORIGINAL_ASSET_082</h3>
+</div>
+<div class="bg-primary text-on-primary px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest">
+                                100% Match
+                            </div>
+</div>
+<div class="space-y-0 zebra-list rounded overflow-hidden">
+<div class="p-4 flex justify-between items-center">
+<span class="text-[10px] uppercase tracking-widest text-outline">Legal Owner</span>
+<span class="font-headline font-bold text-sm">Julian Thorne</span>
+</div>
+<div class="p-4 flex justify-between items-center">
+<span class="text-[10px] uppercase tracking-widest text-outline">Registry Date</span>
+<span class="font-headline font-bold text-sm">Oct 24, 2025</span>
+</div>
+<div class="p-4 flex justify-between items-center">
+<span class="text-[10px] uppercase tracking-widest text-outline">Vault ID</span>
+<span class="font-mono text-xs text-primary">V2-8849-XT-001</span>
+</div>
+</div>
+<div class="mt-8 pt-8 border-t border-outline-variant/20">
+<div class="mb-4">
+<span class="text-[10px] uppercase tracking-widest text-outline block mb-2">Cryptographic Hash</span>
+<div class="bg-surface-container-lowest p-3 rounded font-mono text-[10px] text-outline break-all border border-outline-variant/10">
+                                    0x71C7656EC7ab88b098defB751B7401B5f6d8976F88b098defB751B7401B5f6d8
+                                </div>
+</div>
+<button class="w-full bg-primary text-on-primary py-4 rounded-lg font-headline font-bold uppercase tracking-widest text-xs transition-transform active:scale-95">
+                                Download Certificate
+                            </button>
+</div>
+</div>
+</div>
+<!-- Secondary Info -->
+<div class="mt-8 grid grid-cols-2 gap-4">
+<div class="bg-surface-container-low p-4 rounded-lg border border-outline-variant/10">
+<img class="w-full h-32 object-cover rounded mb-4 grayscale opacity-50" data-alt="Microscopic view of high-tech circuit board with glowing white data paths and intricate silver filaments" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCFrC0Yaq5zZpbENNRRIZuofMKM6-HYt7xdyD704a3HYU1kdR12S8UoqBjNVK74B80jEIWHtCypc0rbMAbb980fb9YWawXt6Dz9TWanGSk2VDKX8jNcq0NRk1MIeOHWnnRr1f0IG5mzLb_KCbc4KNiFjWF7ZAy4h9YU-x0RsSZgVAvRo652eZr3_gWdwkbSg33iQidFuXMa9Vxp0d66OqU_UQsxxoRyn4B-W0Z1F8q9O3jZ0Vl2e7SKUUStyKNj2FOTeUkI0EJvMEkV"/>
+<span class="text-[9px] uppercase tracking-widest text-outline">Neural Pattern</span>
+</div>
+<div class="bg-surface-container-low p-4 rounded-lg border border-outline-variant/10">
+<img class="w-full h-32 object-cover rounded mb-4 grayscale opacity-50" data-alt="Abstract architectural lines of a brutalist concrete building with dramatic shadows and sharp contrast under a dark sky" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAMUgW_YD_tPLVfpf811XBNlBbOHRDEkkQhH4C-3kdAnuwLVrxJU7pI6DjzF-G1xzAPRHfAyEjnXrlW8MHhRn7AX-_encN4KyMqrCdzH9ztWA7_EahAiKmMObwmIXIpuIHsJJkgkhus0x0M1dIyg3Wbjs526p11YD4jiR2SYomToyVz4S1Rw_CgV7gz-i1ulKsuMlLQ8z8Q5oSE5OxxBIAP-61NV6rALgBc-lUw7_xQeErVYNXCEDgTLSp6_flJTJoFZsJ7KjunsxIf"/>
+<span class="text-[9px] uppercase tracking-widest text-outline">Structural Anchor</span>
+</div>
+</div>
+</section>
+</div>
+</main>
+<!-- BottomNavBar (Mobile Only) -->
+<nav class="md:hidden fixed bottom-0 left-0 w-full z-50 flex justify-around items-center h-20 px-4 pb-safe bg-[#131313]/70 backdrop-blur-md border-t border-[#474747]/20">
+<div class="flex flex-col items-center justify-center text-[#919191] cursor-pointer active:scale-95 duration-200">
+<span class="material-symbols-outlined" data-icon="lock">lock</span>
+<span class="font-['Inter'] text-[10px] uppercase tracking-widest mt-1">Vault</span>
+</div>
+<div class="flex flex-col items-center justify-center text-[#919191] cursor-pointer active:scale-95 duration-200">
+<span class="material-symbols-outlined" data-icon="account_balance_wallet">account_balance_wallet</span>
+<span class="font-['Inter'] text-[10px] uppercase tracking-widest mt-1">Ledger</span>
+</div>
+<div class="flex flex-col items-center justify-center text-[#FFFFFF] font-bold cursor-pointer active:scale-95 duration-200">
+<span class="material-symbols-outlined" data-icon="shield" style="font-variation-settings: 'FILL' 1;">shield</span>
+<span class="font-['Inter'] text-[10px] uppercase tracking-widest mt-1">Security</span>
+</div>
+<div class="flex flex-col items-center justify-center text-[#919191] cursor-pointer active:scale-95 duration-200">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+<span class="font-['Inter'] text-[10px] uppercase tracking-widest mt-1">Settings</span>
+</div>
+</nav>
+<!-- Navigation Drawer (Hidden on mobile unless triggered) -->
+<aside class="hidden md:flex fixed inset-y-0 left-0 z-[60] flex-col p-8 bg-[#131313] h-full w-80 border-r border-[#474747]/20 shadow-[20px_0_40px_rgba(0,0,0,0.5)] transform -translate-x-full transition-transform">
+<div class="flex items-center gap-4 mb-12">
+<div class="h-12 w-12 rounded-full bg-surface-container-high flex items-center justify-center font-bold text-primary">JD</div>
+<div>
+<p class="font-['Space_Grotesk'] text-sm uppercase tracking-wider font-bold text-[#FFFFFF]">John Doe</p>
+<p class="text-[10px] text-[#919191] uppercase tracking-widest">Tier III Curator</p>
+</div>
+</div>
+<nav class="space-y-2 flex-grow">
+<a class="flex items-center gap-4 px-4 py-3 text-[#919191] hover:bg-[#1C1B1B] transition-all ease-in-out font-['Space_Grotesk'] text-sm uppercase tracking-wider" href="#">
+<span class="material-symbols-outlined" data-icon="dashboard">dashboard</span> Overview
+            </a>
+<a class="flex items-center gap-4 px-4 py-3 bg-[#2A2A2A] text-[#FFFFFF] border-l-2 border-[#FFFFFF] font-['Space_Grotesk'] text-sm uppercase tracking-wider" href="#">
+<span class="material-symbols-outlined" data-icon="shield">shield</span> Security
+            </a>
+<a class="flex items-center gap-4 px-4 py-3 text-[#919191] hover:bg-[#1C1B1B] transition-all ease-in-out font-['Space_Grotesk'] text-sm uppercase tracking-wider" href="#">
+<span class="material-symbols-outlined" data-icon="inventory_2">inventory_2</span> Archive
+            </a>
+<a class="flex items-center gap-4 px-4 py-3 text-[#919191] hover:bg-[#1C1B1B] transition-all ease-in-out font-['Space_Grotesk'] text-sm uppercase tracking-wider" href="#">
+<span class="material-symbols-outlined" data-icon="key">key</span> Keys
+            </a>
+<a class="flex items-center gap-4 px-4 py-3 text-[#919191] hover:bg-[#1C1B1B] transition-all ease-in-out font-['Space_Grotesk'] text-sm uppercase tracking-wider" href="#">
+<span class="material-symbols-outlined" data-icon="history">history</span> Activity
+            </a>
+</nav>
+<div class="pt-8 border-t border-outline-variant/10">
+<a class="flex items-center gap-4 px-4 py-3 text-[#919191] hover:bg-[#1C1B1B] transition-all ease-in-out font-['Space_Grotesk'] text-sm uppercase tracking-wider" href="#">
+<span class="material-symbols-outlined" data-icon="logout">logout</span> Logout
+            </a>
+<p class="mt-4 px-4 text-[10px] text-outline-variant tracking-widest">Vault v2.0.4</p>
+</div>
+</aside>
+</body></html>

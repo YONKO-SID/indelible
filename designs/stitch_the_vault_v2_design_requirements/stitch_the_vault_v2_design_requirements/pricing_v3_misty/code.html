@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&amp;family=JetBrains+Mono:wght@400;500&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "secondary-container": "#0271a3",
+                    "on-tertiary-container": "#242939",
+                    "tertiary": "#c1c6da",
+                    "on-error-container": "#ffdad6",
+                    "primary-fixed-dim": "#a4c9ff",
+                    "surface-container-low": "#171c21",
+                    "on-secondary": "#00344e",
+                    "error": "#ffb4ab",
+                    "inverse-surface": "#dee3ea",
+                    "tertiary-fixed": "#dee2f7",
+                    "surface-tint": "#a4c9ff",
+                    "error-container": "#93000a",
+                    "primary-container": "#4d93e5",
+                    "secondary-fixed": "#c9e6ff",
+                    "surface-container": "#1b2025",
+                    "on-secondary-fixed-variant": "#004b6f",
+                    "on-primary": "#00315d",
+                    "on-primary-fixed-variant": "#004883",
+                    "on-tertiary-fixed-variant": "#414657",
+                    "on-secondary-container": "#dceeff",
+                    "on-secondary-fixed": "#001e2f",
+                    "surface-container-lowest": "#0a0f14",
+                    "surface-bright": "#353a3f",
+                    "outline": "#8b919d",
+                    "inverse-primary": "#0060ac",
+                    "on-primary-container": "#002a51",
+                    "on-tertiary-fixed": "#161b2a",
+                    "inverse-on-surface": "#2c3136",
+                    "background": "#0f1419",
+                    "on-error": "#690005",
+                    "primary-fixed": "#d4e3ff",
+                    "on-background": "#dee3ea",
+                    "secondary": "#8aceff",
+                    "secondary-fixed-dim": "#8aceff",
+                    "surface-dim": "#0f1419",
+                    "on-tertiary": "#2b3040",
+                    "primary": "#a4c9ff",
+                    "surface-container-highest": "#30353b",
+                    "outline-variant": "#414751",
+                    "surface": "#0f1419",
+                    "surface-variant": "#30353b",
+                    "on-surface-variant": "#c1c7d3",
+                    "surface-container-high": "#252a30",
+                    "on-surface": "#dee3ea",
+                    "tertiary-container": "#8b90a3",
+                    "on-primary-fixed": "#001c39",
+                    "tertiary-fixed-dim": "#c1c6da"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "fontFamily": {
+                    "headline": ["Inter"],
+                    "body": ["Inter"],
+                    "label": ["Inter"],
+                    "mono": ["JetBrains Mono"]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        .glass-card {
+            background: rgba(48, 53, 59, 0.6);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(139, 145, 157, 0.15);
+        }
+        .cyan-glow {
+            box-shadow: 0 0 24px rgba(90, 173, 226, 0.15);
+        }
+        .pulse-monitor {
+            background: radial-gradient(circle, rgba(138, 206, 255, 0.1) 0%, rgba(138, 206, 255, 0) 70%);
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background text-on-background font-body selection:bg-primary-container selection:text-on-primary-container min-h-screen">
+<nav class="fixed top-0 w-full z-50 bg-[#1A1F2E]/60 backdrop-blur-md shadow-[0_0_24px_rgba(90,173,226,0.15)] flex items-center justify-between px-6 h-16 w-full">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-blue-400 dark:text-[#A4C9FF]" data-icon="shield">shield</span>
+<span class="text-lg font-black tracking-tighter text-[#A4C9FF] font-headline uppercase">THE VAULT</span>
+</div>
+<div class="hidden md:flex items-center gap-8 text-[#B0B8C3] font-['Inter'] tracking-tight leading-tight font-bold">
+<a class="hover:opacity-80 transition-opacity text-[#A4C9FF]" href="#">Vault</a>
+<a class="hover:opacity-80 transition-opacity" href="#">Protect</a>
+<a class="hover:opacity-80 transition-opacity" href="#">Activity</a>
+<a class="hover:opacity-80 transition-opacity" href="#">Settings</a>
+</div>
+<button class="material-symbols-outlined text-[#A4C9FF] md:hidden" data-icon="menu">menu</button>
+</nav>
+<main class="pt-28 pb-32 px-6 max-w-7xl mx-auto relative">
+<div class="absolute inset-0 pulse-monitor pointer-events-none opacity-50"></div>
+<header class="text-center mb-16 relative z-10">
+<h1 class="text-4xl md:text-6xl font-black tracking-tighter mb-4 text-on-surface">CALIBRATED SECURITY</h1>
+<p class="text-on-surface-variant max-w-2xl mx-auto font-body text-lg">Choose your level of atmospheric protection. From individual sentinels to global sovereign defense.</p>
+<div class="mt-12 flex justify-center">
+<div class="glass-card p-1 rounded-full flex items-center gap-1">
+<button class="px-6 py-2 rounded-full text-sm font-bold tracking-tight transition-all bg-primary-container text-on-primary-container shadow-lg">Monthly</button>
+<button class="px-6 py-2 rounded-full text-sm font-bold tracking-tight transition-all text-on-surface-variant hover:text-on-surface">Annual (20% OFF)</button>
+</div>
+</div>
+</header>
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-8 relative z-10">
+<section class="flex flex-col bg-surface-container-low rounded-2xl p-8 hover:translate-y-[-4px] transition-transform duration-300">
+<div class="mb-8">
+<h2 class="text-on-surface-variant font-mono text-sm uppercase tracking-widest mb-2">Sentry</h2>
+<div class="flex items-baseline gap-1">
+<span class="text-4xl font-black text-on-surface">$0</span>
+<span class="text-on-surface-variant text-sm">/mo</span>
+</div>
+<p class="text-on-surface-variant text-sm mt-4">Essential mist defense for light-traffic terminals.</p>
+</div>
+<ul class="space-y-4 mb-12 flex-grow">
+<li class="flex items-center gap-3 text-sm text-on-surface-variant">
+<span class="material-symbols-outlined text-xs" data-icon="check_circle">check_circle</span>
+                        256-bit AES Vaulting
+                    </li>
+<li class="flex items-center gap-3 text-sm text-on-surface-variant">
+<span class="material-symbols-outlined text-xs" data-icon="check_circle">check_circle</span>
+                        Manual Refresh Logs
+                    </li>
+<li class="flex items-center gap-3 text-sm text-on-surface-variant">
+<span class="material-symbols-outlined text-xs" data-icon="check_circle">check_circle</span>
+                        Single Node Access
+                    </li>
+</ul>
+<button class="w-full py-4 rounded-xl bg-surface-container-highest text-on-surface font-black tracking-tight hover:opacity-80 transition-all">INITIALIZE</button>
+</section>
+<section class="flex flex-col glass-card rounded-2xl p-8 relative cyan-glow hover:translate-y-[-4px] transition-transform duration-300">
+<div class="mb-8">
+<h2 class="text-secondary font-mono text-sm uppercase tracking-widest mb-2">Guardian</h2>
+<div class="flex items-baseline gap-1">
+<span class="text-4xl font-black text-on-surface">$29</span>
+<span class="text-on-surface-variant text-sm">/mo</span>
+</div>
+<p class="text-on-surface-variant text-sm mt-4">Advanced surveillance for high-frequency cloud nodes.</p>
+</div>
+<ul class="space-y-4 mb-12 flex-grow">
+<li class="flex items-center gap-3 text-sm text-on-surface">
+<span class="material-symbols-outlined text-secondary text-sm" data-icon="verified">verified</span>
+                        Real-time Pulse Monitoring
+                    </li>
+<li class="flex items-center gap-3 text-sm text-on-surface">
+<span class="material-symbols-outlined text-secondary text-sm" data-icon="verified">verified</span>
+                        Quantum-Resistant Layer
+                    </li>
+<li class="flex items-center gap-3 text-sm text-on-surface">
+<span class="material-symbols-outlined text-secondary text-sm" data-icon="verified">verified</span>
+                        5 Node Multisig Support
+                    </li>
+<li class="flex items-center gap-3 text-sm text-on-surface">
+<span class="material-symbols-outlined text-secondary text-sm" data-icon="verified">verified</span>
+                        Priority Sentinel Support
+                    </li>
+</ul>
+<button class="w-full py-4 rounded-xl bg-secondary text-on-secondary font-black tracking-tight shadow-[0_0_20px_rgba(138,206,255,0.3)] hover:brightness-110 transition-all uppercase">DEPLOY GUARDIAN</button>
+</section>
+<section class="flex flex-col bg-surface-container-highest rounded-2xl p-8 relative border border-primary/20 hover:translate-y-[-4px] transition-transform duration-300">
+<div class="absolute -top-3 left-1/2 -translate-x-1/2 bg-primary px-4 py-1 rounded-full flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px] text-on-primary" data-icon="star" data-weight="fill" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="text-[10px] font-black text-on-primary uppercase tracking-widest">MOST SECURE</span>
+</div>
+<div class="mb-8">
+<h2 class="text-primary font-mono text-sm uppercase tracking-widest mb-2">Sovereign</h2>
+<div class="flex items-baseline gap-1">
+<span class="text-4xl font-black text-on-surface">$99</span>
+<span class="text-on-surface-variant text-sm">/mo</span>
+</div>
+<p class="text-on-surface-variant text-sm mt-4">Absolute command over global distributed assets.</p>
+</div>
+<ul class="space-y-4 mb-12 flex-grow">
+<li class="flex items-center gap-3 text-sm text-on-surface">
+<span class="material-symbols-outlined text-primary text-sm" data-icon="security" data-weight="fill" style="font-variation-settings: 'FILL' 1;">security</span>
+                        Unlimited Global Protection
+                    </li>
+<li class="flex items-center gap-3 text-sm text-on-surface">
+<span class="material-symbols-outlined text-primary text-sm" data-icon="security" data-weight="fill" style="font-variation-settings: 'FILL' 1;">security</span>
+                        Immutable Audit Chains
+                    </li>
+<li class="flex items-center gap-3 text-sm text-on-surface">
+<span class="material-symbols-outlined text-primary text-sm" data-icon="security" data-weight="fill" style="font-variation-settings: 'FILL' 1;">security</span>
+                        Zero-Knowledge Proof Logic
+                    </li>
+<li class="flex items-center gap-3 text-sm text-on-surface">
+<span class="material-symbols-outlined text-primary text-sm" data-icon="security" data-weight="fill" style="font-variation-settings: 'FILL' 1;">security</span>
+                        White-Glove Architecture
+                    </li>
+<li class="flex items-center gap-3 text-sm text-on-surface">
+<span class="material-symbols-outlined text-primary text-sm" data-icon="security" data-weight="fill" style="font-variation-settings: 'FILL' 1;">security</span>
+                        Hardware Key Integration
+                    </li>
+</ul>
+<button class="w-full py-4 rounded-xl bg-gradient-to-r from-primary to-primary-container text-on-primary font-black tracking-tight hover:opacity-90 transition-all uppercase">ACTIVATE SOVEREIGN</button>
+</section>
+</div>
+<div class="mt-20 grid grid-cols-1 md:grid-cols-2 gap-8 items-center bg-surface-container-low/40 rounded-3xl p-10 overflow-hidden">
+<div>
+<h3 class="text-2xl font-bold mb-4 tracking-tight">ENCRYPTED AT THE SOURCE</h3>
+<p class="text-on-surface-variant font-body mb-6">Our proprietary mist-tunneling ensures that not even our internal sentinels can view your data. Secure, silent, and sovereign.</p>
+<div class="flex gap-4">
+<div class="p-3 glass-card rounded-lg flex items-center justify-center">
+<span class="material-symbols-outlined text-secondary" data-icon="lock">lock</span>
+</div>
+<div class="p-3 glass-card rounded-lg flex items-center justify-center">
+<span class="material-symbols-outlined text-secondary" data-icon="token">token</span>
+</div>
+<div class="p-3 glass-card rounded-lg flex items-center justify-center">
+<span class="material-symbols-outlined text-secondary" data-icon="policy">policy</span>
+</div>
+</div>
+</div>
+<div class="relative">
+<img class="rounded-2xl shadow-2xl opacity-80" data-alt="high-tech futuristic computer motherboard with neon blue circuits and cinematic atmospheric lighting in a dark room" src="https://lh3.googleusercontent.com/aida-public/AB6AXuD7p6NhIN2vLTsG1gxNoyes6tE4jEtQSJZ6LIDo5eDpxdNRnehLs5Sa_PCHjoJu06WEZL_iaSjvfLlxy8ZzqqworscmlbMBm-ThZy1u8kFT1fUXqR5BYrTsTNevqxfsywwauh08LK1hVUYE1vozJAJ1r_d3eDmDli_R0hhAfKh4v97zkd-FvSNCwvmDabyuY7zM-IPR_XbSBe1G64LOsB8NqiMA6dKEJEeL4pcrgEvFTXTHPDc86GnlSLEJ9ix8RpFdc9cZFHyPQ35D"/>
+<div class="absolute inset-0 bg-gradient-to-t from-background to-transparent opacity-60"></div>
+</div>
+</div>
+</main>
+<footer class="mt-12 mb-24 px-6 text-center">
+<div class="font-mono text-[10px] text-outline uppercase tracking-[0.3em] flex flex-wrap justify-center gap-6">
+<span>256-bit AES</span>
+<span class="opacity-30">|</span>
+<span>Immutable</span>
+<span class="opacity-30">|</span>
+<span>Zero-K</span>
+</div>
+</footer>
+<nav class="fixed bottom-0 left-0 w-full flex justify-around items-center h-20 px-4 pb-4 bg-[#1A1F2E]/60 backdrop-blur-md rounded-t-2xl z-50 shadow-[0_-4px_24px_rgba(90,173,226,0.1)] md:hidden">
+<a class="flex flex-col items-center justify-center text-[#B0B8C3] opacity-60 font-['Inter'] text-[10px] uppercase tracking-widest active:scale-95 transition-all" href="#">
+<span class="material-symbols-outlined mb-1" data-icon="lock">lock</span>
+<span>Vault</span>
+</a>
+<a class="flex flex-col items-center justify-center text-[#A4C9FF] scale-110 transition-transform font-['Inter'] text-[10px] uppercase tracking-widest active:scale-95 transition-all" href="#">
+<span class="material-symbols-outlined mb-1" data-icon="security">security</span>
+<span>Protect</span>
+</a>
+<a class="flex flex-col items-center justify-center text-[#B0B8C3] opacity-60 font-['Inter'] text-[10px] uppercase tracking-widest active:scale-95 transition-all" href="#">
+<span class="material-symbols-outlined mb-1" data-icon="analytics">analytics</span>
+<span>Activity</span>
+</a>
+<a class="flex flex-col items-center justify-center text-[#B0B8C3] opacity-60 font-['Inter'] text-[10px] uppercase tracking-widest active:scale-95 transition-all" href="#">
+<span class="material-symbols-outlined mb-1" data-icon="settings">settings</span>
+<span>Settings</span>
+</a>
+</nav>
+</body></html>

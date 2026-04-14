@@ -1,0 +1,224 @@
+<html class="dark"><head>
+<meta charset="utf-8"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&amp;family=JetBrains+Mono:wght@400;500&amp;family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          "colors": {
+            "secondary-container": "#0271a3",
+            "on-tertiary-container": "#242939",
+            "tertiary": "#c1c6da",
+            "on-error-container": "#ffdad6",
+            "primary-fixed-dim": "#a4c9ff",
+            "surface-container-low": "#171c21",
+            "on-secondary": "#00344e",
+            "error": "#ffb4ab",
+            "inverse-surface": "#dee3ea",
+            "tertiary-fixed": "#dee2f7",
+            "surface-tint": "#a4c9ff",
+            "error-container": "#93000a",
+            "primary-container": "#4d93e5",
+            "secondary-fixed": "#c9e6ff",
+            "surface-container": "#1b2025",
+            "on-secondary-fixed-variant": "#004b6f",
+            "on-primary": "#00315d",
+            "on-primary-fixed-variant": "#004883",
+            "on-tertiary-fixed-variant": "#414657",
+            "on-secondary-container": "#dceeff",
+            "on-secondary-fixed": "#001e2f",
+            "surface-container-lowest": "#0a0f14",
+            "surface-bright": "#353a3f",
+            "outline": "#8b919d",
+            "inverse-primary": "#0060ac",
+            "on-primary-container": "#002a51",
+            "on-tertiary-fixed": "#161b2a",
+            "inverse-on-surface": "#2c3136",
+            "background": "#0f1419",
+            "on-error": "#690005",
+            "primary-fixed": "#d4e3ff",
+            "on-background": "#dee3ea",
+            "secondary": "#8aceff",
+            "secondary-fixed-dim": "#8aceff",
+            "surface-dim": "#0f1419",
+            "on-tertiary": "#2b3040",
+            "primary": "#a4c9ff",
+            "surface-container-highest": "#30353b",
+            "outline-variant": "#414751",
+            "surface": "#0f1419",
+            "surface-variant": "#30353b",
+            "on-surface-variant": "#c1c7d3",
+            "surface-container-high": "#252a30",
+            "on-surface": "#dee3ea",
+            "tertiary-container": "#8b90a3",
+            "on-primary-fixed": "#001c39",
+            "tertiary-fixed-dim": "#c1c6da"
+          },
+          "borderRadius": {
+            "DEFAULT": "0.25rem",
+            "lg": "0.5rem",
+            "xl": "0.75rem",
+            "full": "9999px"
+          },
+          "fontFamily": {
+            "headline": ["Inter"],
+            "body": ["Inter"],
+            "label": ["Inter"]
+          }
+        },
+      },
+    }
+  </script>
+<style>
+    .material-symbols-outlined {
+      font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+    }
+    .glass-panel {
+      background: rgba(26, 31, 46, 0.6);
+      backdrop-filter: blur(12px);
+    }
+    .cyan-glow {
+      box-shadow: 0 0 24px rgba(90, 173, 226, 0.15);
+    }
+    .pulse-monitor {
+      background: radial-gradient(circle, rgba(138, 206, 255, 0.1) 0%, rgba(138, 206, 255, 0) 70%);
+    }
+  </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background text-on-surface font-body min-h-screen">
+<!-- TopAppBar -->
+<nav class="bg-[#1A1F2E]/60 backdrop-blur-md fixed top-0 w-full z-50 shadow-[0_0_24px_rgba(90,173,226,0.15)] flex items-center justify-between px-6 h-16 w-full">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-blue-400 dark:text-[#A4C9FF]">shield</span>
+<span class="text-lg font-black tracking-tighter text-[#A4C9FF] font-['Inter']">THE VAULT</span>
+</div>
+<div class="hidden md:flex items-center gap-8">
+<a class="font-['Inter'] tracking-tight leading-tight font-bold text-[#B0B8C3] hover:opacity-80 transition-opacity" href="#">Vault</a>
+<a class="font-['Inter'] tracking-tight leading-tight font-bold text-[#A4C9FF] hover:opacity-80 transition-opacity" href="#">Protect</a>
+<a class="font-['Inter'] tracking-tight leading-tight font-bold text-[#B0B8C3] hover:opacity-80 transition-opacity" href="#">Activity</a>
+<a class="font-['Inter'] tracking-tight leading-tight font-bold text-[#B0B8C3] hover:opacity-80 transition-opacity" href="#">Settings</a>
+</div>
+<div class="flex items-center gap-4">
+<div class="w-8 h-8 rounded-full overflow-hidden border border-outline-variant/20">
+<img alt="Profile" class="w-full h-full object-cover" data-alt="Close-up portrait of a professional man in a dark studio setting with cinematic side lighting and blue accents" src="https://lh3.googleusercontent.com/aida-public/AB6AXuD6v7lh6bDvhy7sN8_Aqf15k2CPXr4lA7DykL68-ofM8EKJX-SrGwx06wac7T0SMk0UnZjd6w3OzbD3DJamDxnxxHQeULsRmu7XTD6aEFW8pXEk5FlG_rVivpUqDE5UHvy8sD8aaUawfjUjRqAEbvKpb-uiEnLTMr2kulVsHkUrSIHS0naJ7B84ezyZ18mNlbBrkBup0szZWxH9Yg9RuSmo_fDRLczfx6Az_ZFkRXsFoh4pzKUVCMDu-5AWFe4L2KkvBa0BygpkLITc"/>
+</div>
+</div>
+</nav>
+<main class="pt-24 pb-32 px-6 max-w-5xl mx-auto">
+<!-- Hero Section -->
+<header class="mb-12">
+<h1 class="text-4xl md:text-5xl font-extrabold tracking-tight mb-4">Verify Ownership</h1>
+<p class="text-on-surface-variant max-w-2xl text-lg">Instant cross-referencing of media watermarks against the distributed ledger for absolute authenticity.</p>
+</header>
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+<!-- Upload Zone -->
+<section class="lg:col-span-7 flex flex-col gap-6">
+<div class="bg-surface-container-low p-8 rounded-2xl relative overflow-hidden group">
+<div class="absolute inset-0 pulse-monitor opacity-50"></div>
+<div class="relative z-10 border-2 border-dashed border-[#5DADE2] rounded-xl p-12 flex flex-col items-center justify-center transition-all hover:bg-surface-container-high/50">
+<div class="w-16 h-16 rounded-full bg-secondary-container/20 flex items-center justify-center mb-6">
+<span class="material-symbols-outlined text-secondary text-3xl">cloud_upload</span>
+</div>
+<h3 class="text-xl font-bold mb-2">Upload Media to Verify</h3>
+<p class="text-on-surface-variant text-center mb-8 max-w-xs">Drag and drop your digital assets here to start the forensic analysis.</p>
+<button class="bg-gradient-to-r from-primary to-primary-container text-on-primary font-bold py-3 px-8 rounded-xl hover:opacity-90 transition-all active:scale-95 shadow-lg">
+              Select Files
+            </button>
+<p class="mt-6 font-['JetBrains_Mono'] text-xs text-outline tracking-wider">SUPPORTED: PNG, JPG, WEBP, MP4 (MAX 100MB)</p>
+</div>
+</div>
+<div class="bg-surface-container-low p-6 rounded-2xl flex items-start gap-4">
+<span class="material-symbols-outlined text-secondary">info</span>
+<div>
+<h4 class="font-bold text-sm text-secondary uppercase tracking-widest mb-1">Process Insight</h4>
+<p class="text-sm text-on-surface-variant leading-relaxed font-['Inter']">Our Sentinel engine scans for invisible frequency modulations and cryptographic headers embedded during initial registration.</p>
+</div>
+</div>
+</section>
+<!-- Result Card -->
+<aside class="lg:col-span-5">
+<div class="bg-surface-container-high rounded-2xl overflow-hidden shadow-xl border-l-[6px] border-secondary relative">
+<!-- Glass effect top bar in card -->
+<div class="bg-surface-variant/40 px-6 py-4 flex justify-between items-center border-b border-outline-variant/10">
+<span class="font-['JetBrains_Mono'] text-xs font-medium text-secondary">ID: 0xFD29...91A</span>
+<div class="bg-secondary/10 text-secondary px-3 py-1 rounded-full text-[10px] font-bold tracking-widest uppercase">100% Match</div>
+</div>
+<div class="p-8">
+<div class="flex items-center gap-3 mb-6">
+<div class="w-3 h-3 rounded-full bg-[#4CAF50] shadow-[0_0_12px_rgba(76,175,80,0.5)]"></div>
+<span class="text-xl font-bold">Registered</span>
+</div>
+<div class="aspect-video w-full rounded-lg bg-surface-container-lowest mb-8 overflow-hidden relative group">
+<img alt="Verified Media" class="w-full h-full object-cover" data-alt="Abstract digital rendering of a sleek metallic structure with blue neon light reflections on a dark glossy surface" src="https://lh3.googleusercontent.com/aida-public/AB6AXuB-fufTsVBmOQ1KhzPkNJXogT9qA21Xd01agrYcMPxAbZMmo_C3XAIhUNJelZXoO14k8WrwNmypY4vTnzm6MA5PoS98JWO0XBoqUw3BKrPKq8aR2WnifcF46fujlFnYmW08ECWdX1O9qGQ2gtRqCNm6EG5A8M9tixnOOW1HP1CqlEEEGmmhugO66An_Ie0ZDdIdY4I0jjTGpFCL3UpYdCtiSdW72BKGEwVBAX2GSVpmFmd4JThcjksePBMRckGFCGFt5eX-rFiESSnV"/>
+<div class="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+<span class="material-symbols-outlined text-white text-4xl" style="font-variation-settings: 'FILL' 1;">verified</span>
+</div>
+</div>
+<div class="space-y-6">
+<div class="flex flex-col">
+<span class="text-xs text-outline uppercase tracking-widest mb-1">Status</span>
+<span class="text-on-surface font-semibold">Watermark verified</span>
+</div>
+<div class="flex flex-col">
+<span class="text-xs text-outline uppercase tracking-widest mb-1">Owner</span>
+<span class="text-on-surface font-semibold text-lg">Julian Thorne</span>
+</div>
+<div class="flex flex-col">
+<span class="text-xs text-outline uppercase tracking-widest mb-1">Timestamp</span>
+<span class="text-on-surface font-semibold font-['JetBrains_Mono']">Oct 24 2023 | 14:02:11 GMT</span>
+</div>
+</div>
+<button class="w-full mt-10 bg-gradient-to-r from-primary to-primary-container text-on-primary font-black py-4 rounded-xl flex items-center justify-center gap-2 hover:opacity-90 transition-all cyan-glow">
+              View Certificate <span class="material-symbols-outlined text-lg">arrow_forward</span>
+</button>
+</div>
+</div>
+<!-- Secondary Log List -->
+<div class="mt-6 bg-surface-container-low rounded-2xl p-6">
+<h4 class="text-xs font-bold text-outline uppercase tracking-widest mb-4">Verification Logs</h4>
+<div class="space-y-3 font-['JetBrains_Mono'] text-[11px]">
+<div class="flex justify-between items-center py-2 border-b border-outline-variant/5">
+<span class="text-secondary">SCN_START</span>
+<span class="text-on-surface-variant">14:02:08</span>
+</div>
+<div class="flex justify-between items-center py-2 border-b border-outline-variant/5">
+<span class="text-secondary">HDR_DECODE</span>
+<span class="text-on-surface-variant">14:02:09</span>
+</div>
+<div class="flex justify-between items-center py-2">
+<span class="text-secondary">VAL_SUCCESS</span>
+<span class="text-on-surface-variant">14:02:11</span>
+</div>
+</div>
+</div>
+</aside>
+</div>
+</main>
+<!-- BottomNavBar -->
+<nav class="bg-[#1A1F2E]/60 backdrop-blur-md fixed bottom-0 left-0 w-full flex justify-around items-center h-20 px-4 pb-4 z-50 rounded-t-2xl shadow-[0_-4px_24px_rgba(90,173,226,0.1)] md:hidden">
+<a class="flex flex-col items-center justify-center text-[#B0B8C3] opacity-60" href="#">
+<span class="material-symbols-outlined">lock</span>
+<span class="font-['Inter'] text-[10px] uppercase tracking-widest mt-1">Vault</span>
+</a>
+<a class="flex flex-col items-center justify-center text-[#A4C9FF] scale-110 transition-transform" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">security</span>
+<span class="font-['Inter'] text-[10px] uppercase tracking-widest mt-1">Protect</span>
+</a>
+<a class="flex flex-col items-center justify-center text-[#B0B8C3] opacity-60" href="#">
+<span class="material-symbols-outlined">analytics</span>
+<span class="font-['Inter'] text-[10px] uppercase tracking-widest mt-1">Activity</span>
+</a>
+<a class="flex flex-col items-center justify-center text-[#B0B8C3] opacity-60" href="#">
+<span class="material-symbols-outlined">settings</span>
+<span class="font-['Inter'] text-[10px] uppercase tracking-widest mt-1">Settings</span>
+</a>
+</nav>
+</body></html>

@@ -104,3 +104,36 @@ firebase deploy
 -(lib/src/screens/login_screen.dart) - Loginscreen widget controls the entire login and signup process
 -(src/services/firebase_service.dart) - Firebase service for authentication and storage
 -(src/config/firebase_config.dart) - Firebase configuration for authentication and storage
+-(lib/src/screens/sections/stats_grid.dart) - Grid layout component that displays the monitoring engine stats (Watermark Persistence, etc)
+-(lib/src/screens/sections/quick_actions.dart) - Dashboard buttons component containing the Protect Asset and Verify Asset actions
+-(lib/src/screens/sections/recent_activity_list.dart) - Feed component that displays recent security alerts and system events
+-(lib/src/screens/sections/recent_assets_list.dart) - Horizontal scrolling gallery component spotlighting recently protected digital assets
+-(backend/storage/firebase.py) - Backend python script configured to interface with Firebase. Contains fallback architecture to mock saving proofs if `serviceAccountKey.json` is missing.
+
+### 12. User Flow Diagram
+
+```mermaid
+graph TD
+    A([Launch App]) --> B{Authenticated?}
+    B -- Yes ----> E[HomeScreen / Dashboard]
+    B -- No --> C[Login / Signup Screen]
+    C --> D[Firebase Authentication]
+    D -- Success --> E
+    
+    E --> F{Quick Actions}
+    
+    F -- Protect Asset --> G[Select & Upload Image/Video]
+    G --> H((FastAPI Backend))
+    H --> I[Embed Forensic DWT-DCT Watermark]
+    I --> J[(Save Cryptographic Proof to Firebase)]
+    J --> K[Download Protected Asset]
+    
+    F -- Verify Asset --> L[Upload Asset for Verification]
+    L --> M((FastAPI Backend))
+    M --> N[Extract & Decode Hidden Hash]
+    N --> O[(Check Integrity against Firebase)]
+    O --> P[Display Verification Pass/Fail]
+    
+    K --> Q[Update Recent Assets & Feed]
+    P --> Q
+```

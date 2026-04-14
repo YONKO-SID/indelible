@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;800;900&amp;family=JetBrains+Mono:wght@400;500&amp;family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "secondary-container": "#0271a3",
+                        "on-tertiary-container": "#242939",
+                        "tertiary": "#c1c6da",
+                        "on-error-container": "#ffdad6",
+                        "primary-fixed-dim": "#a4c9ff",
+                        "surface-container-low": "#171c21",
+                        "on-secondary": "#00344e",
+                        "error": "#ffb4ab",
+                        "inverse-surface": "#dee3ea",
+                        "tertiary-fixed": "#dee2f7",
+                        "surface-tint": "#a4c9ff",
+                        "error-container": "#93000a",
+                        "primary-container": "#4d93e5",
+                        "secondary-fixed": "#c9e6ff",
+                        "surface-container": "#1b2025",
+                        "on-secondary-fixed-variant": "#004b6f",
+                        "on-primary": "#00315d",
+                        "on-primary-fixed-variant": "#004883",
+                        "on-tertiary-fixed-variant": "#414657",
+                        "on-secondary-container": "#dceeff",
+                        "on-secondary-fixed": "#001e2f",
+                        "surface-container-lowest": "#0a0f14",
+                        "surface-bright": "#353a3f",
+                        "outline": "#8b919d",
+                        "inverse-primary": "#0060ac",
+                        "on-primary-container": "#002a51",
+                        "on-tertiary-fixed": "#161b2a",
+                        "inverse-on-surface": "#2c3136",
+                        "background": "#0f1419",
+                        "on-error": "#690005",
+                        "primary-fixed": "#d4e3ff",
+                        "on-background": "#dee3ea",
+                        "secondary": "#8aceff",
+                        "secondary-fixed-dim": "#8aceff",
+                        "surface-dim": "#0f1419",
+                        "on-tertiary": "#2b3040",
+                        "primary": "#a4c9ff",
+                        "surface-container-highest": "#30353b",
+                        "outline-variant": "#414751",
+                        "surface": "#0f1419",
+                        "surface-variant": "#30353b",
+                        "on-surface-variant": "#c1c7d3",
+                        "surface-container-high": "#252a30",
+                        "on-surface": "#dee3ea",
+                        "tertiary-container": "#8b90a3",
+                        "on-primary-fixed": "#001c39",
+                        "tertiary-fixed-dim": "#c1c6da"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "fontFamily": {
+                        "headline": ["Inter"],
+                        "body": ["Inter"],
+                        "label": ["Inter"],
+                        "mono": ["JetBrains Mono"]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .glass-card {
+            background: rgba(26, 31, 46, 0.6);
+            backdrop-filter: blur(12px);
+        }
+        .pulse-glow {
+            box-shadow: 0 0 24px rgba(138, 206, 255, 0.15);
+        }
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-surface text-on-surface font-body selection:bg-secondary-container selection:text-on-secondary-container">
+<!-- TopAppBar -->
+<header class="bg-[#1A1F2E]/60 backdrop-blur-md text-blue-400 dark:text-[#A4C9FF] fixed top-0 w-full z-50 shadow-[0_0_24px_rgba(90,173,226,0.15)]">
+<div class="flex items-center justify-between px-6 h-16 w-full max-w-7xl mx-auto">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-2xl" data-icon="shield">shield</span>
+<h1 class="text-lg font-black tracking-tighter text-[#A4C9FF] font-headline">THE VAULT</h1>
+</div>
+<div class="hidden md:flex gap-8 items-center text-sm font-label tracking-widest uppercase">
+<span class="text-[#B0B8C3] hover:opacity-80 transition-opacity cursor-pointer">Vault</span>
+<span class="text-[#B0B8C3] hover:opacity-80 transition-opacity cursor-pointer">Protect</span>
+<span class="text-[#A4C9FF] hover:opacity-80 transition-opacity cursor-pointer">Activity</span>
+<span class="text-[#B0B8C3] hover:opacity-80 transition-opacity cursor-pointer">Settings</span>
+</div>
+<div class="w-8 h-8 rounded-full overflow-hidden border border-outline-variant/20">
+<img class="w-full h-full object-cover" data-alt="professional portrait of a cybersecurity expert with subtle blue rim lighting in a dark office" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAx-Kqs8CNgCNl3Palv_oqfXHnPfByGA2MH-nctRTQzLkJXcGw8I31j8ekEkKBsWHJeaUbrE8CqNeHfGepSyfYZ6RSlhZnu22zCVv1qxq0Rm8g_m6d5kWGcbrewupqiR_fDyzLtdv4pQ5LzRx41MFmxb53zV2ef-RabOhpRkxKH1vQNu_iHkfalC2_mtNwErZVaIdwZIywvbDCA_pH0Ia-eXIAZ7AOJ_eW4_h6IDi7_GJtZW-iD22x3hAbmKI6UNe5m9ojfchLUJg9w"/>
+</div>
+</div>
+</header>
+<main class="pt-24 pb-32 px-6 max-w-5xl mx-auto min-h-screen">
+<!-- Pulse Status Monitor Section -->
+<section class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-12">
+<div class="glass-card rounded-xl p-6 relative overflow-hidden group">
+<div class="absolute -right-4 -top-4 w-24 h-24 bg-secondary/5 blur-3xl group-hover:bg-secondary/10 transition-colors"></div>
+<div class="flex items-center justify-between mb-4">
+<span class="font-mono text-xs text-secondary/70 tracking-tighter">SYSTEM_INTEGRITY</span>
+<span class="material-symbols-outlined text-secondary text-sm" data-icon="verified_user">verified_user</span>
+</div>
+<div class="flex items-baseline gap-2">
+<span class="text-4xl font-black tracking-tighter font-headline text-on-surface">99.9%</span>
+<div class="h-1.5 w-1.5 rounded-full bg-secondary animate-pulse"></div>
+</div>
+<p class="text-xs text-on-surface-variant mt-2 font-mono uppercase tracking-widest">Atmospheric Stability: High</p>
+</div>
+<div class="glass-card rounded-xl p-6 relative overflow-hidden group">
+<div class="absolute -right-4 -top-4 w-24 h-24 bg-primary/5 blur-3xl group-hover:bg-primary/10 transition-colors"></div>
+<div class="flex items-center justify-between mb-4">
+<span class="font-mono text-xs text-primary/70 tracking-tighter">ENCRYPTION_STATUS</span>
+<span class="material-symbols-outlined text-primary text-sm" data-icon="lock">lock</span>
+</div>
+<div class="flex items-baseline gap-2">
+<span class="text-4xl font-black tracking-tighter font-headline text-on-surface">SECURE</span>
+</div>
+<p class="text-xs text-on-surface-variant mt-2 font-mono uppercase tracking-widest">Protocol: Fog-Zero Mesh</p>
+</div>
+</section>
+<!-- Timeline Section -->
+<div class="space-y-12">
+<!-- TODAY -->
+<div class="relative">
+<div class="sticky top-20 z-10 py-2 mb-6">
+<span class="font-headline font-extrabold text-sm tracking-[0.3em] uppercase text-on-surface-variant/50">Today</span>
+</div>
+<div class="space-y-4 ml-2 border-l border-outline-variant/10 pl-6">
+<!-- Activity Card: Protected -->
+<div class="glass-card p-5 rounded-xl border-l-4 border-[#4ADE80] relative group hover:bg-[#1A1F2E]/80 transition-colors">
+<div class="flex justify-between items-start mb-2">
+<span class="font-headline font-bold text-base">Biometric Access Granted</span>
+<span class="font-mono text-[10px] text-on-surface-variant">14:22:01.04</span>
+</div>
+<p class="text-sm text-on-surface-variant leading-relaxed max-w-lg">
+                            Primary user validated via retinal mesh scan. Location: London Node-4.
+                        </p>
+<div class="mt-3 flex items-center gap-2">
+<span class="px-2 py-0.5 rounded text-[10px] font-mono bg-surface-container-high text-[#4ADE80] uppercase">Protected</span>
+</div>
+</div>
+<!-- Activity Card: Active -->
+<div class="glass-card p-5 rounded-xl border-l-4 border-secondary relative group hover:bg-[#1A1F2E]/80 transition-colors">
+<div class="flex justify-between items-start mb-2">
+<span class="font-headline font-bold text-base">Continuous Surveillance Active</span>
+<span class="font-mono text-[10px] text-on-surface-variant">11:05:44.29</span>
+</div>
+<p class="text-sm text-on-surface-variant leading-relaxed max-w-lg">
+                            Initiated deep-packet inspection on inbound stream <span class="font-mono text-xs text-secondary">0x1F22...B3</span>.
+                        </p>
+<div class="mt-3 flex items-center gap-2">
+<span class="px-2 py-0.5 rounded text-[10px] font-mono bg-surface-container-high text-secondary uppercase">Active</span>
+</div>
+</div>
+<!-- Activity Card: Shared -->
+<div class="glass-card p-5 rounded-xl border-l-4 border-[#A78BFA] relative group hover:bg-[#1A1F2E]/80 transition-colors">
+<div class="flex justify-between items-start mb-2">
+<span class="font-headline font-bold text-base">Key Delegation</span>
+<span class="font-mono text-[10px] text-on-surface-variant">09:12:00.00</span>
+</div>
+<p class="text-sm text-on-surface-variant leading-relaxed max-w-lg">
+                            Temporary read-only token shared with <span class="italic">Analyst-Alpha</span> for audit log 442.
+                        </p>
+<div class="mt-3 flex items-center gap-2">
+<span class="px-2 py-0.5 rounded text-[10px] font-mono bg-surface-container-high text-[#A78BFA] uppercase">Shared</span>
+</div>
+</div>
+</div>
+</div>
+<!-- YESTERDAY -->
+<div class="relative">
+<div class="sticky top-20 z-10 py-2 mb-6">
+<span class="font-headline font-extrabold text-sm tracking-[0.3em] uppercase text-on-surface-variant/50">Yesterday</span>
+</div>
+<div class="space-y-4 ml-2 border-l border-outline-variant/10 pl-6">
+<!-- Activity Card: Protected -->
+<div class="glass-card p-5 rounded-xl border-l-4 border-[#4ADE80] relative group hover:bg-[#1A1F2E]/80 transition-colors">
+<div class="flex justify-between items-start mb-2">
+<span class="font-headline font-bold text-base">Cold Storage Migration</span>
+<span class="font-mono text-[10px] text-on-surface-variant">22:59:12.88</span>
+</div>
+<p class="text-sm text-on-surface-variant leading-relaxed max-w-lg">
+                            Moved 4.2TB of inactive logs to the sub-zero atmospheric vault.
+                        </p>
+<div class="mt-3 flex items-center gap-2">
+<span class="px-2 py-0.5 rounded text-[10px] font-mono bg-surface-container-high text-[#4ADE80] uppercase">Protected</span>
+</div>
+</div>
+<!-- Activity Card: Active -->
+<div class="glass-card p-5 rounded-xl border-l-4 border-secondary relative group hover:bg-[#1A1F2E]/80 transition-colors">
+<div class="flex justify-between items-start mb-2">
+<span class="font-headline font-bold text-base">Security Patch Deployed</span>
+<span class="font-mono text-[10px] text-on-surface-variant">18:40:00.00</span>
+</div>
+<p class="text-sm text-on-surface-variant leading-relaxed max-w-lg">
+                            Sentinel update v2.4.1 applied to all nodes. Re-indexing fog layers.
+                        </p>
+<div class="mt-3 flex items-center gap-2">
+<span class="px-2 py-0.5 rounded text-[10px] font-mono bg-surface-container-high text-secondary uppercase">Active</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+</main>
+<!-- BottomNavBar -->
+<nav class="fixed bottom-0 left-0 w-full flex justify-around items-center h-20 px-4 pb-4 md:hidden bg-[#1A1F2E]/60 backdrop-blur-md z-50 rounded-t-2xl shadow-[0_-4px_24px_rgba(90,173,226,0.1)]">
+<div class="flex flex-col items-center justify-center text-[#B0B8C3] opacity-60 transition-all hover:text-[#8ACEFF] active:scale-95">
+<span class="material-symbols-outlined text-2xl" data-icon="lock">lock</span>
+<span class="font-['Inter'] text-[10px] uppercase tracking-widest mt-1">Vault</span>
+</div>
+<div class="flex flex-col items-center justify-center text-[#B0B8C3] opacity-60 transition-all hover:text-[#8ACEFF] active:scale-95">
+<span class="material-symbols-outlined text-2xl" data-icon="security">security</span>
+<span class="font-['Inter'] text-[10px] uppercase tracking-widest mt-1">Protect</span>
+</div>
+<div class="flex flex-col items-center justify-center text-[#A4C9FF] scale-110 transition-all">
+<span class="material-symbols-outlined text-2xl" data-icon="analytics" data-weight="fill">analytics</span>
+<span class="font-['Inter'] text-[10px] uppercase tracking-widest mt-1">Activity</span>
+</div>
+<div class="flex flex-col items-center justify-center text-[#B0B8C3] opacity-60 transition-all hover:text-[#8ACEFF] active:scale-95">
+<span class="material-symbols-outlined text-2xl" data-icon="settings">settings</span>
+<span class="font-['Inter'] text-[10px] uppercase tracking-widest mt-1">Settings</span>
+</div>
+</nav>
+<!-- Aesthetic Ambient Elements -->
+<div class="fixed top-0 left-0 w-full h-full pointer-events-none -z-10 overflow-hidden">
+<div class="absolute top-[20%] -left-[10%] w-[50%] h-[50%] bg-primary/5 blur-[120px] rounded-full"></div>
+<div class="absolute bottom-[10%] -right-[10%] w-[40%] h-[40%] bg-secondary/5 blur-[100px] rounded-full"></div>
+</div>
+</body></html>

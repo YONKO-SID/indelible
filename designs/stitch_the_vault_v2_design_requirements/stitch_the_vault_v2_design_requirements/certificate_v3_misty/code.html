@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;800;900&amp;family=JetBrains+Mono:wght@400;700&amp;family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "secondary-container": "#0271a3",
+                        "on-tertiary-container": "#242939",
+                        "tertiary": "#c1c6da",
+                        "on-error-container": "#ffdad6",
+                        "primary-fixed-dim": "#a4c9ff",
+                        "surface-container-low": "#171c21",
+                        "on-secondary": "#00344e",
+                        "error": "#ffb4ab",
+                        "inverse-surface": "#dee3ea",
+                        "tertiary-fixed": "#dee2f7",
+                        "surface-tint": "#a4c9ff",
+                        "error-container": "#93000a",
+                        "primary-container": "#4d93e5",
+                        "secondary-fixed": "#c9e6ff",
+                        "surface-container": "#1b2025",
+                        "on-secondary-fixed-variant": "#004b6f",
+                        "on-primary": "#00315d",
+                        "on-primary-fixed-variant": "#004883",
+                        "on-tertiary-fixed-variant": "#414657",
+                        "on-secondary-container": "#dceeff",
+                        "on-secondary-fixed": "#001e2f",
+                        "surface-container-lowest": "#0a0f14",
+                        "surface-bright": "#353a3f",
+                        "outline": "#8b919d",
+                        "inverse-primary": "#0060ac",
+                        "on-primary-container": "#002a51",
+                        "on-tertiary-fixed": "#161b2a",
+                        "inverse-on-surface": "#2c3136",
+                        "background": "#0f1419",
+                        "on-error": "#690005",
+                        "primary-fixed": "#d4e3ff",
+                        "on-background": "#dee3ea",
+                        "secondary": "#8aceff",
+                        "secondary-fixed-dim": "#8aceff",
+                        "surface-dim": "#0f1419",
+                        "on-tertiary": "#2b3040",
+                        "primary": "#a4c9ff",
+                        "surface-container-highest": "#30353b",
+                        "outline-variant": "#414751",
+                        "surface": "#0f1419",
+                        "surface-variant": "#30353b",
+                        "on-surface-variant": "#c1c7d3",
+                        "surface-container-high": "#252a30",
+                        "on-surface": "#dee3ea",
+                        "tertiary-container": "#8b90a3",
+                        "on-primary-fixed": "#001c39",
+                        "tertiary-fixed-dim": "#c1c6da"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "fontFamily": {
+                        "headline": ["Inter"],
+                        "body": ["Inter"],
+                        "label": ["Inter"],
+                        "mono": ["JetBrains Mono"]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .procedural-storm-grid {
+            background-image: 
+                radial-gradient(circle at 2px 2px, rgba(164, 201, 255, 0.05) 1px, transparent 0);
+            background-size: 24px 24px;
+        }
+        .cyan-glow-pulse {
+            box-shadow: 0 0 40px rgba(138, 206, 255, 0.15);
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background text-on-background font-body min-h-screen selection:bg-secondary-container">
+<!-- TopAppBar -->
+<header class="bg-[#1A1F2E]/60 backdrop-blur-md text-blue-400 dark:text-[#A4C9FF] fixed top-0 w-full z-50 shadow-[0_0_24px_rgba(90,173,226,0.15)] flex items-center justify-between px-6 h-16 w-full">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-primary" data-icon="shield">shield</span>
+<h1 class="text-lg font-black tracking-tighter text-[#A4C9FF] font-['Inter']">THE VAULT</h1>
+</div>
+<div class="hidden md:flex gap-8 items-center text-[#B0B8C3] font-['Inter'] tracking-tight">
+<a class="hover:opacity-80 transition-opacity" href="#">Vault</a>
+<a class="hover:opacity-80 transition-opacity" href="#">Protect</a>
+<a class="hover:opacity-80 transition-opacity" href="#">Activity</a>
+<a class="text-[#A4C9FF] font-bold" href="#">Settings</a>
+</div>
+<div class="md:hidden">
+<span class="material-symbols-outlined" data-icon="menu">menu</span>
+</div>
+</header>
+<main class="pt-24 pb-32 px-6 max-w-5xl mx-auto">
+<!-- Hero Section / Certificate Header -->
+<div class="mb-12 text-center md:text-left">
+<h2 class="text-4xl md:text-5xl font-extrabold tracking-tight mb-4 text-on-surface">Digital Provenance</h2>
+<p class="text-on-surface-variant max-w-xl text-lg">Verified ownership record for high-value digital assets secured within the Stormy Trust protocol.</p>
+</div>
+<!-- The Certificate Canvas (Bento-inspired asymmetry) -->
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+<!-- Main Certificate Card -->
+<div class="lg:col-span-8 bg-surface-container-low rounded-xl p-1 cyan-glow-pulse relative overflow-hidden">
+<!-- Background Decoration -->
+<div class="absolute inset-0 procedural-storm-grid opacity-30"></div>
+<div class="absolute -top-24 -right-24 w-64 h-64 bg-secondary/10 rounded-full blur-3xl"></div>
+<div class="relative bg-surface-container-lowest rounded-lg border border-outline-variant/15 p-8 md:p-12">
+<div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-12 gap-6">
+<div>
+<div class="text-secondary font-mono text-xs tracking-[0.3em] uppercase mb-2">Security Standard 802.11XT</div>
+<h3 class="text-2xl font-black tracking-tight text-on-surface">DIGITAL OWNERSHIP CERTIFICATE</h3>
+</div>
+<div class="bg-secondary/10 border border-secondary/20 p-4 rounded-lg flex items-center gap-4">
+<div class="w-12 h-12 bg-secondary/20 rounded-full flex items-center justify-center">
+<span class="material-symbols-outlined text-secondary" data-icon="verified_user" style="font-variation-settings: 'FILL' 1;">verified_user</span>
+</div>
+<div class="text-left">
+<div class="text-[10px] uppercase tracking-widest text-secondary font-bold">Status</div>
+<div class="text-on-surface font-bold">Quantum-Shielded</div>
+</div>
+</div>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-12 mb-12">
+<div class="space-y-6">
+<div>
+<label class="text-[10px] uppercase tracking-[0.2em] text-outline block mb-1">ASSET IDENTITY</label>
+<div class="text-xl font-bold text-on-surface">Vault Sentinel Core v.04</div>
+</div>
+<div>
+<label class="text-[10px] uppercase tracking-[0.2em] text-outline block mb-1">CREATOR</label>
+<div class="text-on-surface font-semibold flex items-center gap-2">
+<span class="w-6 h-6 rounded-full bg-surface-container-high border border-outline-variant flex items-center justify-center overflow-hidden">
+<img alt="Julian Thorne Profile" class="w-full h-full object-cover" data-alt="close-up of a professional man with sharp features and dark hair against a cool blue background" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCqRlk_Z3uleKUZqMr8I5qr8uRmP29fMpAxUidMlS1XSWFpepjUAoPLpOtKpPyOpxRs4KqHHQSUAiXRNfo5omyX9d2OYykYtkNEyGWBM1jhyR3H8TxDU567ppN3pp-PRZsy2jnzc2YOPli8Ybea_eZu2uv6Q_v_4_d2rO-d3hmNoMxcGBlVsjIxCb6vh6o33BHkU5j72WWV7-jUzWFHs42sN9O0m1hJhh2S3LCHPOnVvXRxMPgJ_pwcoudO4irhIbqPTpd12-9BRsMH"/>
+</span>
+                                    Julian Thorne
+                                </div>
+</div>
+</div>
+<div class="space-y-6">
+<div>
+<label class="text-[10px] uppercase tracking-[0.2em] text-outline block mb-1">ISSUE DATE</label>
+<div class="text-on-surface font-mono text-sm uppercase">OCT-24-2023 // 14:22:01 UTC</div>
+</div>
+<div>
+<label class="text-[10px] uppercase tracking-[0.2em] text-outline block mb-1">PROTECTION TIER</label>
+<div class="flex items-center gap-2">
+<div class="flex gap-0.5">
+<div class="w-4 h-1.5 bg-secondary rounded-full"></div>
+<div class="w-4 h-1.5 bg-secondary rounded-full"></div>
+<div class="w-4 h-1.5 bg-secondary rounded-full"></div>
+<div class="w-4 h-1.5 bg-secondary/30 rounded-full"></div>
+</div>
+<span class="text-xs font-bold text-on-surface uppercase">Platinum</span>
+</div>
+</div>
+</div>
+</div>
+<div class="pt-8 border-t border-outline-variant/10">
+<label class="text-[10px] uppercase tracking-[0.2em] text-outline block mb-3">CRYPTOGRAPHIC PROVENANCE HASH</label>
+<div class="bg-surface-container-low p-4 rounded-lg font-mono text-secondary text-sm break-all leading-relaxed border border-secondary/5">
+                            0x7f9a2c31e4d5f6a7b8c9d0e1f2a3b4c5d6e7f8a9b0c1d2e3f4a5b6c7d8e9f0a1b2c3d4e5f6
+                        </div>
+</div>
+</div>
+</div>
+<!-- Action Panel -->
+<div class="lg:col-span-4 space-y-6">
+<!-- Visual Asset Preview -->
+<div class="bg-surface-container-high rounded-xl overflow-hidden aspect-square relative group">
+<img alt="Digital Asset Abstract" class="w-full h-full object-cover grayscale opacity-60 group-hover:grayscale-0 group-hover:opacity-100 transition-all duration-700" data-alt="abstract 3d visualization of interconnected digital nodes and lines glowing with neon cyan light in a dark void" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAASEFeylwcfxBZ2BrNEgZStQSX5GbhLSxl1oPVRVZ35ZFuKmi6BbhG_FRnt_bfeqFK60REufyn_YQtmv4qETGhCJaVd-FPQ_D2Dnx5IsBVVpvTX474zBxkRcRyg1M48opoiDfLqdclA2pKyG1aw8VvihPz2NSdr7-tsea4rX4yEgCFXjKLjedQAOXBjD-wxlcAY3mX3WSoHw0xWPS8JF5ewGsupSIiwBEufptdh5820dq3aTbr6wPY-VMIAx1nqfb8fGowExwxPD2v"/>
+<div class="absolute inset-0 bg-gradient-to-t from-background to-transparent"></div>
+<div class="absolute bottom-6 left-6">
+<span class="bg-primary/20 backdrop-blur-md text-primary px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest border border-primary/20">Preview Mode</span>
+</div>
+</div>
+<!-- Primary Actions -->
+<div class="grid grid-cols-1 gap-3">
+<button class="w-full bg-gradient-to-r from-primary to-primary-container text-on-primary py-4 rounded-lg font-bold flex items-center justify-center gap-2 hover:opacity-90 transition-all duration-300 shadow-lg shadow-primary/10">
+<span class="material-symbols-outlined" data-icon="download">download</span>
+                        DOWNLOAD
+                    </button>
+<button class="w-full border border-outline-variant/20 bg-surface-container text-secondary py-4 rounded-lg font-bold flex items-center justify-center gap-2 hover:bg-secondary/10 transition-all duration-300">
+<span class="material-symbols-outlined" data-icon="ios_share">ios_share</span>
+                        SHARE
+                    </button>
+</div>
+<!-- Live Health Pulse Monitor -->
+<div class="bg-surface-container-low p-6 rounded-xl relative overflow-hidden">
+<div class="absolute -left-4 -top-4 w-12 h-12 bg-secondary rounded-full blur-2xl animate-pulse opacity-40"></div>
+<div class="relative z-10 flex items-center justify-between">
+<div>
+<div class="text-on-surface font-bold text-lg leading-tight">System Health</div>
+<div class="text-secondary text-xs uppercase font-mono mt-1">Integrity: 100%</div>
+</div>
+<div class="flex items-end gap-1 h-8">
+<div class="w-1 bg-secondary h-4 rounded-full opacity-40"></div>
+<div class="w-1 bg-secondary h-6 rounded-full opacity-60"></div>
+<div class="w-1 bg-secondary h-8 rounded-full opacity-100"></div>
+<div class="w-1 bg-secondary h-5 rounded-full opacity-60"></div>
+<div class="w-1 bg-secondary h-7 rounded-full opacity-80"></div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</main>
+<!-- BottomNavBar -->
+<nav class="md:hidden bg-[#1A1F2E]/60 backdrop-blur-md fixed bottom-0 left-0 w-full flex justify-around items-center h-20 px-4 pb-4 z-50 rounded-t-2xl shadow-[0_-4px_24px_rgba(90,173,226,0.1)]">
+<div class="flex flex-col items-center justify-center text-[#B0B8C3] opacity-60 hover:text-[#8ACEFF] transition-colors active:scale-95">
+<span class="material-symbols-outlined" data-icon="lock">lock</span>
+<span class="font-['Inter'] text-[10px] uppercase tracking-widest mt-1">Vault</span>
+</div>
+<div class="flex flex-col items-center justify-center text-[#B0B8C3] opacity-60 hover:text-[#8ACEFF] transition-colors active:scale-95">
+<span class="material-symbols-outlined" data-icon="security">security</span>
+<span class="font-['Inter'] text-[10px] uppercase tracking-widest mt-1">Protect</span>
+</div>
+<div class="flex flex-col items-center justify-center text-[#B0B8C3] opacity-60 hover:text-[#8ACEFF] transition-colors active:scale-95">
+<span class="material-symbols-outlined" data-icon="analytics">analytics</span>
+<span class="font-['Inter'] text-[10px] uppercase tracking-widest mt-1">Activity</span>
+</div>
+<div class="flex flex-col items-center justify-center text-[#A4C9FF] scale-110 transition-transform active:scale-95">
+<span class="material-symbols-outlined" data-icon="settings" style="font-variation-settings: 'FILL' 1;">settings</span>
+<span class="font-['Inter'] text-[10px] uppercase tracking-widest mt-1">Settings</span>
+</div>
+</nav>
+</body></html>

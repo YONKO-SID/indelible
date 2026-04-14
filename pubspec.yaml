@@ -44,16 +44,27 @@ dependencies:
   flutter_riverpod: ^2.5.1
   http: ^1.2.2
   file_picker: ^8.0.7
+  cloud_firestore: ^5.4.4
+  flutter_svg: ^2.0.10
+  smooth_page_indicator: ^2.0.1
+  shared_preferences: ^2.2.3
+
+flutter_native_splash:
+  color: "#0E0E0D"
+  image: assets/images/Indelible_logo.png
+  android: true
+  ios: true
+
+flutter_launcher_icons:
+  android: true
+  ios: true
+  image_path: "assets/images/Indelible_logo.png"
+  adaptive_icon_background: "#0E0E0D"
+  adaptive_icon_foreground: "assets/images/Indelible_logo.png"
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
-
-  # The "flutter_lints" package below contains a set of recommended lints to
-  # encourage good coding practices. The lint set provided by the package is
-  # activated in the `analysis_options.yaml` file located at the root of your
-  # package. See that file for information about deactivating specific lint
-  # rules and activating additional ones.
   flutter_lints: ^5.0.0
 
 # For information on the generic Dart part of this file, see the

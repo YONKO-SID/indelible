@@ -5,8 +5,9 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../services/auth_service.dart';
-import 'dashboard_screen.dart';
-import '../widgets/app_colors.dart';
+import 'home_screen.dart';
+import '../config/themes/app_colors.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 // Card width — extracted as a constant so it's easy to find and change
 const double _kCardWidth = 440;
@@ -34,15 +35,6 @@ class _LoginScreenState extends State<LoginScreen> {
 
   // The auth service
   final _authService = AuthService();
-
-  // ══════════════════════════════════════════════════════════════════
-  /// COLOR PALETTE
-  // ══════════════════════════════════════════════════════════════════
-
-  static const Color _bgColor = Color(0xFF0A0A0A); // Deepest background
-  static const Color _surfaceColor = Color(0xFF161618); // Card surface
-  static const Color _inputColor = Color(0xFF1E1E20); // Input field fill
-  static const Color _borderColor = Color(0xFF2C2C2E); // Subtle borders
 
   // ══════════════════════════════════════════════════════════════════
   // LIFECYCLE
@@ -124,7 +116,7 @@ class _LoginScreenState extends State<LoginScreen> {
   void _navigateToDashboard() {
     if (!mounted) return;
     Navigator.of(context).pushAndRemoveUntil(
-      MaterialPageRoute(builder: (_) => DashboardScreen()),
+      MaterialPageRoute(builder: (_) => const HomeScreen()),
       (route) => false,
     );
   }
@@ -182,10 +174,10 @@ class _LoginScreenState extends State<LoginScreen> {
             decoration: BoxDecoration(
               color: AppColors.surfaceContainer,
               borderRadius: BorderRadius.circular(24),
-              border: Border.all(color: _borderColor, width: 1),
+              border: Border.all(color: AppColors.outline, width: 1),
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withOpacity(0.5),
+                  color: Colors.black.withValues(alpha: 0.5),
                   blurRadius: 20,
                   offset: const Offset(0, 10),
                 ),
@@ -206,28 +198,6 @@ class _LoginScreenState extends State<LoginScreen> {
                         'assets/images/Indelible_logo.png',
                         height: 230,
                       ),
-                      /*                      const SizedBox(height: 16),
-                      Text(
-                        "INDELIBLE",
-                        style: GoogleFonts.spaceGrotesk(
-                          color: const Color(
-                            0xFFC06CFF,
-                          ), // matched the purple from the logo
-                          fontSize: 32,
-                          fontWeight: FontWeight.bold,
-                          letterSpacing: 2.0,
-                        ),
-                      ),
-                      Text(
-                        "A mark indestructible",
-                        style: GoogleFonts.inter(
-                          color: const Color(
-                            0xFF00D4FF,
-                          ), // matched the cyan from the logo
-                          fontSize: 14,
-                          fontWeight: FontWeight.w500,
-                        ),
-                      ),*/
                     ],
                   ),
                 ),
@@ -421,7 +391,7 @@ class _LoginScreenState extends State<LoginScreen> {
     );
   }
 
-  /// The main CTA button — shows a loading spinner while auth is in progress
+  /// The main CTA button
   Widget _buildPrimaryButton() {
     return SizedBox(
       width: double.infinity,
@@ -430,9 +400,9 @@ class _LoginScreenState extends State<LoginScreen> {
         // Disable the button while loading to prevent double-taps
         onPressed: _isLoading ? null : _handleSubmit,
         style: ElevatedButton.styleFrom(
-          backgroundColor: Colors.white,
-          foregroundColor: Colors.black,
-          disabledBackgroundColor: Colors.white60,
+          backgroundColor: AppColors.onSurface,
+          foregroundColor: AppColors.surface,
+          disabledBackgroundColor: AppColors.outline,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(12),
           ),
@@ -463,7 +433,7 @@ class _LoginScreenState extends State<LoginScreen> {
   Widget _buildDivider() {
     return Row(
       children: [
-        Expanded(child: Container(height: 1, color: _borderColor)),
+        Expanded(child: Container(height: 1, color: AppColors.surfaceBright)),
         const Padding(
           padding: EdgeInsets.symmetric(horizontal: 16),
           child: Text(
@@ -471,7 +441,7 @@ class _LoginScreenState extends State<LoginScreen> {
             style: TextStyle(color: Colors.white38, fontSize: 12),
           ),
         ),
-        Expanded(child: Container(height: 1, color: _borderColor)),
+        Expanded(child: Container(height: 1, color: AppColors.surfaceBright)),
       ],
     );
   }
@@ -482,8 +452,11 @@ class _LoginScreenState extends State<LoginScreen> {
       children: [
         Expanded(
           child: _buildSocialButton(
-            icon: Icons
-                .g_mobiledata, // Placeholder — replace with Google SVG later
+            icon: SvgPicture.asset(
+              'assets/images/google-icon.svg',
+              width: 22,
+              height: 22,
+            ),
             label: "Google",
             onTap: _handleGoogleSignIn,
           ),
@@ -491,7 +464,7 @@ class _LoginScreenState extends State<LoginScreen> {
         const SizedBox(width: 16),
         Expanded(
           child: _buildSocialButton(
-            icon: Icons.apple,
+            icon: const Icon(Icons.apple, color: Colors.white, size: 22),
             label: "Apple",
             onTap: () {
               _showError("Apple Sign-In coming soon");
@@ -504,7 +477,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
   /// A single social sign-in button
   Widget _buildSocialButton({
-    required IconData icon,
+    required Widget icon,
     required String label,
     required VoidCallback onTap,
   }) {
@@ -513,14 +486,14 @@ class _LoginScreenState extends State<LoginScreen> {
       child: Container(
         height: 48,
         decoration: BoxDecoration(
-          color: _inputColor,
+          color: AppColors.surface,
           borderRadius: BorderRadius.circular(12),
-          border: Border.all(color: _borderColor),
+          border: Border.all(color: AppColors.surfaceContainerHigh),
         ),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(icon, color: Colors.white, size: 22),
+            icon,
             const SizedBox(width: 8),
             Text(
               label,
