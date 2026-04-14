@@ -539,15 +539,3 @@ Future Pipeline:
 3. **Test on sample image** - Verify embed → JPEG → extract cycle
 
 ---
-
-## 📞 Team Coordination
-
-| Role | Responsibility | Handoff Points |
-|------|----------------|----------------|
-| Backend (You) | Python core, FastAPI | API endpoints ready by Apr 20 |
-| Frontend (Teammate) | Flutter UI, Firebase | Needs /protect and /verify specs |
-| Pitch (Together) | Demo recording, slides | Code freeze Apr 24 |
-
----
-
-**Good luck. Build robust. Win the hackathon.** 🏆
