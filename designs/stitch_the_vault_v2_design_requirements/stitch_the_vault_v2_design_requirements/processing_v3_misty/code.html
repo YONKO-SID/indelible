@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;800;900&amp;family=JetBrains+Mono:wght@400;700&amp;family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "secondary-container": "#0271a3",
+                    "on-tertiary-container": "#242939",
+                    "tertiary": "#c1c6da",
+                    "on-error-container": "#ffdad6",
+                    "primary-fixed-dim": "#a4c9ff",
+                    "surface-container-low": "#171c21",
+                    "on-secondary": "#00344e",
+                    "error": "#ffb4ab",
+                    "inverse-surface": "#dee3ea",
+                    "tertiary-fixed": "#dee2f7",
+                    "surface-tint": "#a4c9ff",
+                    "error-container": "#93000a",
+                    "primary-container": "#4d93e5",
+                    "secondary-fixed": "#c9e6ff",
+                    "surface-container": "#1b2025",
+                    "on-secondary-fixed-variant": "#004b6f",
+                    "on-primary": "#00315d",
+                    "on-primary-fixed-variant": "#004883",
+                    "on-tertiary-fixed-variant": "#414657",
+                    "on-secondary-container": "#dceeff",
+                    "on-secondary-fixed": "#001e2f",
+                    "surface-container-lowest": "#0a0f14",
+                    "surface-bright": "#353a3f",
+                    "outline": "#8b919d",
+                    "inverse-primary": "#0060ac",
+                    "on-primary-container": "#002a51",
+                    "on-tertiary-fixed": "#161b2a",
+                    "inverse-on-surface": "#2c3136",
+                    "background": "#0f1419",
+                    "on-error": "#690005",
+                    "primary-fixed": "#d4e3ff",
+                    "on-background": "#dee3ea",
+                    "secondary": "#8aceff",
+                    "secondary-fixed-dim": "#8aceff",
+                    "surface-dim": "#0f1419",
+                    "on-tertiary": "#2b3040",
+                    "primary": "#a4c9ff",
+                    "surface-container-highest": "#30353b",
+                    "outline-variant": "#414751",
+                    "surface": "#0f1419",
+                    "surface-variant": "#30353b",
+                    "on-surface-variant": "#c1c7d3",
+                    "surface-container-high": "#252a30",
+                    "on-surface": "#dee3ea",
+                    "tertiary-container": "#8b90a3",
+                    "on-primary-fixed": "#001c39",
+                    "tertiary-fixed-dim": "#c1c6da"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "fontFamily": {
+                    "headline": ["Inter"],
+                    "body": ["Inter"],
+                    "label": ["Inter"],
+                    "mono": ["JetBrains Mono"]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .bg-misty-blob {
+            background: radial-gradient(circle at center, #4D93E5 0%, #0271A3 100%);
+            filter: blur(40px);
+            opacity: 0.6;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background text-on-background font-body selection:bg-primary/30 min-h-screen flex flex-col items-center justify-center overflow-hidden">
+<!-- TopAppBar -->
+<header class="fixed top-0 w-full z-50 bg-[#1A1F2E]/60 backdrop-blur-md shadow-[0_0_24px_rgba(90,173,226,0.15)] flex items-center justify-between px-6 h-16 w-full">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-blue-400 dark:text-[#A4C9FF]" data-icon="shield">shield</span>
+<h1 class="text-lg font-black tracking-tighter text-[#A4C9FF] font-['Inter']">THE VAULT</h1>
+</div>
+<div class="hidden md:flex gap-8 items-center text-sm font-bold tracking-tight">
+<span class="text-[#B0B8C3] hover:opacity-80 transition-opacity cursor-pointer">Vault</span>
+<span class="text-[#A4C9FF] hover:opacity-80 transition-opacity cursor-pointer">Protect</span>
+<span class="text-[#B0B8C3] hover:opacity-80 transition-opacity cursor-pointer">Activity</span>
+<span class="text-[#B0B8C3] hover:opacity-80 transition-opacity cursor-pointer">Settings</span>
+</div>
+<div class="flex items-center">
+<span class="material-symbols-outlined text-[#B0B8C3]" data-icon="account_circle">account_circle</span>
+</div>
+</header>
+<!-- Main Canvas -->
+<main class="relative w-full max-w-4xl px-6 flex flex-col items-center justify-center z-10 py-24">
+<!-- Atmospheric Progress Blob -->
+<div class="relative w-72 h-72 md:w-96 md:h-96 flex items-center justify-center mb-16">
+<div class="absolute inset-0 bg-misty-blob rounded-full transform scale-110"></div>
+<div class="absolute inset-0 bg-secondary/20 rounded-full animate-pulse blur-3xl"></div>
+<div class="relative z-10 flex flex-col items-center">
+<span class="text-5xl md:text-7xl font-extrabold tracking-tighter text-on-background drop-shadow-lg">74%</span>
+<span class="text-xs uppercase tracking-[0.4em] font-bold text-secondary mt-2">Complete</span>
+</div>
+<!-- Pulse Monitor Signature Component -->
+<div class="absolute -bottom-4 left-1/2 -translate-x-1/2 bg-surface-container-highest/40 backdrop-blur-xl px-4 py-1.5 rounded-full shadow-[0_0_24px_rgba(90,173,226,0.15)] flex items-center gap-2">
+<div class="w-2 h-2 rounded-full bg-secondary shadow-[0_0_8px_#8ACEFF] animate-pulse"></div>
+<span class="text-[10px] font-mono text-secondary uppercase tracking-widest">System Live</span>
+</div>
+</div>
+<!-- Processing Steps Grid -->
+<div class="w-full grid grid-cols-1 md:grid-cols-2 gap-6 items-start">
+<!-- Progress Timeline -->
+<div class="bg-[#1A1F2E]/60 backdrop-blur-md rounded-2xl p-8 shadow-[0_0_24px_rgba(90,173,226,0.1)] flex flex-col gap-6">
+<div class="flex items-center gap-4 text-secondary/40">
+<span class="material-symbols-outlined text-secondary" data-icon="check_circle" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+<div class="flex flex-col">
+<span class="text-sm font-bold text-on-surface">Uploading</span>
+<span class="text-[10px] font-mono text-secondary/60">SOURCE: LOCAL_NODE_01</span>
+</div>
+</div>
+<div class="flex items-center gap-4 text-secondary/40">
+<span class="material-symbols-outlined text-secondary" data-icon="check_circle" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+<div class="flex flex-col">
+<span class="text-sm font-bold text-on-surface">Analyzing</span>
+<span class="text-[10px] font-mono text-secondary/60">THREAT_VECTOR_SCAN: CLEAN</span>
+</div>
+</div>
+<div class="flex items-center gap-4">
+<div class="w-6 h-6 flex items-center justify-center">
+<span class="material-symbols-outlined text-primary animate-spin" data-icon="sync">sync</span>
+</div>
+<div class="flex flex-col">
+<span class="text-sm font-bold text-primary">Embedding (74%)</span>
+<span class="text-[10px] font-mono text-primary/60">VECTORIZING_METADATA...</span>
+</div>
+</div>
+<div class="flex items-center gap-4 opacity-40">
+<span class="material-symbols-outlined" data-icon="radio_button_unchecked">radio_button_unchecked</span>
+<div class="flex flex-col">
+<span class="text-sm font-bold">Generating (0%)</span>
+<span class="text-[10px] font-mono">WAITING_FOR_HASH_MAP</span>
+</div>
+</div>
+</div>
+<!-- Technical Logs Card -->
+<div class="bg-[#1A1F2E]/40 backdrop-blur-sm rounded-2xl p-8 flex flex-col h-full">
+<div class="flex justify-between items-center mb-6">
+<h3 class="text-[10px] font-mono uppercase tracking-[0.2em] text-secondary">Tech_Data_Stream</h3>
+<span class="w-2 h-2 rounded-full bg-secondary/40"></span>
+</div>
+<div class="space-y-3 font-mono text-[11px] leading-relaxed overflow-hidden">
+<div class="flex gap-4 p-2 bg-surface-container-low/50 rounded">
+<span class="text-secondary/40">09:42:11</span>
+<span class="text-secondary">HASH: 0x8F2B9C...7E1A</span>
+</div>
+<div class="flex gap-4 p-2">
+<span class="text-secondary/40">09:42:12</span>
+<span class="text-on-surface-variant">NODE_RELAY: ESTABLISHED [AES-256]</span>
+</div>
+<div class="flex gap-4 p-2 bg-surface-container-low/50 rounded">
+<span class="text-secondary/40">09:42:15</span>
+<span class="text-on-surface-variant">ENTROPY_POOL: CALIBRATED</span>
+</div>
+<div class="flex gap-4 p-2">
+<span class="text-secondary/40">09:42:18</span>
+<span class="text-primary">ENCRYPTING_FRAGMENTS: SECTOR_07</span>
+</div>
+</div>
+<div class="mt-auto pt-8">
+<button class="w-full bg-surface-container-highest hover:bg-surface-bright text-on-surface text-[10px] font-mono uppercase tracking-widest py-3 rounded-xl transition-all active:scale-95 flex items-center justify-center gap-2">
+<span class="material-symbols-outlined text-[14px]" data-icon="pause">pause</span>
+                        Suspend Process
+                    </button>
+</div>
+</div>
+</div>
+</main>
+<!-- BottomNavBar -->
+<nav class="md:hidden fixed bottom-0 left-0 w-full flex justify-around items-center h-20 px-4 pb-4 bg-[#1A1F2E]/60 backdrop-blur-md rounded-t-2xl shadow-[0_-4px_24px_rgba(90,173,226,0.1)] z-50">
+<div class="flex flex-col items-center justify-center text-[#B0B8C3] opacity-60 transition-colors">
+<span class="material-symbols-outlined" data-icon="lock">lock</span>
+<span class="font-['Inter'] text-[10px] uppercase tracking-widest mt-1">Vault</span>
+</div>
+<div class="flex flex-col items-center justify-center text-[#A4C9FF] scale-110 transition-transform">
+<span class="material-symbols-outlined" data-icon="security" style="font-variation-settings: 'FILL' 1;">security</span>
+<span class="font-['Inter'] text-[10px] uppercase tracking-widest mt-1">Protect</span>
+</div>
+<div class="flex flex-col items-center justify-center text-[#B0B8C3] opacity-60 transition-colors">
+<span class="material-symbols-outlined" data-icon="analytics">analytics</span>
+<span class="font-['Inter'] text-[10px] uppercase tracking-widest mt-1">Activity</span>
+</div>
+<div class="flex flex-col items-center justify-center text-[#B0B8C3] opacity-60 transition-colors">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+<span class="font-['Inter'] text-[10px] uppercase tracking-widest mt-1">Settings</span>
+</div>
+</nav>
+<!-- Background Decoration -->
+<div class="fixed inset-0 pointer-events-none -z-10">
+<div class="absolute top-1/4 -left-20 w-96 h-96 bg-primary/5 rounded-full blur-[100px]"></div>
+<div class="absolute bottom-1/4 -right-20 w-96 h-96 bg-secondary/5 rounded-full blur-[100px]"></div>
+</div>
+</body></html>

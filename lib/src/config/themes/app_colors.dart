@@ -8,6 +8,9 @@ class AppColors {
   static const Color surfaceContainerLow = Color(0xFF131312);
   static const Color surfaceContainerHigh = Color(0xFF20201E);
   static const Color surfaceBright = Color(0xFF2C2C2B);
+  static const Color red = Color(0xFFFF0000);
+  static const Color green = Color(0xFF00FF00);
+
 
   // Primary (Cyan)
   static const Color primary = Color(0xFF8FF5FE);
@@ -21,6 +24,7 @@ class AppColors {
   // Tertiary (Blue)
   static const Color tertiary = Color(0xFF65AFFE);
   static const Color tertiaryContainer = Color(0xFF4AA2F8);
+  static const Color blue = Color(0xFF0000FF);
 
   // Text
   static const Color onSurface = Color(0xFFFFFFFE);

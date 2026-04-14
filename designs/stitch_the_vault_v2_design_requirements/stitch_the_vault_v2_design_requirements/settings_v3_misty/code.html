@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;800;900&amp;family=JetBrains+Mono&amp;family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "secondary-container": "#0271a3",
+                    "on-tertiary-container": "#242939",
+                    "tertiary": "#c1c6da",
+                    "on-error-container": "#ffdad6",
+                    "primary-fixed-dim": "#a4c9ff",
+                    "surface-container-low": "#171c21",
+                    "on-secondary": "#00344e",
+                    "error": "#ffb4ab",
+                    "inverse-surface": "#dee3ea",
+                    "tertiary-fixed": "#dee2f7",
+                    "surface-tint": "#a4c9ff",
+                    "error-container": "#93000a",
+                    "primary-container": "#4d93e5",
+                    "secondary-fixed": "#c9e6ff",
+                    "surface-container": "#1b2025",
+                    "on-secondary-fixed-variant": "#004b6f",
+                    "on-primary": "#00315d",
+                    "on-primary-fixed-variant": "#004883",
+                    "on-tertiary-fixed-variant": "#414657",
+                    "on-secondary-container": "#dceeff",
+                    "on-secondary-fixed": "#001e2f",
+                    "surface-container-lowest": "#0a0f14",
+                    "surface-bright": "#353a3f",
+                    "outline": "#8b919d",
+                    "inverse-primary": "#0060ac",
+                    "on-primary-container": "#002a51",
+                    "on-tertiary-fixed": "#161b2a",
+                    "inverse-on-surface": "#2c3136",
+                    "background": "#0f1419",
+                    "on-error": "#690005",
+                    "primary-fixed": "#d4e3ff",
+                    "on-background": "#dee3ea",
+                    "secondary": "#8aceff",
+                    "secondary-fixed-dim": "#8aceff",
+                    "surface-dim": "#0f1419",
+                    "on-tertiary": "#2b3040",
+                    "primary": "#a4c9ff",
+                    "surface-container-highest": "#30353b",
+                    "outline-variant": "#414751",
+                    "surface": "#0f1419",
+                    "surface-variant": "#30353b",
+                    "on-surface-variant": "#c1c7d3",
+                    "surface-container-high": "#252a30",
+                    "on-surface": "#dee3ea",
+                    "tertiary-container": "#8b90a3",
+                    "on-primary-fixed": "#001c39",
+                    "tertiary-fixed-dim": "#c1c6da"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "fontFamily": {
+                    "headline": ["Inter"],
+                    "body": ["Inter"],
+                    "label": ["Inter"],
+                    "technical": ["JetBrains Mono"]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .glass-panel {
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+        }
+        .pulse-glow {
+            box-shadow: 0 0 24px rgba(90, 173, 226, 0.15);
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background text-on-background font-body min-h-screen pb-24 selection:bg-primary-container selection:text-on-primary-container">
+<header class="fixed top-0 w-full z-50 bg-[#1A1F2E]/60 backdrop-blur-md shadow-[0_0_24px_rgba(90,173,226,0.15)] flex items-center justify-between px-6 h-16">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-[#A4C9FF]" data-icon="shield">shield</span>
+<h1 class="text-lg font-black tracking-tighter text-[#A4C9FF] font-headline">THE VAULT</h1>
+</div>
+<div class="hidden md:flex items-center gap-8">
+<a class="text-[#B0B8C3] hover:opacity-80 transition-opacity font-['Inter'] tracking-tight text-sm font-bold" href="#">Vault</a>
+<a class="text-[#B0B8C3] hover:opacity-80 transition-opacity font-['Inter'] tracking-tight text-sm font-bold" href="#">Protect</a>
+<a class="text-[#B0B8C3] hover:opacity-80 transition-opacity font-['Inter'] tracking-tight text-sm font-bold" href="#">Activity</a>
+<a class="text-[#A4C9FF] hover:opacity-80 transition-opacity font-['Inter'] tracking-tight text-sm font-bold" href="#">Settings</a>
+</div>
+<button class="md:hidden text-[#B0B8C3]">
+<span class="material-symbols-outlined" data-icon="menu">menu</span>
+</button>
+</header>
+<main class="max-w-2xl mx-auto px-6 pt-24 space-y-8">
+<section class="relative group">
+<div class="absolute -inset-1 bg-gradient-to-r from-primary to-secondary opacity-10 blur-xl group-hover:opacity-20 transition duration-1000"></div>
+<div class="relative bg-surface-container-high rounded-2xl p-6 flex items-center gap-6 shadow-[0_0_24px_rgba(90,173,226,0.15)]">
+<div class="w-20 h-20 rounded-xl bg-gradient-to-br from-[#4A90E2] to-[#5DADE2] flex items-center justify-center overflow-hidden">
+<img class="w-full h-full object-cover" data-alt="Professional portrait of a sophisticated man with a focused expression, Julian Thorne, set against a dark architectural background with blue ambient lighting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuB4a6e1WIBtvApnyxVY5KbZjC_v2usliyVB7A5jsocq_TYw4YvVzQxX_TPd6PpJ0Nb9-vcMl56V4hajDC8jNAl0AES3QHAarJwUtuo4RlukfW-1IgKv9bAD8gxpDEQ8o0-db-d2539PUaKPXv0IMywR4TYfM7OUKB-D-v4bfhHxwUucfMXZ_Ln_bNrE5eXAsko9MOghAfY1CfgpMiY2Ea6CYdvTU5bs2BswQQZqPcRptiIMZ4uqYeFom9pkU05Tp4zC-sXrwXL95S_s"/>
+</div>
+<div class="flex-1">
+<div class="flex items-center gap-2 mb-1">
+<h2 class="text-2xl font-bold tracking-tight text-on-surface">Julian Thorne</h2>
+<span class="bg-primary/20 text-primary text-[10px] font-bold px-2 py-0.5 rounded-full tracking-widest uppercase border border-primary/20">Sovereign Badge</span>
+</div>
+<p class="text-on-surface-variant text-sm font-technical">UID: VLT-7729-ALPHA</p>
+</div>
+<button class="text-on-surface-variant hover:text-primary transition-colors">
+<span class="material-symbols-outlined" data-icon="edit">edit</span>
+</button>
+</div>
+</section>
+<section class="space-y-4">
+<h3 class="text-xs font-bold tracking-[0.2em] uppercase text-on-surface-variant px-2">Account Control</h3>
+<div class="bg-surface-container-low rounded-2xl overflow-hidden">
+<div class="flex items-center justify-between p-4 bg-surface-container hover:bg-surface-container-highest transition-colors cursor-pointer group">
+<div class="flex items-center gap-4">
+<div class="w-10 h-10 rounded-lg bg-surface-container-highest flex items-center justify-center text-primary group-hover:bg-primary/10 transition-colors">
+<span class="material-symbols-outlined" data-icon="credit_card">credit_card</span>
+</div>
+<div>
+<p class="font-bold text-on-surface">Manage Plan</p>
+<p class="text-xs text-on-surface-variant">Sovereign Tier • Next billing Oct 12</p>
+</div>
+</div>
+<span class="material-symbols-outlined text-outline" data-icon="chevron_right">chevron_right</span>
+</div>
+<div class="flex items-center justify-between p-4 bg-surface-container hover:bg-surface-container-highest transition-colors cursor-pointer group">
+<div class="flex items-center gap-4">
+<div class="w-10 h-10 rounded-lg bg-surface-container-highest flex items-center justify-center text-primary group-hover:bg-primary/10 transition-colors">
+<span class="material-symbols-outlined" data-icon="key">key</span>
+</div>
+<div>
+<p class="font-bold text-on-surface">Encryption Keys</p>
+<p class="text-xs text-on-surface-variant">4 Active Keys • Hardware Rooted</p>
+</div>
+</div>
+<span class="material-symbols-outlined text-outline" data-icon="chevron_right">chevron_right</span>
+</div>
+</div>
+</section>
+<section class="space-y-4">
+<h3 class="text-xs font-bold tracking-[0.2em] uppercase text-on-surface-variant px-2">Sentinel Protocols</h3>
+<div class="bg-surface-container-low rounded-2xl overflow-hidden">
+<div class="flex items-center justify-between p-4 bg-surface-container">
+<div class="flex items-center gap-4">
+<div class="w-10 h-10 rounded-lg bg-surface-container-highest flex items-center justify-center text-secondary">
+<span class="material-symbols-outlined" data-icon="shield_lock">shield_lock</span>
+</div>
+<div>
+<p class="font-bold text-on-surface">Two-Factor Auth</p>
+<p class="text-xs text-on-surface-variant">Authenticator App Enabled</p>
+</div>
+</div>
+<button class="relative inline-flex h-6 w-11 items-center rounded-full bg-primary-container transition-colors focus:outline-none">
+<span class="inline-block h-4 w-4 transform rounded-full bg-on-primary-container transition-transform translate-x-6"></span>
+</button>
+</div>
+<div class="flex items-center justify-between p-4 bg-surface-container">
+<div class="flex items-center gap-4">
+<div class="w-10 h-10 rounded-lg bg-surface-container-highest flex items-center justify-center text-secondary">
+<span class="material-symbols-outlined" data-icon="fingerprint">fingerprint</span>
+</div>
+<div>
+<p class="font-bold text-on-surface">Biometric Login</p>
+<p class="text-xs text-on-surface-variant">FaceID / TouchID Active</p>
+</div>
+</div>
+<button class="relative inline-flex h-6 w-11 items-center rounded-full bg-primary-container transition-colors focus:outline-none">
+<span class="inline-block h-4 w-4 transform rounded-full bg-on-primary-container transition-transform translate-x-6"></span>
+</button>
+</div>
+<div class="flex items-center justify-between p-4 bg-surface-container">
+<div class="flex items-center gap-4">
+<div class="w-10 h-10 rounded-lg bg-surface-container-highest flex items-center justify-center text-secondary">
+<span class="material-symbols-outlined" data-icon="notification_important">notification_important</span>
+</div>
+<div>
+<p class="font-bold text-on-surface">Piracy Alerts</p>
+<p class="text-xs text-on-surface-variant">Real-time dark web scanning</p>
+</div>
+</div>
+<button class="relative inline-flex h-6 w-11 items-center rounded-full bg-surface-container-highest transition-colors focus:outline-none">
+<span class="inline-block h-4 w-4 transform rounded-full bg-on-surface-variant transition-transform translate-x-1"></span>
+</button>
+</div>
+</div>
+</section>
+<section class="pt-4">
+<button class="w-full py-4 px-6 bg-surface-container-low hover:bg-error-container/20 border border-error-container/20 rounded-2xl flex items-center justify-center gap-3 text-[#C9646A] font-bold transition-all group">
+<span class="material-symbols-outlined text-xl group-hover:scale-110 transition-transform" data-icon="logout">logout</span>
+                Sign Out
+            </button>
+<p class="text-center text-[10px] font-technical uppercase tracking-[0.3em] text-outline mt-8 opacity-40">The Vault v4.2.0-SENTINEL</p>
+</section>
+</main>
+<nav class="fixed bottom-0 left-0 w-full flex justify-around items-center h-20 px-4 pb-4 bg-[#1A1F2E]/60 backdrop-blur-md rounded-t-2xl shadow-[0_-4px_24px_rgba(90,173,226,0.1)] z-50 md:hidden">
+<a class="flex flex-col items-center justify-center text-[#B0B8C3] opacity-60 hover:text-[#8ACEFF] transition-colors" href="#">
+<span class="material-symbols-outlined" data-icon="lock">lock</span>
+<span class="font-['Inter'] text-[10px] uppercase tracking-widest mt-1">Vault</span>
+</a>
+<a class="flex flex-col items-center justify-center text-[#B0B8C3] opacity-60 hover:text-[#8ACEFF] transition-colors" href="#">
+<span class="material-symbols-outlined" data-icon="security">security</span>
+<span class="font-['Inter'] text-[10px] uppercase tracking-widest mt-1">Protect</span>
+</a>
+<a class="flex flex-col items-center justify-center text-[#B0B8C3] opacity-60 hover:text-[#8ACEFF] transition-colors" href="#">
+<span class="material-symbols-outlined" data-icon="analytics">analytics</span>
+<span class="font-['Inter'] text-[10px] uppercase tracking-widest mt-1">Activity</span>
+</a>
+<a class="flex flex-col items-center justify-center text-[#A4C9FF] scale-110 transition-transform" href="#">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+<span class="font-['Inter'] text-[10px] uppercase tracking-widest mt-1">Settings</span>
+</a>
+</nav>
+</body></html>

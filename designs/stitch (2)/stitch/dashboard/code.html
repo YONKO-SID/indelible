@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&amp;family=Inter:wght@300;400;500;600&amp;family=Space+Mono&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "primary": "#ffffff",
+                    "on-secondary-fixed": "#1b1c1c",
+                    "tertiary-fixed-dim": "#464747",
+                    "secondary-fixed-dim": "#acabaa",
+                    "on-secondary-fixed-variant": "#3b3b3b",
+                    "tertiary-container": "#919090",
+                    "surface-tint": "#c6c7c5",
+                    "primary-fixed": "#5d5f5d",
+                    "inverse-on-surface": "#313030",
+                    "surface-container-highest": "#353534",
+                    "on-surface-variant": "#c6c6c6",
+                    "surface": "#131313",
+                    "secondary": "#c8c6c6",
+                    "primary-container": "#d4d4d3",
+                    "on-tertiary": "#1b1c1c",
+                    "outline-variant": "#474747",
+                    "on-error-container": "#ffdad6",
+                    "on-tertiary-fixed": "#ffffff",
+                    "background": "#131313",
+                    "surface-container-lowest": "#0e0e0e",
+                    "inverse-primary": "#5d5f5d",
+                    "on-background": "#e5e2e1",
+                    "on-tertiary-fixed-variant": "#e4e2e2",
+                    "on-primary-fixed": "#ffffff",
+                    "tertiary-fixed": "#5e5e5e",
+                    "outline": "#919191",
+                    "tertiary": "#e4e2e2",
+                    "inverse-surface": "#e5e2e1",
+                    "error-container": "#93000a",
+                    "on-secondary-container": "#e4e2e1",
+                    "on-error": "#690005",
+                    "surface-container-high": "#2a2a2a",
+                    "surface-container": "#201f1f",
+                    "surface-dim": "#131313",
+                    "secondary-container": "#474747",
+                    "primary-fixed-dim": "#454746",
+                    "error": "#ffb4ab",
+                    "on-tertiary-container": "#000000",
+                    "on-primary-container": "#000000",
+                    "surface-variant": "#353534",
+                    "surface-container-low": "#1c1b1b",
+                    "on-primary": "#1a1c1b",
+                    "surface-bright": "#3a3939",
+                    "on-surface": "#e5e2e1",
+                    "on-secondary": "#1b1c1c",
+                    "on-primary-fixed-variant": "#e2e3e1",
+                    "secondary-fixed": "#c8c6c6"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.125rem",
+                    "lg": "0.25rem",
+                    "xl": "0.5rem",
+                    "full": "0.75rem"
+            },
+            "fontFamily": {
+                    "headline": ["Space Grotesk"],
+                    "body": ["Inter"],
+                    "label": ["Inter"],
+                    "mono": ["Space Mono"]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 300, 'GRAD' 0, 'opsz' 24;
+        }
+        body {
+            background-color: #131313;
+            color: #FAFAF8;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="font-body selection:bg-primary selection:text-on-primary">
+<!-- TopAppBar -->
+<header class="fixed top-0 w-full z-50 bg-[#131313]/70 backdrop-blur-md border-b border-[#474747]/20 flex justify-between items-center px-6 h-16 w-full">
+<div class="flex items-center gap-4">
+<span class="material-symbols-outlined text-[#FFFFFF] cursor-pointer active:opacity-70">menu</span>
+<span class="text-[#FFFFFF] font-['Space_Grotesk'] tracking-tighter uppercase font-bold text-xl font-bold tracking-widest text-[#FFFFFF]">THE VAULT v2</span>
+</div>
+<div class="flex items-center gap-4">
+<div class="hidden md:flex gap-8 px-6">
+<span class="font-['Inter'] text-[10px] uppercase tracking-widest text-[#FFFFFF] cursor-pointer">Vault</span>
+<span class="font-['Inter'] text-[10px] uppercase tracking-widest text-[#919191] hover:text-[#FFFFFF] transition-colors cursor-pointer">Ledger</span>
+<span class="font-['Inter'] text-[10px] uppercase tracking-widest text-[#919191] hover:text-[#FFFFFF] transition-colors cursor-pointer">Security</span>
+<span class="font-['Inter'] text-[10px] uppercase tracking-widest text-[#919191] hover:text-[#FFFFFF] transition-colors cursor-pointer">Settings</span>
+</div>
+<div class="w-8 h-8 rounded-full bg-surface-container-high border border-outline-variant/20 flex items-center justify-center text-[10px] font-bold text-primary">JD</div>
+</div>
+</header>
+<main class="pt-24 pb-32 px-6 max-w-7xl mx-auto">
+<!-- Hero Section -->
+<section class="mb-16">
+<h1 class="font-headline text-5xl md:text-7xl font-bold tracking-tighter text-primary mb-2">Welcome back, Julian</h1>
+<div class="h-px w-24 bg-primary mb-6"></div>
+<p class="font-body text-outline text-sm uppercase tracking-[0.2em]">Curator Access Level Tier III • System Nominal</p>
+</section>
+<!-- Stats Grid (Digital Artifacts) -->
+<section class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-16">
+<div class="p-6 bg-surface-container-low border border-outline-variant/20 rounded-lg">
+<div class="flex justify-between items-start mb-8">
+<span class="material-symbols-outlined text-outline text-xl">verified_user</span>
+<span class="text-[10px] font-mono text-outline uppercase tracking-wider">01</span>
+</div>
+<div class="text-3xl font-headline font-bold text-primary mb-1 tracking-tighter">99.2%</div>
+<div class="text-[10px] font-label text-outline uppercase tracking-widest">Protected</div>
+</div>
+<div class="p-6 bg-surface-container-low border border-outline-variant/20 rounded-lg">
+<div class="flex justify-between items-start mb-8">
+<span class="material-symbols-outlined text-outline text-xl">sync</span>
+<span class="text-[10px] font-mono text-outline uppercase tracking-wider">02</span>
+</div>
+<div class="text-3xl font-headline font-bold text-primary mb-1 tracking-tighter">Active</div>
+<div class="text-[10px] font-label text-outline uppercase tracking-widest">Syncing</div>
+</div>
+<div class="p-6 bg-surface-container-low border border-outline-variant/20 rounded-lg">
+<div class="flex justify-between items-start mb-8">
+<span class="material-symbols-outlined text-outline text-xl">database</span>
+<span class="text-[10px] font-mono text-outline uppercase tracking-wider">03</span>
+</div>
+<div class="text-3xl font-headline font-bold text-primary mb-1 tracking-tighter">1.4 TB</div>
+<div class="text-[10px] font-label text-outline uppercase tracking-widest">Storage</div>
+</div>
+<div class="p-6 bg-surface-container-low border border-outline-variant/20 rounded-lg">
+<div class="flex justify-between items-start mb-8">
+<span class="material-symbols-outlined text-outline text-xl">fingerprint</span>
+<span class="text-[10px] font-mono text-outline uppercase tracking-wider">04</span>
+</div>
+<div class="text-3xl font-headline font-bold text-primary mb-1 tracking-tighter">Verified</div>
+<div class="text-[10px] font-label text-outline uppercase tracking-widest">Integrity</div>
+</div>
+</section>
+<!-- Quick Actions & Assets Layout -->
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+<!-- Quick Actions (Asymmetric Sidebar-style on Desktop) -->
+<div class="lg:col-span-4 space-y-4">
+<h3 class="font-headline text-lg uppercase tracking-widest text-primary mb-6">Quick Actions</h3>
+<button class="w-full group p-5 bg-surface border border-outline-variant/20 rounded-lg flex items-center justify-between hover:bg-surface-bright transition-all duration-300 active:scale-[0.98]">
+<div class="flex items-center gap-4">
+<span class="material-symbols-outlined text-primary group-hover:rotate-12 transition-transform">upload_file</span>
+<span class="font-body text-sm uppercase tracking-wider">Upload Media</span>
+</div>
+<span class="material-symbols-outlined text-outline text-sm">arrow_forward_ios</span>
+</button>
+<button class="w-full group p-5 bg-surface border border-outline-variant/20 rounded-lg flex items-center justify-between hover:bg-surface-bright transition-all duration-300 active:scale-[0.98]">
+<div class="flex items-center gap-4">
+<span class="material-symbols-outlined text-primary">gavel</span>
+<span class="font-body text-sm uppercase tracking-wider">Verify Ownership</span>
+</div>
+<span class="material-symbols-outlined text-outline text-sm">arrow_forward_ios</span>
+</button>
+<button class="w-full group p-5 bg-surface border border-outline-variant/20 rounded-lg flex items-center justify-between hover:bg-surface-bright transition-all duration-300 active:scale-[0.98]">
+<div class="flex items-center gap-4">
+<span class="material-symbols-outlined text-primary">history_edu</span>
+<span class="font-body text-sm uppercase tracking-wider">Activity Log</span>
+</div>
+<span class="material-symbols-outlined text-outline text-sm">arrow_forward_ios</span>
+</button>
+<div class="mt-12 p-8 bg-surface-container-highest/30 rounded-lg border border-outline-variant/10 relative overflow-hidden group">
+<div class="relative z-10">
+<p class="font-headline text-primary text-xl font-medium mb-2 tracking-tight">Security Protocol Alpha</p>
+<p class="font-body text-outline text-xs leading-relaxed mb-6">Multi-signature hardware verification is currently active for all transfers over 5.0 ETH.</p>
+<div class="flex items-center gap-2">
+<div class="w-2 h-2 rounded-full bg-primary animate-pulse"></div>
+<span class="text-[10px] font-mono text-primary uppercase">Active Monitoring</span>
+</div>
+</div>
+<div class="absolute -right-4 -bottom-4 opacity-5 group-hover:opacity-10 transition-opacity">
+<span class="material-symbols-outlined text-[120px]" style="font-variation-settings: 'FILL' 1;">shield</span>
+</div>
+</div>
+</div>
+<!-- Recent Assets (Gallery List) -->
+<div class="lg:col-span-8">
+<div class="flex justify-between items-end mb-6">
+<h3 class="font-headline text-lg uppercase tracking-widest text-primary">Recent Assets</h3>
+<a class="text-[10px] font-label text-outline uppercase tracking-widest hover:text-primary transition-colors" href="#">View All Archive</a>
+</div>
+<div class="space-y-px rounded-lg overflow-hidden border border-outline-variant/20">
+<!-- Asset Item 01 -->
+<div class="flex items-center justify-between p-4 bg-surface-container-low hover:bg-surface-container-high transition-colors group">
+<div class="flex items-center gap-6">
+<div class="w-12 h-12 bg-surface-container-highest rounded overflow-hidden">
+<img alt="Abstract digital sculpture" class="w-full h-full object-cover grayscale opacity-80 group-hover:grayscale-0 group-hover:opacity-100 transition-all" data-alt="abstract minimalist 3D render of a smooth obsidian sculpture with sharp angles and soft highlights against a dark gray background" src="https://lh3.googleusercontent.com/aida-public/AB6AXuB9-2J13zhhxQqg6WlKa78zIDtt7tVz_LUNN_4xh4aY5xvZFVJNRp6qCZ8KJ4WbJ_N6bZ3YOB48SBU5teoqxxKHwLdKiDQO9yuK5dhQTbC-fQVDQyyjcTyK5nVVtw4CxnmLY3B-wweygfJ8AdD2VIMYrn_Me_jcCPP2K9edT_yc_1mIKCbehamcECbNhI5MQnShn-VOP9qrZgMYppU8iOWAndcAYjcZeD214cUpAMZJo8j2ntEEtLXK6yq0c0_HAWyZ7SURkgL_AHxd"/>
+</div>
+<div>
+<h4 class="font-headline text-primary text-sm font-medium">ARCHIVE_772_DELTA.obj</h4>
+<div class="flex items-center gap-3 mt-1">
+<span class="text-[10px] font-mono text-outline">0x7F2...88A1</span>
+<span class="w-1 h-1 rounded-full bg-outline-variant"></span>
+<span class="text-[10px] font-body text-outline">2.4 MB</span>
+</div>
+</div>
+</div>
+<div class="flex items-center gap-4">
+<span class="text-[10px] font-label text-outline uppercase tracking-tighter">2h ago</span>
+<span class="material-symbols-outlined text-outline group-hover:text-primary cursor-pointer">more_vert</span>
+</div>
+</div>
+<!-- Asset Item 02 -->
+<div class="flex items-center justify-between p-4 bg-surface hover:bg-surface-container-high transition-colors group">
+<div class="flex items-center gap-6">
+<div class="w-12 h-12 bg-surface-container-highest rounded overflow-hidden">
+<img alt="Flowing digital texture" class="w-full h-full object-cover grayscale opacity-80 group-hover:grayscale-0 group-hover:opacity-100 transition-all" data-alt="minimalist topographic map lines rendered in white on a charcoal background, sleek editorial aesthetic" src="https://lh3.googleusercontent.com/aida-public/AB6AXuArN5pLydWfV1b_RpEu-L6VCbGCzIjIpmqMHO4LB0WxNV6dRhcK2amZcWoKBArbQAath1SGkWpdX7OLqWWozPAl3D-6Hpqo0rRek6kh_nGmqZzVDOaGwUUiCSTrD6lJprV5v8obYfg_F-JPqjaXplOaLhoHSyIJMeGyMO7sklBawM23v6-QIONcmDbpNGrZ24PqsGJiXw2Tc-af87m0HH6DYeg18vcaxP-c_ou605_D_42AbZYAR342HLmySUDnmy47bUgywBhS6LIL"/>
+</div>
+<div>
+<h4 class="font-headline text-primary text-sm font-medium">CONTRACT_MINT_FINAL.pdf</h4>
+<div class="flex items-center gap-3 mt-1">
+<span class="text-[10px] font-mono text-outline">0xBC4...E322</span>
+<span class="w-1 h-1 rounded-full bg-outline-variant"></span>
+<span class="text-[10px] font-body text-outline">128 KB</span>
+</div>
+</div>
+</div>
+<div class="flex items-center gap-4">
+<span class="text-[10px] font-label text-outline uppercase tracking-tighter">5h ago</span>
+<span class="material-symbols-outlined text-outline group-hover:text-primary cursor-pointer">more_vert</span>
+</div>
+</div>
+<!-- Asset Item 03 -->
+<div class="flex items-center justify-between p-4 bg-surface-container-low hover:bg-surface-container-high transition-colors group">
+<div class="flex items-center gap-6">
+<div class="w-12 h-12 bg-surface-container-highest rounded overflow-hidden">
+<img alt="Geometric pattern" class="w-full h-full object-cover grayscale opacity-80 group-hover:grayscale-0 group-hover:opacity-100 transition-all" data-alt="dark atmospheric macro photography of architectural brutalist concrete texture with sharp shadows and high contrast" src="https://lh3.googleusercontent.com/aida-public/AB6AXuB6_UMEkn-l_ogj1b6D4KB821CKc5CL1W0rqupaUBsFX63aoJ3-wByxOk8VtQkZg__iKxg7wJapBSloY9rehzgtC6zmY0qGcOMLJ5kcKIJ3BgwVFkZU9ngzE2zcw2rZcdv8TgtCV7TT5PFspa74AfBinuTPB6rJJCkR-mYA7tZmq7v3FsPAUZdF3TkqtIZ5ajPNs6ayOm_gnvHrEEYLi0ZcAY7G2gpR_U2zWNuXcKis2Vo4ekTDB8QmSHnfwRhyMHbc3I5YgpjNGtnI"/>
+</div>
+<div>
+<h4 class="font-headline text-primary text-sm font-medium">COLLECTION_MANIFESTO.mp4</h4>
+<div class="flex items-center gap-3 mt-1">
+<span class="text-[10px] font-mono text-outline">0x11A...99CC</span>
+<span class="w-1 h-1 rounded-full bg-outline-variant"></span>
+<span class="text-[10px] font-body text-outline">45.8 MB</span>
+</div>
+</div>
+</div>
+<div class="flex items-center gap-4">
+<span class="text-[10px] font-label text-outline uppercase tracking-tighter">Yesterday</span>
+<span class="material-symbols-outlined text-outline group-hover:text-primary cursor-pointer">more_vert</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+</main>
+<!-- BottomNavBar -->
+<nav class="md:hidden fixed bottom-0 left-0 w-full z-50 bg-[#131313]/70 backdrop-blur-md border-t border-[#474747]/20 flex justify-around items-center h-20 px-4 pb-safe">
+<div class="flex flex-col items-center justify-center text-[#FFFFFF] font-bold cursor-pointer active:scale-95 duration-200">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">lock</span>
+<span class="font-['Inter'] text-[10px] uppercase tracking-widest mt-1">Vault</span>
+</div>
+<div class="flex flex-col items-center justify-center text-[#919191] hover:bg-[#3A3939] transition-all cursor-pointer active:scale-95 duration-200">
+<span class="material-symbols-outlined">account_balance_wallet</span>
+<span class="font-['Inter'] text-[10px] uppercase tracking-widest mt-1">Ledger</span>
+</div>
+<div class="flex flex-col items-center justify-center text-[#919191] hover:bg-[#3A3939] transition-all cursor-pointer active:scale-95 duration-200">
+<span class="material-symbols-outlined">shield</span>
+<span class="font-['Inter'] text-[10px] uppercase tracking-widest mt-1">Security</span>
+</div>
+<div class="flex flex-col items-center justify-center text-[#919191] hover:bg-[#3A3939] transition-all cursor-pointer active:scale-95 duration-200">
+<span class="material-symbols-outlined">settings</span>
+<span class="font-['Inter'] text-[10px] uppercase tracking-widest mt-1">Settings</span>
+</div>
+</nav>
+<!-- Background Accents (Minimalist Gallery Aesthetic) -->
+<div class="fixed top-0 right-0 -z-10 w-[600px] h-[600px] bg-primary/5 blur-[120px] rounded-full pointer-events-none"></div>
+<div class="fixed bottom-0 left-0 -z-10 w-[400px] h-[400px] bg-primary/2 blur-[100px] rounded-full pointer-events-none"></div>
+</body></html>

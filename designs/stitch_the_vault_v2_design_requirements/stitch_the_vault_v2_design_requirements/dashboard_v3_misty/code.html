@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&amp;family=JetBrains+Mono:wght@400;500&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "secondary-container": "#0271a3",
+                        "on-tertiary-container": "#242939",
+                        "tertiary": "#c1c6da",
+                        "on-error-container": "#ffdad6",
+                        "primary-fixed-dim": "#a4c9ff",
+                        "surface-container-low": "#171c21",
+                        "on-secondary": "#00344e",
+                        "error": "#ffb4ab",
+                        "inverse-surface": "#dee3ea",
+                        "tertiary-fixed": "#dee2f7",
+                        "surface-tint": "#a4c9ff",
+                        "error-container": "#93000a",
+                        "primary-container": "#4d93e5",
+                        "secondary-fixed": "#c9e6ff",
+                        "surface-container": "#1b2025",
+                        "on-secondary-fixed-variant": "#004b6f",
+                        "on-primary": "#00315d",
+                        "on-primary-fixed-variant": "#004883",
+                        "on-tertiary-fixed-variant": "#414657",
+                        "on-secondary-container": "#dceeff",
+                        "on-secondary-fixed": "#001e2f",
+                        "surface-container-lowest": "#0a0f14",
+                        "surface-bright": "#353a3f",
+                        "outline": "#8b919d",
+                        "inverse-primary": "#0060ac",
+                        "on-primary-container": "#002a51",
+                        "on-tertiary-fixed": "#161b2a",
+                        "inverse-on-surface": "#2c3136",
+                        "background": "#0f1419",
+                        "on-error": "#690005",
+                        "primary-fixed": "#d4e3ff",
+                        "on-background": "#dee3ea",
+                        "secondary": "#8aceff",
+                        "secondary-fixed-dim": "#8aceff",
+                        "surface-dim": "#0f1419",
+                        "on-tertiary": "#2b3040",
+                        "primary": "#a4c9ff",
+                        "surface-container-highest": "#30353b",
+                        "outline-variant": "#414751",
+                        "surface": "#0f1419",
+                        "surface-variant": "#30353b",
+                        "on-surface-variant": "#c1c7d3",
+                        "surface-container-high": "#252a30",
+                        "on-surface": "#dee3ea",
+                        "tertiary-container": "#8b90a3",
+                        "on-primary-fixed": "#001c39",
+                        "tertiary-fixed-dim": "#c1c6da"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "fontFamily": {
+                        "headline": ["Inter"],
+                        "body": ["Inter"],
+                        "label": ["Inter"],
+                        "mono": ["JetBrains Mono"]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        .glass-panel {
+            background: rgba(26, 31, 46, 0.6);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+        }
+        .pulse-monitor {
+            filter: blur(40px);
+            background: radial-gradient(circle, rgba(138, 206, 255, 0.15) 0%, rgba(138, 206, 255, 0) 70%);
+        }
+        .text-gradient-primary {
+            background: linear-gradient(to right, #a4c9ff, #4d93e5);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-surface text-on-surface font-body selection:bg-secondary/30">
+<!-- TopAppBar -->
+<header class="fixed top-0 w-full z-50 bg-[#1A1F2E]/60 backdrop-blur-md shadow-[0_0_24px_rgba(90,173,226,0.15)] flex items-center justify-between px-6 h-16 w-full">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-blue-400 dark:text-[#A4C9FF]" style="font-variation-settings: 'FILL' 1;">shield</span>
+<span class="text-lg font-black tracking-tighter text-[#A4C9FF]">THE VAULT</span>
+</div>
+<div class="hidden md:flex items-center gap-8 font-['Inter'] tracking-tight leading-tight font-bold">
+<button class="text-[#A4C9FF] hover:opacity-80 transition-opacity">Vault</button>
+<button class="text-[#B0B8C3] hover:opacity-80 transition-opacity">Protect</button>
+<button class="text-[#B0B8C3] hover:opacity-80 transition-opacity">Activity</button>
+<button class="text-[#B0B8C3] hover:opacity-80 transition-opacity">Settings</button>
+</div>
+<div class="flex items-center gap-4">
+<div class="bg-surface-container-highest px-4 py-1.5 rounded-full flex items-center gap-2 group transition-all focus-within:ring-2 ring-secondary/30">
+<span class="material-symbols-outlined text-on-surface-variant text-sm">search</span>
+<input class="bg-transparent border-none focus:ring-0 text-sm p-0 w-32 md:w-48 placeholder:text-outline" placeholder="Search archives..." type="text"/>
+</div>
+<div class="w-8 h-8 rounded-full bg-primary-container flex items-center justify-center overflow-hidden">
+<img class="w-full h-full object-cover" data-alt="professional portrait of a middle-aged man with short hair and clean-shaven face in soft studio lighting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuB5niH6vmbMqTBi7mu7kpvTbtdFtrtYoxlVIzJJbVgxi9Kl9SLobDXp0JmOU2EwWVSQWf9dXBXvcVn0lx4xbkqz5tf4_lY_7N6MVs6XpacCleC9bFFxbyXdvj8Mf077cxVjsifP4DHqnAYxf257LZmXJnN860mn0LyO6-uHY_hkcL0Y3Q-NhVaPvfa9CX3iSdn_X1enFnFOa75Kvd4blVLJZst63_XkYRZF30tLkdSQ7Q690lxfUgK1qkD0eJxBj1VBTeZa2XgrCCw_"/>
+</div>
+</div>
+</header>
+<main class="pt-24 pb-32 px-6 max-w-7xl mx-auto relative overflow-hidden">
+<!-- Pulse Monitor Ambient Glow -->
+<div class="absolute top-40 left-1/2 -translate-x-1/2 w-[600px] h-[600px] pulse-monitor pointer-events-none"></div>
+<!-- Hero Section -->
+<section class="mb-12 relative z-10">
+<p class="text-on-surface-variant text-lg font-medium mb-1">Welcome back, Julian</p>
+<h1 class="text-[28px] md:text-4xl font-bold tracking-tight text-gradient-primary">Your media vault is secure</h1>
+</section>
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-8 relative z-10">
+<!-- Left Column: Stats and Recent -->
+<div class="lg:col-span-8 space-y-8">
+<!-- Stats Grid -->
+<div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+<div class="bg-[#1A1F2E] p-5 rounded-xl transition-all hover:bg-surface-container-high group">
+<p class="text-xs font-mono text-outline uppercase tracking-wider mb-2">Protected</p>
+<div class="flex items-baseline gap-1">
+<span class="text-2xl font-bold text-on-surface">998</span>
+<span class="material-symbols-outlined text-secondary text-sm" style="font-variation-settings: 'FILL' 1;">verified</span>
+</div>
+</div>
+<div class="bg-[#1A1F2E] p-5 rounded-xl transition-all hover:bg-surface-container-high group">
+<p class="text-xs font-mono text-outline uppercase tracking-wider mb-2">Syncing</p>
+<div class="flex items-baseline gap-1">
+<span class="text-2xl font-bold text-on-surface">156</span>
+<span class="material-symbols-outlined text-primary text-sm animate-pulse">sync</span>
+</div>
+</div>
+<div class="bg-[#1A1F2E] p-5 rounded-xl transition-all hover:bg-surface-container-high group">
+<p class="text-xs font-mono text-outline uppercase tracking-wider mb-2">Storage</p>
+<div class="flex items-baseline gap-1">
+<span class="text-2xl font-bold text-on-surface">84%</span>
+<div class="w-12 h-1.5 bg-surface-container-highest rounded-full ml-2 overflow-hidden">
+<div class="bg-secondary-container h-full w-[84%]"></div>
+</div>
+</div>
+</div>
+<div class="bg-[#1A1F2E] p-5 rounded-xl transition-all hover:bg-surface-container-high group">
+<p class="text-xs font-mono text-outline uppercase tracking-wider mb-2">Integrity</p>
+<div class="flex items-baseline gap-1">
+<span class="text-2xl font-bold text-on-surface">99.9</span>
+<span class="text-xs font-bold text-secondary-fixed">%</span>
+</div>
+</div>
+</div>
+<!-- Recent Assets Section -->
+<div class="bg-surface-container-low rounded-2xl p-6">
+<div class="flex justify-between items-center mb-6">
+<h3 class="font-bold text-lg">Recent Assets</h3>
+<button class="text-xs font-mono uppercase text-secondary hover:underline">View Archive</button>
+</div>
+<div class="space-y-3">
+<!-- Asset Row -->
+<div class="flex items-center justify-between p-3 rounded-lg hover:bg-surface-container transition-colors group">
+<div class="flex items-center gap-4">
+<div class="w-12 h-12 rounded-lg bg-surface-container-highest overflow-hidden">
+<img class="w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-opacity" data-alt="dramatic aerial view of jagged golden mountain peaks at sunset with low clouds" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCSzzt5A_ezCkhplikx7PS5ekAnKDvLt1oNjmC5heM9kZ2X3ieMvAq2_rJugpR4yB0hQHfUNVACt0rNf4ZqEudkabPpVPg0U17UZUkRKnsqLdEbbjlX4BmXy4vFMVwaufLW1NsZFXWNeZH6sA3D220uvCDQHJSv7codHNbeTkjcXQCnCLKrkOMBjv5dMDLSe3u5hVh8khFT4TguGVj5PnrE46zkbjW2D1HpXplHvNSFda8Arrr29IRVXaNgpnX8mupM09bt2mx5vSEz"/>
+</div>
+<div>
+<p class="font-semibold text-on-surface">Golden Terrain</p>
+<p class="text-xs font-mono text-outline">SHA-256: 8f2a...d9e1</p>
+</div>
+</div>
+<div class="flex items-center gap-6">
+<span class="hidden md:block text-xs font-mono text-outline">24.5 MB</span>
+<span class="material-symbols-outlined text-secondary opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer">download</span>
+</div>
+</div>
+<!-- Asset Row -->
+<div class="flex items-center justify-between p-3 rounded-lg hover:bg-surface-container transition-colors group">
+<div class="flex items-center gap-4">
+<div class="w-12 h-12 rounded-lg bg-surface-container-highest overflow-hidden">
+<img class="w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-opacity" data-alt="abstract glowing blue circuit board lines on a dark background representing neural networks" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCWjigSwJ35rCxvoofCNmUVNIm3TpRwHKztPt-dgsWZBtXkhVA-lktX4W9Dj4iVZOmrL3nNMKcWD_hLlRdkkKdcHXlvudFwGta0_P6eij4nCdIcgLa1-LUrOD_8avwBX9llMQXeJGOWpVuRxFQlflXKtX-yHNyfQ8JzSa6rweEk3ztluS-K_xoBjNyXDRifTzWPygzH5x7co3wMwTeHcuJQUzUgt4XOp3ofR39CGJL3Ia1U0pCc8zZLT5CE2FeA4g-dQUL7Zjvc6mEG"/>
+</div>
+<div>
+<p class="font-semibold text-on-surface">Neural Web</p>
+<p class="text-xs font-mono text-outline">SHA-256: 4c9b...a1f0</p>
+</div>
+</div>
+<div class="flex items-center gap-6">
+<span class="hidden md:block text-xs font-mono text-outline">12.1 MB</span>
+<span class="material-symbols-outlined text-secondary opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer">download</span>
+</div>
+</div>
+<!-- Asset Row -->
+<div class="flex items-center justify-between p-3 rounded-lg hover:bg-surface-container transition-colors group">
+<div class="flex items-center gap-4">
+<div class="w-12 h-12 rounded-lg bg-surface-container-highest overflow-hidden">
+<img class="w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-opacity" data-alt="deep space nebula with swirling purple and pink cosmic dust and distant bright stars" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBqyo-k-UJ_p7TN5l4zemHvB6Wiq0IMZiRyawEmZeoJv84IiJnFqhwTlpxZ55edHLWBczhBxU_HMFbs5-j6bw4qCunl_V43F7i0ECaCQapGHi7IcCqtX5cRQ6Oj7x_tue_I1dnNVTsvnkBFIiHPNcQoQLQsI_gTbKmKE4lcnhtyWBhoFi3zd-1p64WNnOMAvfTLMMiu-PIfBG0ync3mB18eadgOBxFnqc3_H3XvCu9Czi18RAQIkEeKrAHEWTisVJf2X6xYJvIovZi3"/>
+</div>
+<div>
+<p class="font-semibold text-on-surface">Event Horizon</p>
+<p class="text-xs font-mono text-outline">SHA-256: e3d2...f8c4</p>
+</div>
+</div>
+<div class="flex items-center gap-6">
+<span class="hidden md:block text-xs font-mono text-outline">89.4 MB</span>
+<span class="material-symbols-outlined text-secondary opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer">download</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Right Column: Quick Actions -->
+<div class="lg:col-span-4 space-y-4">
+<h3 class="font-mono text-xs uppercase tracking-[0.2em] text-outline px-2">Primary Commands</h3>
+<button class="w-full text-left bg-surface-container-high p-5 rounded-xl border-l-4 border-[#4A90E2] group hover:bg-surface-container-highest transition-all duration-300">
+<div class="flex items-start justify-between">
+<div>
+<p class="font-bold text-lg mb-1 group-hover:text-primary transition-colors">Upload Media</p>
+<p class="text-sm text-on-surface-variant">Encrypted tunnel for new assets</p>
+</div>
+<span class="material-symbols-outlined text-primary-container">cloud_upload</span>
+</div>
+</button>
+<button class="w-full text-left bg-surface-container-high p-5 rounded-xl border-l-4 border-[#5DADE2] group hover:bg-surface-container-highest transition-all duration-300">
+<div class="flex items-start justify-between">
+<div>
+<p class="font-bold text-lg mb-1 group-hover:text-secondary transition-colors">Verify Ownership</p>
+<p class="text-sm text-on-surface-variant">Blockchain timestamp validation</p>
+</div>
+<span class="material-symbols-outlined text-secondary">workspace_premium</span>
+</div>
+</button>
+<button class="w-full text-left bg-surface-container-high p-5 rounded-xl border-l-4 border-[#7B68AA] group hover:bg-surface-container-highest transition-all duration-300">
+<div class="flex items-start justify-between">
+<div>
+<p class="font-bold text-lg mb-1 group-hover:text-tertiary transition-colors">Activity Log</p>
+<p class="text-sm text-on-surface-variant">Full audit trail &amp; telemetry</p>
+</div>
+<span class="material-symbols-outlined text-tertiary-container">history</span>
+</div>
+</button>
+<!-- System Health Card -->
+<div class="mt-8 bg-surface-container-lowest p-6 rounded-2xl border border-outline-variant/10">
+<div class="flex items-center gap-3 mb-4">
+<div class="w-2 h-2 rounded-full bg-secondary shadow-[0_0_8px_rgba(138,206,255,0.8)]"></div>
+<h4 class="font-mono text-xs uppercase tracking-widest text-on-surface">Network Status: Nominal</h4>
+</div>
+<div class="space-y-3">
+<div class="flex justify-between text-[10px] font-mono text-outline">
+<span>ENCRYPTION</span>
+<span class="text-secondary">AES-256 GCM</span>
+</div>
+<div class="flex justify-between text-[10px] font-mono text-outline">
+<span>LATENCY</span>
+<span class="text-on-surface">14ms</span>
+</div>
+<div class="flex justify-between text-[10px] font-mono text-outline">
+<span>IP ADDR</span>
+<span class="text-on-surface">192.168.1.104</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+</main>
+<!-- BottomNavBar -->
+<nav class="md:hidden fixed bottom-0 left-0 w-full flex justify-around items-center h-20 px-4 pb-4 bg-[#1A1F2E]/60 backdrop-blur-md rounded-t-2xl shadow-[0_-4px_24px_rgba(90,173,226,0.1)] z-50">
+<div class="flex flex-col items-center justify-center text-[#A4C9FF] scale-110 transition-transform">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">lock</span>
+<span class="font-['Inter'] text-[10px] uppercase tracking-widest mt-1">Vault</span>
+</div>
+<div class="flex flex-col items-center justify-center text-[#B0B8C3] opacity-60 hover:text-[#8ACEFF] transition-colors active:scale-95">
+<span class="material-symbols-outlined">security</span>
+<span class="font-['Inter'] text-[10px] uppercase tracking-widest mt-1">Protect</span>
+</div>
+<div class="flex flex-col items-center justify-center text-[#B0B8C3] opacity-60 hover:text-[#8ACEFF] transition-colors active:scale-95">
+<span class="material-symbols-outlined">analytics</span>
+<span class="font-['Inter'] text-[10px] uppercase tracking-widest mt-1">Activity</span>
+</div>
+<div class="flex flex-col items-center justify-center text-[#B0B8C3] opacity-60 hover:text-[#8ACEFF] transition-colors active:scale-95">
+<span class="material-symbols-outlined">settings</span>
+<span class="font-['Inter'] text-[10px] uppercase tracking-widest mt-1">Settings</span>
+</div>
+</nav>
+</body></html>
