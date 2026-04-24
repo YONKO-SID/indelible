@@ -44,7 +44,6 @@ app.*.map.json
 /android/app/profile
 /android/app/release
 
-# project files
 .env
 .venv/
 __pycache__/
@@ -52,3 +51,12 @@ backend_shit/
 firebase.json
 LEARNING_GUIDE.md
 PROJECT_STATUS.md
+
+# Backend test artifacts & outputs (not for version control)
+backend/outputs/
+backend/scraped_assets/
+backend/test_*.png
+backend/sim_output.png
+backend/sim_output.png.meta
+backend/*.meta
+backend/creator_registry.json
