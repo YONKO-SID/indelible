@@ -4,7 +4,6 @@ import '../config/themes/app_colors.dart';
 import '../services/api_service.dart';
 import '../models/protection_stats.dart';
 import '../models/asset_log.dart';
-import '../models/activity_event.dart';
 import '../screens/sections/stats_grid.dart';
 import '../screens/sections/recent_assets_list.dart';
 import '../screens/sections/recent_activity_list.dart';

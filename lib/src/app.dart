@@ -3,6 +3,8 @@ import 'package:google_fonts/google_fonts.dart';
 import 'screens/splash_screen.dart';
 import 'screens/auth/auth_gate.dart';
 import 'screens/profile_screen.dart';
+import 'screens/protect_screen.dart';
+import 'screens/verify_screen.dart';
 import 'config/themes/app_colors.dart';
 
 /// Root widget of the INDELIBLE application.
@@ -31,6 +33,8 @@ class IndelibleApp extends StatelessWidget {
       routes: {
         '/auth': (context) => const AuthGate(),
         '/profile': (context) => const ProfileScreen(),
+        '/protect': (context) => const ProtectScreen(),
+        '/verify': (context) => const VerifyScreen(),
       },
     );
   }

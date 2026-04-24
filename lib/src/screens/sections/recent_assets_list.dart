@@ -4,16 +4,18 @@ import '../../config/themes/app_colors.dart';
 import '../../services/api_service.dart';
 import '../../models/asset_log.dart';
 
+// ═══════════════════════════════════════════════════════════
 /// Horizontal scrollable gallery of recently protected assets.
 ///
-/// Fetches real data from backend `/logs` endpoint.
+/// Fetches real data from the backend /logs endpoint via ApiService.
 /// Each asset card shows:
 /// - File type icon with colored background
 /// - File name and size
-/// - Protection timestamp
-/// - Creator fingerprint (if available)
+/// - Protection timestamp (relative, e.g. "2m ago")
+/// - Creator fingerprint badge (if watermark verified)
 ///
-/// Tapping a card will navigate to detailed asset view.
+/// States: loading (shimmer) / error / empty / data.
+// ═══════════════════════════════════════════════════════════
 class RecentAssetsList extends StatefulWidget {
   const RecentAssetsList({super.key});
 
@@ -154,8 +156,10 @@ class _RecentAssetsListState extends State<RecentAssetsList> {
   }
 
   Widget _buildAssetCard(AssetLog asset) {
-    final iconData = asset.fileType == 'Video' ? Icons.videocam : Icons.image;
-    final bgColor = asset.fileType == 'Video' ? AppColors.tertiary : AppColors.secondary;
+    final iconData =
+        asset.fileType == 'Video' ? Icons.videocam : Icons.image;
+    final bgColor =
+        asset.fileType == 'Video' ? AppColors.tertiary : AppColors.secondary;
 
     return Container(
       width: 200,
@@ -169,7 +173,7 @@ class _RecentAssetsListState extends State<RecentAssetsList> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Icon header
+          // ── Icon header ──────────────────────────────────
           Container(
             height: 80,
             width: double.infinity,
@@ -187,7 +191,7 @@ class _RecentAssetsListState extends State<RecentAssetsList> {
               ),
             ),
           ),
-          // Content
+          // ── Content ──────────────────────────────────────
           Expanded(
             child: Padding(
               padding: const EdgeInsets.all(12.0),
@@ -244,7 +248,8 @@ class _RecentAssetsListState extends State<RecentAssetsList> {
                         asset.relativeTime,
                         style: GoogleFonts.inter(
                           fontSize: 9,
-                          color: AppColors.onSurfaceVariant.withValues(alpha: 0.7),
+                          color: AppColors.onSurfaceVariant
+                              .withValues(alpha: 0.7),
                         ),
                       ),
                     ],
@@ -259,7 +264,10 @@ class _RecentAssetsListState extends State<RecentAssetsList> {
   }
 }
 
-/// Simple shimmer loading animation
+// ═══════════════════════════════════════════════════════════
+/// Simple shimmer loading placeholder animation.
+/// Pulses opacity between 0.3 and 0.7 over 1500ms.
+// ═══════════════════════════════════════════════════════════
 class Shimmer extends StatefulWidget {
   const Shimmer({super.key});
 
@@ -298,4 +306,5 @@ class _ShimmerState extends State<Shimmer> with SingleTickerProviderStateMixin {
         color: AppColors.surfaceBright.withValues(alpha: _opacity.value),
       ),
     );
-
+  }
+}

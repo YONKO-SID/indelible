@@ -88,26 +88,30 @@ class _UploadLogSectionState extends State<UploadLogSection> {
         // ── Header ──────────────────────────────────────────
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  'Protected Asset Logs',
-                  style: GoogleFonts.spaceGrotesk(
-                    fontSize: 24,
-                    fontWeight: FontWeight.bold,
-                    color: AppColors.onSurface,
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Protected Asset Logs',
+                    style: GoogleFonts.spaceGrotesk(
+                      fontSize: 22,
+                      fontWeight: FontWeight.bold,
+                      color: AppColors.onSurface,
+                    ),
                   ),
-                ),
-                Text(
-                  'Live index of all watermarked assets on the backend.',
-                  style: GoogleFonts.inter(
-                    fontSize: 14,
-                    color: AppColors.onSurfaceVariant,
+                  Text(
+                    'Live index of all watermarked assets on the backend.',
+                    style: GoogleFonts.inter(
+                      fontSize: 13,
+                      color: AppColors.onSurfaceVariant,
+                    ),
+                    overflow: TextOverflow.ellipsis,
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
             IconButton(
               tooltip: 'Refresh logs',
@@ -202,22 +206,26 @@ class _UploadLogSectionState extends State<UploadLogSection> {
     final fp = log['creator_fingerprint'] as String? ?? 'unknown';
     final isVerified = fp != 'unknown';
     final statusColor = isVerified ? AppColors.primary : AppColors.secondary;
+    final filename = log['filename'] as String? ?? '—';
+    final sizeKb = log['size_kb']?.toString() ?? '?';
+    final downloadUrl = log['download_url'] as String?;
 
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
-      padding: const EdgeInsets.all(20),
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
       decoration: BoxDecoration(
         color: AppColors.surfaceContainer,
         borderRadius: BorderRadius.circular(12),
         border: Border(
-          left: BorderSide(color: statusColor.withValues(alpha: 0.5), width: 4),
+          left: BorderSide(color: statusColor.withValues(alpha: 0.6), width: 3),
         ),
       ),
       child: Row(
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          // Status icon
+          // ── Status Icon ──
           Container(
-            padding: const EdgeInsets.all(10),
+            padding: const EdgeInsets.all(8),
             decoration: BoxDecoration(
               color: statusColor.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(8),
@@ -225,74 +233,100 @@ class _UploadLogSectionState extends State<UploadLogSection> {
             child: Icon(
               isVerified ? Icons.shield_outlined : Icons.help_outline,
               color: statusColor,
-              size: 20,
+              size: 18,
             ),
           ),
-          const SizedBox(width: 16),
+          const SizedBox(width: 12),
 
-          // File info
+          // ── Two-row info block ──
           Expanded(
-            flex: 3,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  log['filename'] as String? ?? '—',
-                  style: GoogleFonts.spaceGrotesk(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 14,
-                    color: AppColors.onSurface,
-                  ),
-                  overflow: TextOverflow.ellipsis,
+                // Row 1: filename + size
+                Row(
+                  children: [
+                    Expanded(
+                      child: Text(
+                        filename,
+                        style: GoogleFonts.spaceGrotesk(
+                          fontWeight: FontWeight.w600,
+                          fontSize: 13,
+                          color: AppColors.onSurface,
+                        ),
+                        overflow: TextOverflow.ellipsis,
+                        maxLines: 1,
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    Text(
+                      '$sizeKb KB',
+                      style: GoogleFonts.inter(
+                        fontSize: 11,
+                        color: AppColors.onSurfaceVariant,
+                      ),
+                    ),
+                  ],
                 ),
-                Text(
-                  '${log['size_kb']} KB  •  Protected ${_formatTime(log['protected_at'])}',
-                  style: GoogleFonts.inter(
-                    fontSize: 11,
-                    color: AppColors.onSurfaceVariant,
-                  ),
+                const SizedBox(height: 4),
+                // Row 2: fingerprint + timestamp
+                Row(
+                  children: [
+                    Icon(
+                      isVerified ? Icons.verified_outlined : Icons.radio_button_unchecked,
+                      size: 11,
+                      color: statusColor,
+                    ),
+                    const SizedBox(width: 4),
+                    Flexible(
+                      child: Text(
+                        fp,
+                        style: GoogleFonts.jetBrainsMono(
+                          fontSize: 10,
+                          color: isVerified ? AppColors.primary : AppColors.onSurfaceVariant,
+                          letterSpacing: 0.8,
+                        ),
+                        overflow: TextOverflow.ellipsis,
+                        maxLines: 1,
+                      ),
+                    ),
+                    if (log['watermark_timestamp'] != null) ...[
+                      const SizedBox(width: 8),
+                      Text(
+                        '•',
+                        style: GoogleFonts.inter(
+                          fontSize: 10,
+                          color: AppColors.outlineVariant,
+                        ),
+                      ),
+                      const SizedBox(width: 8),
+                      Flexible(
+                        child: Text(
+                          _formatTime(log['watermark_timestamp'] as String?),
+                          style: GoogleFonts.jetBrainsMono(
+                            fontSize: 10,
+                            color: AppColors.onSurfaceVariant,
+                          ),
+                          overflow: TextOverflow.ellipsis,
+                          maxLines: 1,
+                        ),
+                      ),
+                    ],
+                  ],
                 ),
               ],
             ),
           ),
 
-          // Fingerprint
-          Expanded(
-            flex: 2,
-            child: Text(
-              fp,
-              style: GoogleFonts.jetBrainsMono(
-                fontSize: 11,
-                color: isVerified ? AppColors.primary : AppColors.onSurfaceVariant,
-                letterSpacing: 1.2,
-              ),
-              overflow: TextOverflow.ellipsis,
+          // ── Download Button ──
+          if (downloadUrl != null)
+            IconButton(
+              tooltip: 'Download protected asset',
+              icon: const Icon(Icons.download_rounded, size: 18),
+              color: AppColors.primary,
+              onPressed: () => _downloadFile(downloadUrl),
+              visualDensity: VisualDensity.compact,
             ),
-          ),
-
-          // Watermark timestamp
-          Expanded(
-            flex: 2,
-            child: Text(
-              _formatTime(log['watermark_timestamp'] as String?),
-              style: GoogleFonts.jetBrainsMono(
-                fontSize: 11,
-                color: AppColors.onSurfaceVariant,
-              ),
-              overflow: TextOverflow.ellipsis,
-            ),
-          ),
-
-          // Download button
-          IconButton(
-            tooltip: 'Download protected asset',
-            icon: const Icon(Icons.download, size: 18),
-            color: AppColors.primary,
-            onPressed: () {
-              final url = log['download_url'] as String?;
-              if (url != null) _downloadFile(url);
-            },
-          ),
         ],
       ),
     );

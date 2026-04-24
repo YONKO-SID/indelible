@@ -204,16 +204,22 @@ class _HomeScreenState extends State<HomeScreen> {
 
   Widget _buildNavItem(String label, IconData icon, int index) {
     final isSelected = index == _selectedIndex;
+    final routes = ['', '/protect', '/verify', '/proof'];
+
     return GestureDetector(
       onTap: () {
-        if (index == 0) return;
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('$label screen coming soon'),
-            behavior: SnackBarBehavior.floating,
-            backgroundColor: AppColors.surfaceContainerHigh,
-          ),
-        );
+        if (index == 0) return; // already here
+        if (index == 3) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('Blockchain Proof explorer coming in v2'),
+              behavior: SnackBarBehavior.floating,
+              backgroundColor: AppColors.surfaceContainerHigh,
+            ),
+          );
+          return;
+        }
+        Navigator.pushNamed(context, routes[index]);
       },
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 300),

@@ -179,7 +179,7 @@ class _QuickActionsState extends State<QuickActions> {
             subtitle: 'Inject forensic DWT-DCT watermark',
             icon: Icons.shield,
             color: AppColors.primary,
-            onTap: _isLoading ? null : () => _handleUpload('protect', 'Protection'),
+            onTap: () => Navigator.pushNamed(context, '/protect'),
           ),
           const SizedBox(height: 16),
           _buildActionButton(
@@ -187,7 +187,7 @@ class _QuickActionsState extends State<QuickActions> {
             subtitle: 'Extract and decode HMAC hashes',
             icon: Icons.radar,
             color: AppColors.tertiary,
-            onTap: _isLoading ? null : () => _handleUpload('verify', 'Verification'),
+            onTap: () => Navigator.pushNamed(context, '/verify'),
           ),
         ],
       ),
