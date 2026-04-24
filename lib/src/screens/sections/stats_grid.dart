@@ -73,36 +73,45 @@ class _StatsGridState extends State<StatsGrid> {
     return LayoutBuilder(
       builder: (context, constraints) {
         // Adjust crossAxisCount based on screen width
-        int columns = constraints.maxWidth > 800
-            ? 3
-            : (constraints.maxWidth > 500 ? 2 : 1);
+        int columns = constraints.maxWidth > 1200
+            ? 4
+            : (constraints.maxWidth > 800 ? 2 : 1);
 
         return GridView.count(
           crossAxisCount: columns,
-          crossAxisSpacing: 16,
-          mainAxisSpacing: 16,
+          crossAxisSpacing: 24,
+          mainAxisSpacing: 24,
           shrinkWrap: true,
           physics: const NeverScrollableScrollPhysics(),
-          childAspectRatio: 2.5,
+          childAspectRatio: 2.2, // Tweak this based on height
           children: [
+            _buildStatCard(
+              title: 'Total Protected',
+              value: '${stats.totalAssets}',
+              icon: Icons.shield_outlined,
+              trend: '0.43%',
+              isPositive: true,
+            ),
             _buildStatCard(
               title: 'Watermark Persistence',
               value: '${(stats.successRate).toStringAsFixed(1)}%',
-              progress: stats.successRate / 100,
-              color: AppColors.primary,
+              icon: Icons.water_drop_outlined,
+              trend: '0.12%',
+              isPositive: true,
             ),
             _buildStatCard(
-              title: 'Asset Integrity',
-              value: '${stats.totalAssets}',
-              progress: stats.totalAssets > 0 ? 0.95 : 0.0,
-              color: AppColors.secondary,
-              subtitle: '${stats.totalAssets} protected',
+              title: 'Verification Hits',
+              value: '2.450',
+              icon: Icons.radar_outlined,
+              trend: '2.1%',
+              isPositive: true,
             ),
             _buildStatCard(
               title: 'System Uptime',
               value: '${stats.uptimePercentage.toStringAsFixed(1)}%',
-              progress: stats.uptimePercentage / 100,
-              color: AppColors.tertiary,
+              icon: Icons.cloud_done_outlined,
+              trend: '0.00%',
+              isPositive: true,
             ),
           ],
         );
@@ -171,89 +180,77 @@ class _StatsGridState extends State<StatsGrid> {
   Widget _buildStatCard({
     required String title,
     required String value,
-    required double progress,
-    required Color color,
-    String? subtitle,
+    required IconData icon,
+    required String trend,
+    required bool isPositive,
   }) {
     return Container(
-      padding: const EdgeInsets.all(20),
+      padding: const EdgeInsets.all(24),
       decoration: BoxDecoration(
-        color: AppColors.surfaceContainerHigh,
-        borderRadius: BorderRadius.circular(16),
+        color: AppColors.surfaceContainer,
+        borderRadius: BorderRadius.circular(12),
         border: Border.all(
-          color: AppColors.outlineVariant.withValues(alpha: 0.15),
+          color: AppColors.outlineVariant.withValues(alpha: 0.5),
         ),
-        boxShadow: [
-          BoxShadow(
-            color: color.withValues(alpha: 0.05),
-            blurRadius: 24,
-            offset: const Offset(0, 8),
-          ),
-        ],
       ),
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Expanded(
-                child: Text(
-                  title.toUpperCase(),
-                  style: GoogleFonts.spaceGrotesk(
-                    fontSize: 10,
-                    letterSpacing: 1.5,
-                    fontWeight: FontWeight.bold,
-                    color: AppColors.onSurfaceVariant,
-                  ),
-                ),
-              ),
-              Text(
-                value,
-                style: GoogleFonts.jetBrainsMono(
-                  fontSize: 14,
-                  fontWeight: FontWeight.w700,
-                  color: color,
-                ),
-              ),
-            ],
-          ),
-          if (subtitle != null) ...[
-            const SizedBox(height: 4),
-            Text(
-              subtitle,
-              style: GoogleFonts.inter(
-                fontSize: 9,
-                color: AppColors.onSurfaceVariant.withValues(alpha: 0.7),
-              ),
-            ),
-          ],
-          const SizedBox(height: 12),
-          Container(
-            height: 6,
-            width: double.infinity,
-            decoration: BoxDecoration(
-              color: AppColors.surfaceBright,
-              borderRadius: BorderRadius.circular(3),
-            ),
-            child: FractionallySizedBox(
-              alignment: Alignment.centerLeft,
-              widthFactor: progress,
-              child: Container(
+              Container(
+                padding: const EdgeInsets.all(12),
                 decoration: BoxDecoration(
-                  color: color,
-                  borderRadius: BorderRadius.circular(3),
-                  boxShadow: [
-                    BoxShadow(
-                      color: color.withValues(alpha: 0.4),
-                      blurRadius: 8,
-                      offset: const Offset(0, 0),
+                  color: AppColors.surfaceContainerHigh,
+                  shape: BoxShape.circle,
+                ),
+                child: Icon(icon, color: AppColors.primary, size: 24),
+              ),
+              const SizedBox(width: 16),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      title,
+                      style: GoogleFonts.inter(
+                        fontSize: 14,
+                        color: AppColors.onSurfaceVariant,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      value,
+                      style: GoogleFonts.spaceGrotesk(
+                        fontSize: 24,
+                        fontWeight: FontWeight.bold,
+                        color: AppColors.onSurface,
+                      ),
                     ),
                   ],
                 ),
               ),
-            ),
+            ],
+          ),
+          const Spacer(),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: [
+              Text(
+                trend,
+                style: GoogleFonts.inter(
+                  fontSize: 12,
+                  fontWeight: FontWeight.w500,
+                  color: isPositive ? AppColors.success : AppColors.errorContainer,
+                ),
+              ),
+              Icon(
+                isPositive ? Icons.arrow_upward : Icons.arrow_downward,
+                size: 14,
+                color: isPositive ? AppColors.success : AppColors.errorContainer,
+              ),
+            ],
           ),
         ],
       ),

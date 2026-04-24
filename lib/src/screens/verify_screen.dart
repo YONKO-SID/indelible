@@ -5,6 +5,7 @@ import 'dart:convert';
 // ignore: avoid_web_libraries_in_flutter
 import 'dart:html' as html;
 import '../config/themes/app_colors.dart';
+import 'layouts/dashboard_layout.dart';
 
 // ═══════════════════════════════════════════════════════════════
 /// Verify Screen — Upload a suspected piracy copy or your own
@@ -106,38 +107,30 @@ class _VerifyScreenState extends State<VerifyScreen> {
     });
   }
 
-  // ── Build ──────────────────────────────────────────────────
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: AppColors.surface,
-      appBar: AppBar(
-        backgroundColor: AppColors.surfaceContainerLow,
-        elevation: 0,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: AppColors.onSurface),
-          onPressed: () => Navigator.pop(context),
-        ),
-        title: Row(
-          children: [
-            const Icon(Icons.radar_rounded, color: AppColors.secondary, size: 20),
-            const SizedBox(width: 10),
-            Text(
-              'Verify Ownership',
-              style: GoogleFonts.spaceGrotesk(
-                color: AppColors.onSurface,
-                fontWeight: FontWeight.bold,
-                fontSize: 18,
-              ),
-            ),
-          ],
-        ),
-      ),
-      body: SingleChildScrollView(
+    return DashboardLayout(
+      currentRoute: '/verify',
+      child: SingleChildScrollView(
         padding: const EdgeInsets.all(24),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            Row(
+              children: [
+                const Icon(Icons.radar_rounded, color: AppColors.secondary, size: 24),
+                const SizedBox(width: 12),
+                Text(
+                  'Verify Ownership',
+                  style: GoogleFonts.spaceGrotesk(
+                    color: AppColors.onSurface,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 22,
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 24),
             // ── Info banner ─────────────────────────────────
             _buildInfoBanner(),
             const SizedBox(height: 28),

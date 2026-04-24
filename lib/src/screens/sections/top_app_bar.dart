@@ -1,126 +1,242 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:http/http.dart' as http;
+import 'dart:async';
 import '../../config/themes/app_colors.dart';
 
 // ═══════════════════════════════════════════════════════════
-/// Top application bar with navigation links and user profile.
-///
-/// Displays:
-/// - App logo and navigation menu
-/// - User initials avatar
-/// - Navigation links (Dashboard, Ledger, Security, Settings)
-///
-/// Implements PreferredSizeWidget to work with Scaffold.appBar.
+/// Top application bar matching FlareLine style.
+/// Displays search bar, status indicators, and profile menu.
 // ═══════════════════════════════════════════════════════════
-class TopAppBar extends StatelessWidget implements PreferredSizeWidget {
-  /// Display name shown next to user initials
-  final String userName;
+class TopAppBar extends StatefulWidget implements PreferredSizeWidget {
+  const TopAppBar({super.key});
 
-  /// Two-letter initials shown in profile avatar
-  final String userInitials;
+  @override
+  State<TopAppBar> createState() => _TopAppBarState();
 
-  const TopAppBar({super.key, this.userName = 'User', this.userInitials = 'U'});
+  @override
+  Size get preferredSize => const Size.fromHeight(80);
+}
+
+class _TopAppBarState extends State<TopAppBar> {
+  bool _isBackendOnline = true;
+  Timer? _pingTimer;
+
+  @override
+  void initState() {
+    super.initState();
+    _checkBackendStatus();
+    _pingTimer = Timer.periodic(const Duration(seconds: 10), (_) => _checkBackendStatus());
+  }
+
+  @override
+  void dispose() {
+    _pingTimer?.cancel();
+    super.dispose();
+  }
+
+  Future<void> _checkBackendStatus() async {
+    try {
+      final response = await http.get(Uri.parse('http://127.0.0.1:8000/')).timeout(const Duration(seconds: 3));
+      if (mounted && !_isBackendOnline && response.statusCode == 200) {
+        setState(() => _isBackendOnline = true);
+      } else if (mounted && response.statusCode != 200) {
+        setState(() => _isBackendOnline = false);
+      }
+    } catch (_) {
+      if (mounted && _isBackendOnline) {
+        setState(() => _isBackendOnline = false);
+      }
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
+    final isMobile = MediaQuery.of(context).size.width < 900;
+
     return Container(
-      height: preferredSize.height,
+      height: widget.preferredSize.height,
+      padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 16.0),
       decoration: BoxDecoration(
-        color: AppColors.surface.withValues(alpha: 0.67),
+        color: AppColors.surface,
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.2),
-            blurRadius: 8,
-            offset: const Offset(0, 4),
+            color: Colors.black.withValues(alpha: 0.1),
+            blurRadius: 4,
+            offset: const Offset(0, 2),
           ),
         ],
       ),
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 24.0),
-        child: Row(
-          children: [
-            Row(
+      child: Row(
+        children: [
+          if (isMobile) ...[
+            IconButton(
+              onPressed: () => Scaffold.of(context).openDrawer(),
+              icon: const Icon(Icons.menu, color: AppColors.onSurfaceVariant),
+            ),
+            const SizedBox(width: 16),
+          ],
+          
+          // Search Bar
+          Expanded(
+            child: Container(
+              height: 40,
+              constraints: const BoxConstraints(maxWidth: 400),
+              decoration: BoxDecoration(
+                color: AppColors.surfaceContainerLow,
+                borderRadius: BorderRadius.circular(8),
+                border: Border.all(color: AppColors.outlineVariant.withValues(alpha: 0.5)),
+              ),
+              child: Row(
+                children: [
+                  const Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 12),
+                    child: Icon(Icons.search, color: AppColors.onSurfaceVariant, size: 20),
+                  ),
+                  Expanded(
+                    child: TextField(
+                      style: GoogleFonts.inter(color: AppColors.onSurface),
+                      decoration: InputDecoration(
+                        hintText: 'Search or type keyword',
+                        hintStyle: GoogleFonts.inter(color: AppColors.onSurfaceVariant, fontSize: 14),
+                        border: InputBorder.none,
+                        isDense: true,
+                        contentPadding: const EdgeInsets.symmetric(vertical: 10),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+
+          const Spacer(),
+
+          // Backend Status Badge
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+            decoration: BoxDecoration(
+              color: _isBackendOnline 
+                  ? AppColors.success.withValues(alpha: 0.1)
+                  : AppColors.errorContainer.withValues(alpha: 0.1),
+              borderRadius: BorderRadius.circular(20),
+              border: Border.all(
+                color: _isBackendOnline ? AppColors.success : AppColors.errorContainer,
+                width: 1,
+              ),
+            ),
+            child: Row(
               children: [
-                IconButton(
-                  onPressed: () {
-                    Scaffold.of(context).openDrawer();
-                  },
-                  icon: const Icon(Icons.menu),
-                  color: AppColors.onSurfaceVariant,
+                Container(
+                  width: 8,
+                  height: 8,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: _isBackendOnline ? AppColors.success : AppColors.errorContainer,
+                  ),
                 ),
-                const SizedBox(width: 16),
+                const SizedBox(width: 6),
                 Text(
-                  'Indelible',
-                  style: GoogleFonts.spaceGrotesk(
-                    color: AppColors.onSurface,
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
-                    letterSpacing: 2,
+                  _isBackendOnline ? 'System Online' : 'System Offline',
+                  style: GoogleFonts.inter(
+                    color: _isBackendOnline ? AppColors.success : AppColors.errorContainer,
+                    fontSize: 12,
+                    fontWeight: FontWeight.w600,
                   ),
                 ),
               ],
             ),
-            const Spacer(),
-            // Navigation links (hidden on smaller screens)
-            if (MediaQuery.of(context).size.width > 800) ...[
-              Row(
-                children: [
-                  _buildNavLink('Dashboard', isActive: true),
-                  _buildNavLink('Ledger'),
-                  _buildNavLink('Security'),
-                  _buildNavLink('Settings'),
-                ],
-              ),
-            ],
-            const SizedBox(width: 24),
-            // User Profile
-            GestureDetector(
-              onTap: () {
-                Navigator.of(context).pushNamed('/profile');
-              },
-              child: Container(
-                width: 32,
-                height: 32,
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  color: AppColors.surfaceContainerHigh,
-                  border: Border.all(
-                    color: AppColors.onSurfaceVariant.withValues(alpha: 0.2),
+          ),
+          
+          const SizedBox(width: 16),
+
+          // Icons
+          _buildIconButton(Icons.light_mode_outlined),
+          const SizedBox(width: 12),
+          _buildIconButton(Icons.notifications_none_outlined, hasBadge: true),
+          const SizedBox(width: 12),
+          _buildIconButton(Icons.chat_bubble_outline_rounded),
+          const SizedBox(width: 20),
+
+          // Profile
+          GestureDetector(
+            onTap: () => Navigator.of(context).pushNamed('/profile'),
+            child: Row(
+              children: [
+                if (MediaQuery.of(context).size.width > 600) ...[
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.end,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(
+                        'Creator',
+                        style: GoogleFonts.inter(
+                          color: AppColors.onSurface,
+                          fontSize: 14,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                      Text(
+                        'Developer',
+                        style: GoogleFonts.inter(
+                          color: AppColors.onSurfaceVariant,
+                          fontSize: 12,
+                        ),
+                      ),
+                    ],
                   ),
-                ),
-                child: Center(
+                  const SizedBox(width: 12),
+                ],
+                CircleAvatar(
+                  radius: 18,
+                  backgroundColor: AppColors.primary,
                   child: Text(
-                    userInitials,
+                    'CR',
                     style: GoogleFonts.inter(
-                      color: AppColors.onSurface,
-                      fontSize: 12,
-                      fontWeight: FontWeight.w600,
+                      color: AppColors.onPrimary,
+                      fontSize: 14,
+                      fontWeight: FontWeight.bold,
                     ),
                   ),
                 ),
+                const SizedBox(width: 4),
+                const Icon(Icons.keyboard_arrow_down, color: AppColors.onSurfaceVariant),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildIconButton(IconData icon, {bool hasBadge = false}) {
+    return Container(
+      width: 36,
+      height: 36,
+      decoration: BoxDecoration(
+        color: AppColors.surfaceContainerLow,
+        shape: BoxShape.circle,
+        border: Border.all(color: AppColors.outlineVariant.withValues(alpha: 0.5)),
+      ),
+      child: Stack(
+        alignment: Alignment.center,
+        children: [
+          Icon(icon, color: AppColors.onSurfaceVariant, size: 20),
+          if (hasBadge)
+            Positioned(
+              top: 6,
+              right: 6,
+              child: Container(
+                width: 8,
+                height: 8,
+                decoration: const BoxDecoration(
+                  color: AppColors.errorContainer,
+                  shape: BoxShape.circle,
+                ),
               ),
             ),
-          ],
-        ),
+        ],
       ),
     );
   }
-
-  Widget _buildNavLink(String title, {bool isActive = false}) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 12.0),
-      child: Text(
-        title,
-        style: GoogleFonts.inter(
-          color: isActive ? AppColors.primary : AppColors.onSurfaceVariant,
-          fontSize: 14,
-          fontWeight: FontWeight.w500,
-          letterSpacing: 1.5,
-        ),
-      ),
-    );
-  }
-
-  @override
-  Size get preferredSize => const Size.fromHeight(64);
 }

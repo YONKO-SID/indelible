@@ -4,6 +4,7 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 import '../config/themes/app_colors.dart';
 import '../services/auth_service.dart';
+import 'layouts/dashboard_layout.dart';
 
 // ═══════════════════════════════════════════════════════════════
 /// Protect Screen — Upload an image or video to embed a forensic
@@ -138,35 +139,28 @@ class _ProtectScreenState extends State<ProtectScreen> {
   // ── Build ──────────────────────────────────────────────────
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: AppColors.surface,
-      appBar: AppBar(
-        backgroundColor: AppColors.surfaceContainerLow,
-        elevation: 0,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: AppColors.onSurface),
-          onPressed: () => Navigator.pop(context),
-        ),
-        title: Row(
-          children: [
-            const Icon(Icons.shield_rounded, color: AppColors.primary, size: 20),
-            const SizedBox(width: 10),
-            Text(
-              'Protect Asset',
-              style: GoogleFonts.spaceGrotesk(
-                color: AppColors.onSurface,
-                fontWeight: FontWeight.bold,
-                fontSize: 18,
-              ),
-            ),
-          ],
-        ),
-      ),
-      body: SingleChildScrollView(
+    return DashboardLayout(
+      currentRoute: '/protect',
+      child: SingleChildScrollView(
         padding: const EdgeInsets.all(24),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            Row(
+              children: [
+                const Icon(Icons.shield_rounded, color: AppColors.primary, size: 24),
+                const SizedBox(width: 12),
+                Text(
+                  'Protect Asset',
+                  style: GoogleFonts.spaceGrotesk(
+                    color: AppColors.onSurface,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 22,
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 24),
             // ── Intro banner ────────────────────────────────
             _InfoBanner(
               icon: Icons.info_outline_rounded,
