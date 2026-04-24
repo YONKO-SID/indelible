@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'screens/splash_screen.dart';
 import 'screens/auth/auth_gate.dart';
+import 'screens/profile_screen.dart';
 import 'config/themes/app_colors.dart';
 
 /// Root widget of the INDELIBLE application.
@@ -27,7 +28,10 @@ class IndelibleApp extends StatelessWidget {
       ),
       // Always starts at splash, hands off to auth route
       home: const SplashScreen(),
-      routes: {'/auth': (context) => const AuthGate()},
+      routes: {
+        '/auth': (context) => const AuthGate(),
+        '/profile': (context) => const ProfileScreen(),
+      },
     );
   }
 }

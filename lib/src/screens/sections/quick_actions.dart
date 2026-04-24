@@ -1,19 +1,132 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:file_picker/file_picker.dart';
+import 'package:http/http.dart' as http;
+import 'package:firebase_auth/firebase_auth.dart';
+import 'dart:convert';
+// ignore: avoid_web_libraries_in_flutter
+import 'dart:html' as html;
 import '../../config/themes/app_colors.dart';
 
 // ═══════════════════════════════════════════════════════════
 /// Primary action buttons for core app functions.
 ///
-/// Provides quick access to:
-/// - Protect: Upload and watermark new media
-/// - Verify: Submit suspect file for forensic check
-///
-/// Each button shows an icon, title, subtitle, and navigates
-/// to the corresponding screen when tapped.
+/// Sends user's Firebase UID to the backend so that a unique
+/// cryptographic fingerprint (INDL-XXXX-XXXX-XXXX) is generated
+/// and embedded into the DWT-DCT watermark payload.
 // ═══════════════════════════════════════════════════════════
-class QuickActions extends StatelessWidget {
+class QuickActions extends StatefulWidget {
   const QuickActions({super.key});
+
+  @override
+  State<QuickActions> createState() => _QuickActionsState();
+}
+
+class _QuickActionsState extends State<QuickActions> {
+  bool _isLoading = false;
+
+  /// Returns the logged-in user's Firebase UID, or "anonymous" as fallback.
+  String get _userUid => FirebaseAuth.instance.currentUser?.uid ?? 'anonymous';
+
+  Future<void> _handleUpload(String endpoint, String actionName) async {
+    try {
+      FilePickerResult? result = await FilePicker.platform.pickFiles(
+        type: FileType.media,
+      );
+
+      if (result != null && result.files.single.bytes != null) {
+        setState(() {
+          _isLoading = true;
+        });
+
+        ScaffoldMessenger.of(context).showSnackBar(
+           SnackBar(
+             content: Text('Uploading to $actionName engine...'),
+             backgroundColor: AppColors.primary,
+           ),
+        );
+
+        var request = http.MultipartRequest(
+          'POST',
+          Uri.parse('http://127.0.0.1:8000/$endpoint'),
+        );
+
+        // Attach the file
+        request.files.add(http.MultipartFile.fromBytes(
+          'file',
+          result.files.single.bytes!,
+          filename: result.files.single.name,
+        ));
+
+        // Attach the user's Firebase UID for fingerprint generation
+        request.fields['user_uid'] = _userUid;
+
+        var streamedResponse = await request.send();
+        var response = await http.Response.fromStream(streamedResponse);
+
+        if (response.statusCode == 200) {
+          var data = jsonDecode(response.body);
+          _showResultDialog(actionName, data);
+        } else {
+          throw Exception('Backend error: ${response.statusCode}');
+        }
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Error: $e'),
+          backgroundColor: AppColors.errorContainer,
+        ),
+      );
+    } finally {
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+        });
+      }
+    }
+  }
+
+  /// Triggers a real browser download using an anchor element.
+  void _downloadFile(String url) {
+    html.AnchorElement(href: url)
+      ..setAttribute('download', '')
+      ..click();
+  }
+
+  void _showResultDialog(String actionName, Map<String, dynamic> data) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        backgroundColor: AppColors.surfaceContainer,
+        title: Text(
+          '$actionName Complete',
+          style: GoogleFonts.spaceGrotesk(color: AppColors.primary),
+        ),
+        content: SingleChildScrollView(
+          child: SelectableText(
+            const JsonEncoder.withIndent('  ').convert(data),
+            style: GoogleFonts.jetBrainsMono(
+              color: AppColors.onSurfaceVariant,
+              fontSize: 12,
+            ),
+          ),
+        ),
+        actions: [
+          if (data.containsKey('download_url'))
+            TextButton.icon(
+              onPressed: () => _downloadFile(data['download_url']),
+              icon: const Icon(Icons.download, size: 18),
+              label: const Text('DOWNLOAD ASSET'),
+            ),
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('CLOSE'),
+          ),
+        ],
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -47,7 +160,17 @@ class QuickActions extends StatelessWidget {
                   color: AppColors.onSurface,
                 ),
               ),
-              Icon(Icons.bolt, color: AppColors.primary, size: 20),
+              if (_isLoading)
+                const SizedBox(
+                  width: 20,
+                  height: 20,
+                  child: CircularProgressIndicator(
+                    strokeWidth: 2,
+                    color: AppColors.primary,
+                  ),
+                )
+              else
+                const Icon(Icons.bolt, color: AppColors.primary, size: 20),
             ],
           ),
           const SizedBox(height: 24),
@@ -56,12 +179,7 @@ class QuickActions extends StatelessWidget {
             subtitle: 'Inject forensic DWT-DCT watermark',
             icon: Icons.shield,
             color: AppColors.primary,
-            onTap: () {
-              // TODO: Implement file upload + API call
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('Protect action clicked!')),
-              );
-            },
+            onTap: _isLoading ? null : () => _handleUpload('protect', 'Protection'),
           ),
           const SizedBox(height: 16),
           _buildActionButton(
@@ -69,9 +187,7 @@ class QuickActions extends StatelessWidget {
             subtitle: 'Extract and decode HMAC hashes',
             icon: Icons.radar,
             color: AppColors.tertiary,
-            onTap: () {
-              // TODO: Implement verify logic
-            },
+            onTap: _isLoading ? null : () => _handleUpload('verify', 'Verification'),
           ),
         ],
       ),
@@ -83,7 +199,7 @@ class QuickActions extends StatelessWidget {
     required String subtitle,
     required IconData icon,
     required Color color,
-    required VoidCallback onTap,
+    required VoidCallback? onTap,
   }) {
     return InkWell(
       onTap: onTap,
@@ -129,7 +245,7 @@ class QuickActions extends StatelessWidget {
                 ],
               ),
             ),
-            Icon(Icons.chevron_right, color: AppColors.onSurfaceVariant),
+            const Icon(Icons.chevron_right, color: AppColors.onSurfaceVariant),
           ],
         ),
       ),

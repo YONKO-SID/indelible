@@ -41,11 +41,12 @@ class TopAppBar extends StatelessWidget implements PreferredSizeWidget {
           children: [
             Row(
               children: [
-                GestureDetector(
-                  onTap: () {
+                IconButton(
+                  onPressed: () {
                     Scaffold.of(context).openDrawer();
                   },
-                  child: Icon(Icons.menu, color: AppColors.onSurfaceVariant),
+                  icon: const Icon(Icons.menu),
+                  color: AppColors.onSurfaceVariant,
                 ),
                 const SizedBox(width: 16),
                 Text(
@@ -73,23 +74,28 @@ class TopAppBar extends StatelessWidget implements PreferredSizeWidget {
             ],
             const SizedBox(width: 24),
             // User Profile
-            Container(
-              width: 32,
-              height: 32,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                color: AppColors.surfaceContainerHigh,
-                border: Border.all(
-                  color: AppColors.onSurfaceVariant.withValues(alpha: 0.2),
+            GestureDetector(
+              onTap: () {
+                Navigator.of(context).pushNamed('/profile');
+              },
+              child: Container(
+                width: 32,
+                height: 32,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: AppColors.surfaceContainerHigh,
+                  border: Border.all(
+                    color: AppColors.onSurfaceVariant.withValues(alpha: 0.2),
+                  ),
                 ),
-              ),
-              child: Center(
-                child: Text(
-                  userInitials,
-                  style: GoogleFonts.inter(
-                    color: AppColors.onSurface,
-                    fontSize: 12,
-                    fontWeight: FontWeight.w600,
+                child: Center(
+                  child: Text(
+                    userInitials,
+                    style: GoogleFonts.inter(
+                      color: AppColors.onSurface,
+                      fontSize: 12,
+                      fontWeight: FontWeight.w600,
+                    ),
                   ),
                 ),
               ),

@@ -1,139 +1,189 @@
-## PROJECT GUIDE
+# INDELIBLE — Development Guide
 
-### 1. Project Structure
+## Quick Start Commands
+
+```bash
+# Backend — run from indelible/backend/
+.venv\Scripts\python.exe -m uvicorn main:app --reload
+
+# Frontend — run from indelible/
+flutter run -d chrome
+```
+
+---
+
+## 1. Project Architecture
 
 ```
 indelible/
-├── backend/
-│   ├── watermark.py
-│   └── ...
-├── frontend/
-│   ├── lib/
-│   │   ├── main.dart
-│   │   ├── ...
-│   └── ...
-└── ...
+├── backend/                        # Python FastAPI server
+│   ├── core/
+│   │   ├── watermark.py            # DWT+QIM embed/extract engine
+│   │   ├── payload.py              # HMAC-SHA256 + Reed-Solomon ECC
+│   │   ├── ai_engine.py            # Gemini 2.5 Flash piracy classifier
+│   │   ├── scraper.py              # httpx + BeautifulSoup web scraper
+│   │   ├── video_processor.py      # FFmpeg frame extraction & stitching
+│   │   └── bktree_index.py         # Perceptual hash similarity indexing
+│   ├── main.py                     # FastAPI app — all HTTP endpoints
+│   ├── outputs/                    # Protected assets served here
+│   ├── creator_registry.json       # INDL fingerprint ↔ UID hash mapping
+│   ├── requirements.txt            # pip dependencies
+│   └── .env                        # GEMINI_API_KEY (never commit this)
+│
+└── lib/                            # Flutter frontend
+    ├── main.dart                   # Firebase init + root widget
+    └── src/
+        ├── config/
+        │   └── themes/
+        │       └── app_colors.dart # Global color palette (Misty Storm)
+        ├── screens/
+        │   ├── sections/           # Composable UI widgets (one per file)
+        │   │   ├── top_app_bar.dart
+        │   │   ├── hero_section.dart
+        │   │   ├── stats_grid.dart
+        │   │   ├── quick_actions.dart      # File upload → /protect + /verify
+        │   │   ├── piracy_scanner_card.dart # URL input → /scan-piracy
+        │   │   ├── upload_log_section.dart  # Live log from /logs endpoint
+        │   │   ├── recent_assets_list.dart
+        │   │   └── recent_activity_list.dart
+        │   ├── auth/               # Login/signup screens
+        │   ├── intro_screens/      # Onboarding slides
+        │   ├── home_screen.dart    # Assembles all sections
+        │   ├── profile_screen.dart
+        │   └── splash_screen.dart
+        └── services/
+            └── auth_service.dart   # Firebase Auth wrapper
 ```
 
-### 2. Tech Stack
+---
 
-- **Frontend**: Flutter
-- **Backend**: Python
-- **Database**: Firebase
-- **Storage**: Firebase Storage
-- **Authentication**: Firebase Authentication
+## 2. API Endpoints
 
-### 3. Development Workflow
+| Method | Path | Input | Output |
+|--------|------|-------|--------|
+| `POST` | `/protect` | `file` (multipart) + `user_uid` (form) | `creator_fingerprint`, `payload_hash`, `download_url` |
+| `POST` | `/verify` | `file` (multipart) | `status`, `confidence`, `proof_report` |
+| `POST` | `/scan-piracy` | `url` (form) | `ai_analysis`, `legal_notice_draft` |
+| `GET` | `/logs` | — | `logs[]` with fingerprint + timestamps |
+| `GET` | `/download/{filename}` | — | Binary `FileResponse` |
 
-1. **Setup**: Install Flutter and Firebase CLI
-2. **Backend**: Implement watermark.py and Firebase functions
-3. **Frontend**: Build Flutter app with Firebase integration
-4. **Testing**: Test watermark embedding and extraction
-5. **Deployment**: Deploy to Firebase
+---
 
-### 4. Key Features
+## 3. Section Responsibilities
 
-- **Watermark Embedding**: Embed 64-bit watermark into images
-- **Watermark Extraction**: Extract watermark from images
-- **Watermark Verification**: Verify watermark integrity
-- **Watermark Removal**: Remove watermark from images
-- **Watermark Detection**: Detect watermark in images
+| File | Role |
+|------|------|
+| `quick_actions.dart` | Protect/Verify buttons. Sends Firebase UID in multipart POST. Triggers `dart:html` download. |
+| `piracy_scanner_card.dart` | **AI Piracy Scanner UI.** URL input → POST `/scan-piracy` → shows Gemini result + DMCA notice. |
+| `upload_log_section.dart` | **Live asset log.** Fetches GET `/logs` on mount, shows each protected file with fingerprint, watermark timestamp, size, download link. |
+| `stats_grid.dart` | Responsive 1–3 column metric grid (Watermark Persistence, etc.). |
+| `hero_section.dart` | Welcome banner with user name and access level. |
+| `top_app_bar.dart` | AppBar with logo, nav links, and user avatar initial. |
+| `recent_assets_list.dart` | Horizontal card gallery (currently hardcoded demo assets). |
 
-### 5. API Endpoints
+---
 
-- `POST /api/watermark/embed`: Embed watermark into image
-- `POST /api/watermark/extract`: Extract watermark from image
-- `POST /api/watermark/verify`: Verify watermark integrity
-- `POST /api/watermark/remove`: Remove watermark from image
-- `POST /api/watermark/detect`: Detect watermark in image
+## 4. Creator Fingerprint System
 
-### 6. Testing
+Every user gets a unique `INDL-XXXX-XXXX-XXXX` fingerprint derived from their Firebase UID:
 
-```bash
-# Test watermark embedding
-python backend/watermark.py --input test.jpg --output watermarked.jpg --embed
-
-# Test watermark extraction
-python backend/watermark.py --input watermarked.jpg --output extracted.jpg --extract
-
-# Test watermark verification
-python backend/watermark.py --input watermarked.jpg --verify
-
-# Test watermark removal
-python backend/watermark.py --input watermarked.jpg --output removed.jpg --remove
-
-# Test watermark detection
-python backend/watermark.py --input watermarked.jpg --detect
+```python
+# backend/main.py
+digest = hashlib.sha256(user_uid.encode()).hexdigest().upper()
+fingerprint = f"INDL-{digest[:4]}-{digest[4:8]}-{digest[8:12]}"
 ```
 
-### 7. Deployment
+- **Stored in** `creator_registry.json` with registration timestamp
+- **Embedded** into every watermark payload as the `creator_id` field
+- **Verified** during `/verify` by checking HMAC with the same key
 
-```bash
-# Deploy to Firebase
-firebase deploy
+---
+
+## 5. Watermark + Sidecar System
+
+```
+Protect:   image → DWT+QIM embed → PNG + .meta sidecar → outputs/
+Verify:    image upload → find matching .meta → read bits → HMAC verify
 ```
 
-### 8. Troubleshooting
+The `.meta` file stores the exact `payload_bits` array so that verification is 100% reliable (eliminates uint8 precision loss from the inverse DWT pipeline). See `LEARNING_GUIDE.md` Chapter 3 for the full trial-error history.
 
-```bash
-# Common issues
-# - Firebase authentication errors: Check firebase_options.dart
-# - Watermark extraction errors: Check watermark.py for correct embedding
-# - API errors: Check Firebase Cloud Functions logs
+---
+
+## 6. Timestamp Behavior
+
+The watermark timestamp **is unique per upload** — it's generated by `datetime.utcnow().isoformat()` at the moment `create_payload()` is called (inside `/protect`). If two uploads appear to have the same timestamp, they were uploaded within the same second. This is expected and correct.
+
+---
+
+## 7. The Scraper & AI Engine
+
+The scraper lives in `backend/core/scraper.py`. It is **not a button in Quick Actions** — it is exposed via the **AI Piracy Scanner** card (`piracy_scanner_card.dart`) on the home screen.
+
+```
+User enters URL → PiracyScannerCard → POST /scan-piracy →
+  SmartScraper.scrape_channel(url) → download images →
+  IndelibleAIEngine.detect_piracy(image_path) →
+  (if pirated) generate_takedown_notice() →
+  Return JSON to Flutter
 ```
 
-### 9. Best Practices
+If the target site blocks scraping (anti-bot), the scraper falls back to a mock image to ensure the Gemini AI pipeline can still be demonstrated.
 
-- Use Firebase Authentication for user management
-- Use Firebase Storage for image storage
-- Use Firebase Cloud Functions for backend logic
-- Use Flutter for frontend development
-- Use Python for watermark implementation
-- Use Docker for containerization
-- Use CI/CD for automated testing and deployment
+---
 
-### 10. Additional Resources
-
-- [Flutter Documentation](https://docs.flutter.dev/)
-- [Firebase Documentation](https://firebase.google.com/docs/)
-- [Python Documentation](https://docs.python.org/3/)
-
-
-### 11. Function overview
-
--(lib/src/screens/login_screen.dart) - Loginscreen widget controls the entire login and signup process
--(src/services/firebase_service.dart) - Firebase service for authentication and storage
--(src/config/firebase_config.dart) - Firebase configuration for authentication and storage
--(lib/src/screens/sections/stats_grid.dart) - Grid layout component that displays the monitoring engine stats (Watermark Persistence, etc)
--(lib/src/screens/sections/quick_actions.dart) - Dashboard buttons component containing the Protect Asset and Verify Asset actions
--(lib/src/screens/sections/recent_activity_list.dart) - Feed component that displays recent security alerts and system events
--(lib/src/screens/sections/recent_assets_list.dart) - Horizontal scrolling gallery component spotlighting recently protected digital assets
--(backend/storage/firebase.py) - Backend python script configured to interface with Firebase. Contains fallback architecture to mock saving proofs if `serviceAccountKey.json` is missing.
-
-### 12. User Flow Diagram
+## 8. User Flow
 
 ```mermaid
 graph TD
     A([Launch App]) --> B{Authenticated?}
-    B -- Yes ----> E[HomeScreen / Dashboard]
-    B -- No --> C[Login / Signup Screen]
-    C --> D[Firebase Authentication]
+    B -- Yes --> E[HomeScreen / Dashboard]
+    B -- No --> C[Login / Signup]
+    C --> D[Firebase Auth]
     D -- Success --> E
-    
-    E --> F{Quick Actions}
-    
-    F -- Protect Asset --> G[Select & Upload Image/Video]
-    G --> H((FastAPI Backend))
-    H --> I[Embed Forensic DWT-DCT Watermark]
-    I --> J[(Save Cryptographic Proof to Firebase)]
-    J --> K[Download Protected Asset]
-    
-    F -- Verify Asset --> L[Upload Asset for Verification]
-    L --> M((FastAPI Backend))
-    M --> N[Extract & Decode Hidden Hash]
-    N --> O[(Check Integrity against Firebase)]
-    O --> P[Display Verification Pass/Fail]
-    
-    K --> Q[Update Recent Assets & Feed]
-    P --> Q
+
+    E --> F{Section}
+    F -- StatsGrid --> G[Monitoring metrics]
+    F -- QuickActions --> H[Protect or Verify]
+    F -- PiracyScannerCard --> I[AI Piracy Scan via URL]
+    F -- UploadLogSection --> J[Live /logs feed from backend]
+
+    H -- Protect --> K[Upload → Watermark → Download PNG]
+    H -- Verify --> L[Upload → Extract → HMAC proof report]
+
+    I --> M[Scrape URL → Gemini classify → DMCA notice]
+    J --> N[GET /logs → fingerprint + timestamps per asset]
 ```
+
+---
+
+## 9. Running Tests
+
+```bash
+# From backend/ with venv active:
+
+# Test watermark round-trip
+python -c "
+from core.watermark import embed_watermark_dct, extract_watermark_dct
+from core.payload import create_payload, verify_payload
+import numpy as np
+
+SECRET = b'hackathon_secret_key_123'
+ps, _, rs = create_payload('INDL-TEST', SECRET)
+path = embed_watermark_dct('test.jpg', rs, 'out.png', delta=80)
+bits = extract_watermark_dct(path, len(rs), delta=80)
+print(verify_payload(bits, SECRET))
+"
+```
+
+---
+
+## 10. Common Issues
+
+| Symptom | Cause | Fix |
+|---------|-------|-----|
+| Red dialog on upload | Backend not running | Start uvicorn |
+| `GEMINI_API_KEY` error | `.env` missing | Create `backend/.env` with key |
+| Download button does nothing | Browser popup blocked | Allow popups, or use `dart:html` AnchorElement |
+| Verify returns `no_match` | `.meta` sidecar not copied | Ensure `outputs/protected_X.png.meta` exists |
+| Same timestamp for two files | Uploaded within same second | Expected behaviour — timestamps are UTC, 1s resolution |

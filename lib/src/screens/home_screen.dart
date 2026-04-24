@@ -6,7 +6,8 @@ import 'package:indelible/src/screens/sections/top_app_bar.dart';
 import 'package:indelible/src/screens/sections/stats_grid.dart';
 import 'package:indelible/src/screens/sections/quick_actions.dart';
 import 'package:indelible/src/screens/sections/recent_assets_list.dart';
-import 'package:indelible/src/screens/sections/recent_activity_list.dart';
+import 'package:indelible/src/screens/sections/upload_log_section.dart';
+import 'package:indelible/src/screens/sections/piracy_scanner_card.dart';
 import 'package:indelible/src/services/auth_service.dart';
 
 /// Main home screen after authentication.
@@ -59,6 +60,7 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.surface,
+      drawer: _buildDrawer(),
       body: SafeArea(
         child: Column(
           children: [
@@ -76,8 +78,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     const SizedBox(height: 48),
                     const StatsGrid(),
                     const SizedBox(height: 48),
-                    const RecentActivityList(),
-                    const SizedBox(height: 48),
+                    // ── Quick Actions + Recent Assets ──────────────────
                     LayoutBuilder(
                       builder: (context, constraints) {
                         if (constraints.maxWidth > 800) {
@@ -101,6 +102,12 @@ class _HomeScreenState extends State<HomeScreen> {
                         }
                       },
                     ),
+                    const SizedBox(height: 48),
+                    // ── AI Piracy Scanner ─────────────────────────────
+                    const PiracyScannerCard(),
+                    const SizedBox(height: 48),
+                    // ── Live Upload Logs ──────────────────────────────
+                    const UploadLogSection(),
                   ],
                 ),
               ),
@@ -112,16 +119,72 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
+  Widget _buildDrawer() {
+    return Drawer(
+      backgroundColor: AppColors.surfaceContainer,
+      child: ListView(
+        padding: EdgeInsets.zero,
+        children: [
+          DrawerHeader(
+            decoration: BoxDecoration(color: AppColors.surfaceContainerLow),
+            child: GestureDetector(
+              onTap: () {
+                Navigator.pop(context);
+                Navigator.pushNamed(context, '/profile');
+              },
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  CircleAvatar(
+                    backgroundColor: AppColors.primary.withValues(alpha: 0.2),
+                    child: Text(_userInitials, style: GoogleFonts.inter(color: AppColors.primary)),
+                  ),
+                  const SizedBox(height: 12),
+                  Text(_userName, style: GoogleFonts.spaceGrotesk(color: AppColors.onSurface, fontSize: 18, fontWeight: FontWeight.bold)),
+                ],
+              ),
+            ),
+          ),
+          ListTile(
+            leading: const Icon(Icons.dashboard, color: AppColors.primary),
+            title: Text('Dashboard', style: GoogleFonts.inter(color: AppColors.primary)),
+            onTap: () => Navigator.pop(context),
+          ),
+          ListTile(
+            leading: const Icon(Icons.settings, color: AppColors.onSurfaceVariant),
+            title: Text('Settings', style: GoogleFonts.inter(color: AppColors.onSurfaceVariant)),
+            onTap: () => Navigator.pop(context),
+          ),
+          const Divider(color: AppColors.outlineVariant),
+          ListTile(
+            leading: const Icon(Icons.logout, color: AppColors.errorContainer),
+            title: Text('Sign Out', style: GoogleFonts.inter(color: AppColors.errorContainer)),
+            onTap: () {
+              Navigator.pop(context);
+              _handleSignOut();
+            },
+          ),
+        ],
+      ),
+    );
+  }
+
   /// Bottom navigation with 4 tabs: Home, Protect, Detect, Proof
   Widget _buildBottomNavBar() {
     return Container(
       height: 80,
       decoration: BoxDecoration(
-        color: AppColors.surface.withValues(alpha: 0.8),
+        color: AppColors.surfaceContainer.withValues(alpha: 0.6),
         borderRadius: const BorderRadius.vertical(top: Radius.circular(32)),
+        border: Border(
+          top: BorderSide(
+            color: AppColors.outlineVariant.withValues(alpha: 0.15),
+          ),
+        ),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.5),
+            color: AppColors.secondary.withValues(alpha: 0.05),
             blurRadius: 40,
             offset: const Offset(0, -10),
           ),
@@ -144,10 +207,6 @@ class _HomeScreenState extends State<HomeScreen> {
     return GestureDetector(
       onTap: () {
         if (index == 0) return;
-        if (index == 3) {
-          _handleSignOut();
-          return;
-        }
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text('$label screen coming soon'),

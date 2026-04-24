@@ -1,19 +1,35 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../config/themes/app_colors.dart';
+import '../../services/api_service.dart';
+import '../../models/asset_log.dart';
 
-// ═══════════════════════════════════════════════════════════
 /// Horizontal scrollable gallery of recently protected assets.
 ///
+/// Fetches real data from backend `/logs` endpoint.
 /// Each asset card shows:
-/// - Thumbnail preview with dark overlay
-/// - File name and last verification time
-/// - Hash identifier and verification badge
+/// - File type icon with colored background
+/// - File name and size
+/// - Protection timestamp
+/// - Creator fingerprint (if available)
 ///
 /// Tapping a card will navigate to detailed asset view.
-// ═══════════════════════════════════════════════════════════
-class RecentAssetsList extends StatelessWidget {
+class RecentAssetsList extends StatefulWidget {
   const RecentAssetsList({super.key});
+
+  @override
+  State<RecentAssetsList> createState() => _RecentAssetsListState();
+}
+
+class _RecentAssetsListState extends State<RecentAssetsList> {
+  late Future<List<AssetLog>> _assetsFuture;
+  final ApiService _apiService = ApiService();
+
+  @override
+  void initState() {
+    super.initState();
+    _assetsFuture = _apiService.fetchAssetLogs();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -42,7 +58,7 @@ class RecentAssetsList extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
-                  'Asset Library Spotlight',
+                  'Protected Assets',
                   style: GoogleFonts.spaceGrotesk(
                     fontSize: 20,
                     fontWeight: FontWeight.bold,
@@ -50,7 +66,7 @@ class RecentAssetsList extends StatelessWidget {
                   ),
                 ),
                 Icon(
-                  Icons.movie_creation,
+                  Icons.shield_rounded,
                   color: AppColors.secondary,
                   size: 20,
                 ),
@@ -58,28 +74,36 @@ class RecentAssetsList extends StatelessWidget {
             ),
           ),
           Expanded(
-            child: ListView(
-              padding: const EdgeInsets.symmetric(horizontal: 24),
-              scrollDirection: Axis.horizontal,
-              children: [
-                _buildAssetCard(
-                  title: 'Visual Genesis.mp4',
-                  hash: '0x8F...FF2',
-                  timeAgo: 'Last verified 4m ago',
-                  imageProvider: const NetworkImage(
-                    'https://images.unsplash.com/photo-1593508512255-86ab42a8e620?q=80&w=600&auto=format&fit=crop',
-                  ),
-                ),
-                const SizedBox(width: 16),
-                _buildAssetCard(
-                  title: 'Campaign_Hero.png',
-                  hash: '0x2A...X91',
-                  timeAgo: 'Last verified 1h ago',
-                  imageProvider: const NetworkImage(
-                    'https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=600&auto=format&fit=crop',
-                  ),
-                ),
-              ],
+            child: FutureBuilder<List<AssetLog>>(
+              future: _assetsFuture,
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return _buildLoadingList();
+                } else if (snapshot.hasError) {
+                  return _buildErrorWidget(snapshot.error.toString());
+                } else if (snapshot.hasData && snapshot.data!.isNotEmpty) {
+                  final assets = snapshot.data!;
+                  return ListView.separated(
+                    padding: const EdgeInsets.symmetric(horizontal: 24),
+                    scrollDirection: Axis.horizontal,
+                    itemCount: assets.length,
+                    separatorBuilder: (_, __) => const SizedBox(width: 16),
+                    itemBuilder: (context, index) {
+                      return _buildAssetCard(assets[index]);
+                    },
+                  );
+                } else {
+                  return Center(
+                    child: Text(
+                      'No assets protected yet',
+                      style: GoogleFonts.inter(
+                        color: AppColors.onSurfaceVariant,
+                        fontSize: 14,
+                      ),
+                    ),
+                  );
+                }
+              },
             ),
           ),
           const SizedBox(height: 24),
@@ -88,14 +112,53 @@ class RecentAssetsList extends StatelessWidget {
     );
   }
 
-  Widget _buildAssetCard({
-    required String title,
-    required String hash,
-    required String timeAgo,
-    required ImageProvider imageProvider,
-  }) {
+  Widget _buildLoadingList() {
+    return ListView.separated(
+      padding: const EdgeInsets.symmetric(horizontal: 24),
+      scrollDirection: Axis.horizontal,
+      itemCount: 3,
+      separatorBuilder: (_, __) => const SizedBox(width: 16),
+      itemBuilder: (context, index) {
+        return Container(
+          width: 200,
+          decoration: BoxDecoration(
+            color: AppColors.surfaceContainer,
+            borderRadius: BorderRadius.circular(12),
+          ),
+          child: const Shimmer(),
+        );
+      },
+    );
+  }
+
+  Widget _buildErrorWidget(String error) {
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.all(24.0),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(Icons.error_rounded, color: AppColors.errorContainer, size: 32),
+            const SizedBox(height: 12),
+            Text(
+              'Failed to load assets',
+              style: GoogleFonts.inter(
+                color: AppColors.errorContainer,
+                fontSize: 12,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildAssetCard(AssetLog asset) {
+    final iconData = asset.fileType == 'Video' ? Icons.videocam : Icons.image;
+    final bgColor = asset.fileType == 'Video' ? AppColors.tertiary : AppColors.secondary;
+
     return Container(
-      width: 280,
+      width: 200,
       decoration: BoxDecoration(
         color: AppColors.surfaceContainer,
         borderRadius: BorderRadius.circular(12),
@@ -106,87 +169,88 @@ class RecentAssetsList extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Expanded(
-            child: Container(
-              decoration: BoxDecoration(
-                borderRadius: const BorderRadius.vertical(
-                  top: Radius.circular(12),
-                ),
-                image: DecorationImage(
-                  image: imageProvider,
-                  fit: BoxFit.cover,
-                  colorFilter: ColorFilter.mode(
-                    Colors.black.withValues(alpha: 0.4),
-                    BlendMode.darken,
-                  ),
-                ),
+          // Icon header
+          Container(
+            height: 80,
+            width: double.infinity,
+            decoration: BoxDecoration(
+              color: bgColor.withValues(alpha: 0.15),
+              borderRadius: const BorderRadius.vertical(
+                top: Radius.circular(12),
               ),
-              child: Stack(
-                children: [
-                  Positioned(
-                    bottom: 8,
-                    left: 8,
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 8,
-                        vertical: 4,
-                      ),
-                      decoration: BoxDecoration(
-                        color: AppColors.primary.withValues(alpha: 0.2),
-                        border: Border.all(
-                          color: AppColors.primary.withValues(alpha: 0.4),
-                        ),
-                        borderRadius: BorderRadius.circular(4),
-                      ),
-                      child: Text(
-                        'ACTIVE TRACE',
-                        style: GoogleFonts.spaceGrotesk(
-                          fontSize: 10,
-                          color: AppColors.primary,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
+            ),
+            child: Center(
+              child: Icon(
+                iconData,
+                size: 40,
+                color: bgColor,
               ),
             ),
           ),
-          Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  title,
-                  style: GoogleFonts.spaceGrotesk(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 14,
-                    color: AppColors.onSurface,
-                  ),
-                ),
-                Text(
-                  timeAgo,
-                  style: GoogleFonts.inter(
-                    fontSize: 12,
-                    color: AppColors.onSurfaceVariant,
-                  ),
-                ),
-                const SizedBox(height: 12),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      'HASH: $hash',
-                      style: GoogleFonts.spaceGrotesk(
-                        fontSize: 10,
-                        color: AppColors.onSurfaceVariant,
+          // Content
+          Expanded(
+            child: Padding(
+              padding: const EdgeInsets.all(12.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        asset.displayFilename,
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                        style: GoogleFonts.spaceGrotesk(
+                          fontSize: 12,
+                          fontWeight: FontWeight.bold,
+                          color: AppColors.onSurface,
+                        ),
                       ),
-                    ),
-                    Icon(Icons.verified, color: AppColors.primary, size: 16),
-                  ],
-                ),
-              ],
+                      const SizedBox(height: 4),
+                      Text(
+                        '${asset.sizeKb.toStringAsFixed(1)} KB',
+                        style: GoogleFonts.inter(
+                          fontSize: 10,
+                          color: AppColors.onSurfaceVariant,
+                        ),
+                      ),
+                    ],
+                  ),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      if (asset.creatorFingerprint != null)
+                        Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 6,
+                            vertical: 2,
+                          ),
+                          decoration: BoxDecoration(
+                            color: bgColor.withValues(alpha: 0.2),
+                            borderRadius: BorderRadius.circular(4),
+                          ),
+                          child: Text(
+                            asset.creatorFingerprint!,
+                            style: GoogleFonts.jetBrainsMono(
+                              fontSize: 8,
+                              color: bgColor,
+                            ),
+                          ),
+                        ),
+                      const SizedBox(height: 4),
+                      Text(
+                        asset.relativeTime,
+                        style: GoogleFonts.inter(
+                          fontSize: 9,
+                          color: AppColors.onSurfaceVariant.withValues(alpha: 0.7),
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
             ),
           ),
         ],
@@ -194,3 +258,44 @@ class RecentAssetsList extends StatelessWidget {
     );
   }
 }
+
+/// Simple shimmer loading animation
+class Shimmer extends StatefulWidget {
+  const Shimmer({super.key});
+
+  @override
+  State<Shimmer> createState() => _ShimmerState();
+}
+
+class _ShimmerState extends State<Shimmer> with SingleTickerProviderStateMixin {
+  late AnimationController _controller;
+  late Animation<double> _opacity;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(
+      duration: const Duration(milliseconds: 1500),
+      vsync: this,
+    )..repeat(reverse: true);
+
+    _opacity = Tween<double>(begin: 0.3, end: 0.7).animate(
+      CurvedAnimation(parent: _controller, curve: Curves.easeInOut),
+    );
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return AnimatedBuilder(
+      animation: _opacity,
+      builder: (context, child) => Container(
+        color: AppColors.surfaceBright.withValues(alpha: _opacity.value),
+      ),
+    );
+

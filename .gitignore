@@ -45,6 +45,7 @@ app.*.map.json
 /android/app/release
 
 # project files
+.env
 .venv/
 __pycache__/
 backend_shit/

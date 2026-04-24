@@ -1,75 +1,59 @@
 # INDELIBLE
 
-**Forensics as a Service (FaaS) — Digital Rights Management for Independent Creators**
+**Forensics as a Service (FaaS) — Compression-Resistant Digital Watermarking & AI Piracy Detection**
 
-INDELIBLE is a compression-resistant forensic watermarking platform that provides mathematically robust proof of ownership for digital media. Built for mid-tier sports organizations and independent creators who cannot afford enterprise-grade DRM solutions.
+INDELIBLE embeds cryptographically signed, invisible watermarks into images and video using classical signal processing (DWT + QIM). When pirated copies surface, the platform extracts the watermark, verifies the HMAC signature, identifies the original creator via a unique `INDL-XXXX-XXXX-XXXX` fingerprint, and auto-generates DMCA takedown notices using Gemini 2.5 Flash.
 
 ---
 
-## Project Overview
+## How It Works
 
-### Problem
-Digital content creators lack affordable tools to prove ownership of their media. Existing watermarking solutions are either trivial to remove (visible overlays) or computationally expensive (neural network-based), making them inaccessible to independent creators.
+```
+1. PROTECT ──▶ User uploads media → DWT+QIM embeds signed payload → PNG returned
+2. VERIFY  ──▶ User uploads suspect copy → Payload extracted → HMAC verified → Proof report
+3. SCAN    ──▶ AI scrapes URL → Gemini classifies piracy → Legal notice drafted
+```
 
-### Solution
-INDELIBLE uses classical signal processing — Discrete Wavelet Transform (DWT), Discrete Cosine Transform (DCT), and Quantization Index Modulation (QIM) — to embed cryptographic watermarks directly into image/video frequency domains. These watermarks survive JPEG compression, cropping, and quality reduction while remaining visually imperceptible.
+### Core Pipeline
 
-### Key Properties
-- **Compression-resistant**: Watermark survives JPEG compression at quality 50+
-- **Visually imperceptible**: No visible artifacts on watermarked media
-- **Cryptographically verifiable**: HMAC-SHA256 signatures prove authenticity
-- **Error-corrected**: Reed-Solomon encoding recovers watermarks from degraded copies
-- **Fast search indexed**: BK-Tree with perceptual hashing enables O(log N) similarity search
+```
+Image → YCrCb (extract Y) → Haar DWT → LL subband → QIM embed payload bits
+    → Inverse DWT → Clip to uint8 → Save as PNG + .meta sidecar
+```
+
+The payload is: `CreatorFingerprint | UTC Timestamp | HMAC-SHA256`, Reed-Solomon encoded to 1400 bits for error correction.
 
 ---
 
 ## Architecture
 
-### System Components
-
 ```
 ┌──────────────┐     ┌──────────────┐     ┌──────────────┐
-│   Flutter    │────▶│   FastAPI    │────▶│   Python     │
-│   Frontend   │     │   API Layer  │     │   Core Engine│
-│   (Mobile)   │◀────│   (Backend)  │◀────│   (DSP)      │
+│   Flutter    │────▶│   FastAPI    │────▶│   Python DSP │
+│   Frontend   │     │   + Uvicorn  │     │   + Gemini AI│
+│   (Web/Mobile)│◀────│   API Layer  │◀────│   Engine     │
 └──────────────┘     └──────────────┘     └──────────────┘
        │                    │                     │
        ▼                    ▼                     ▼
-┌──────────────┐     ┌──────────────┐     ┌──────────────┐
-│   Firebase   │     │   BK-Tree    │     │   FFmpeg     │
-│   Auth +     │     │   Index      │     │   Video I/O  │
-│   Firestore  │     │   (pHash)    │     │              │
-└──────────────┘     └──────────────┘     └──────────────┘
+ Firebase Auth      Creator Registry       FFmpeg Video I/O
+                   (JSON fingerprint DB)
 ```
-
-### Data Flow
-
-1. User uploads media through Flutter app
-2. FastAPI receives file, saves to temporary storage
-3. Python Core Engine extracts keyframes via FFmpeg scene detection
-4. DWT-DCT-QIM pipeline embeds cryptographic payload into each keyframe
-5. Perceptual hashes (pHash) generated and indexed in BK-Tree
-6. Payload hash recorded to Firestore (mock blockchain ledger)
-7. Protected media returned to user with proof report
 
 ---
 
-## Technology Stack
+## Tech Stack
 
-### Frontend (Flutter)
-- Framework: Flutter 3.x (Dart 3.9+)
-- State Management: Flutter Riverpod
-- Authentication: Firebase Auth (Email/Password, Google Sign-In)
-- Database: Cloud Firestore (mock blockchain ledger)
-- Fonts: Space Grotesk (headlines), Inter (body), Space Mono (code)
-
-### Backend (Python)
-- API: FastAPI with Uvicorn
-- Signal Processing: OpenCV, PyWavelets, NumPy
-- Cryptography: HMAC-SHA256, Reed-Solomon (reedsolo)
-- Video Processing: FFmpeg (via subprocess)
-- Indexing: imagehash (pHash), pybktree (BK-Tree)
-- Database: Firebase Admin SDK (Firestore writes)
+| Layer | Technology | Purpose |
+|-------|-----------|---------|
+| Frontend | Flutter + Dart | Cross-platform UI |
+| State | Riverpod | Reactive state management |
+| Auth | Firebase Auth | Email + Google Sign-In |
+| API | FastAPI + Uvicorn | HTTP endpoints, file serving |
+| DSP | OpenCV, PyWavelets, NumPy | DWT, DCT, QIM watermarking |
+| Crypto | hmac, hashlib, reedsolo | HMAC-SHA256 + Reed-Solomon ECC |
+| AI | google-genai (Gemini 2.5 Flash) | Multimodal piracy detection |
+| Video | FFmpeg (subprocess) | Frame extraction & stitching |
+| Scraping | httpx, BeautifulSoup4 | Web content crawling |
 
 ---
 
@@ -77,204 +61,99 @@ INDELIBLE uses classical signal processing — Discrete Wavelet Transform (DWT),
 
 ```
 indelible/
-├── lib/                                    # Flutter application
-│   ├── main.dart                           # Entry point, Firebase initialization
+├── backend/
+│   ├── core/
+│   │   ├── watermark.py          # DWT+QIM embed/extract engine
+│   │   ├── payload.py            # HMAC + Reed-Solomon crypto
+│   │   ├── ai_engine.py          # Gemini 2.5 piracy classifier
+│   │   ├── scraper.py            # Web scraper with fallback
+│   │   ├── video_processor.py    # FFmpeg frame extraction
+│   │   └── bktree_index.py       # Perceptual hash indexing
+│   ├── main.py                   # FastAPI server & endpoints
+│   ├── outputs/                  # Protected files served here
+│   ├── creator_registry.json     # Fingerprint ↔ UID mapping
+│   └── .env                      # GEMINI_API_KEY (not committed)
+├── lib/
+│   ├── main.dart
 │   └── src/
-│       ├── config/
-│       │   └── themes/
-│       │       └── app_colors.dart         # Global color palette
+│       ├── config/themes/app_colors.dart
 │       ├── screens/
-│       │   ├── sections/                   # Reusable UI sections
-│       │   │   ├── top_app_bar.dart        # Top navigation bar
-│       │   │   ├── hero_section.dart       # Welcome/status section
-│       │   │   └── stats_grid.dart         # System metrics grid
-│       │   ├── login_screen.dart           # Authentication screen
-│       │   ├── home_screen.dart            # Main dashboard
-│       │   └── dashboard_screen.dart       # Detailed asset view
-│       ├── services/
-│       │   └── auth_service.dart           # Firebase authentication logic
-│       └── widgets/                        # Small reusable components
-├── backend/                                # Python watermarking engine
-│   ├── watermark.py                        # DWT-QIM prototype (legacy)
-│   ├── requirements.txt                    # Python dependencies
-│   └── tests/                              # Backend test suite
-├── designs/                                # HTML design references
-├── pubspec.yaml                            # Flutter dependencies
-└── analysis_options.yaml                   # Dart linting rules
+│       │   ├── sections/
+│       │   │   ├── top_app_bar.dart
+│       │   │   ├── hero_section.dart
+│       │   │   ├── quick_actions.dart    # File upload + API calls
+│       │   │   ├── stats_grid.dart
+│       │   │   ├── recent_assets_list.dart
+│       │   │   └── recent_activity_list.dart
+│       │   ├── login_screen.dart
+│       │   └── home_screen.dart
+│       └── services/auth_service.dart
+├── LEARNING_GUIDE.md             # Deep technical reference (read this!)
+├── ROADMAP.md                    # Phase breakdown & status
+└── PROJECT_STATUS.md             # Current completion tracker
 ```
 
 ---
 
-## Getting Started
+## Quick Start
 
 ### Prerequisites
-
-- Flutter SDK 3.9+ ([installation guide](https://docs.flutter.dev/get-started/install))
+- Flutter SDK 3.9+
 - Python 3.10+
+- FFmpeg in PATH
 - Firebase project with Auth enabled
-- FFmpeg installed and in PATH
 
-### Frontend Setup
-
-```bash
-# 1. Install Flutter dependencies
-flutter pub get
-
-# 2. Configure Firebase
-# - Install Firebase CLI: npm install -g firebase-tools
-# - Run: flutterfire configure
-# - Select your Firebase project
-
-# 3. Run the app
-flutter run
-```
-
-### Backend Setup
+### Backend
 
 ```bash
-# 1. Create Python virtual environment
 cd backend
 python -m venv .venv
-
-# 2. Activate environment
-# Windows:
-.venv\Scripts\activate
-# macOS/Linux:
-source .venv/bin/activate
-
-# 3. Install dependencies
+.venv\Scripts\activate        # Windows
 pip install -r requirements.txt
 
-# 4. Run FastAPI server
-uvicorn api.main:app --reload
+# Create .env with your Gemini key
+echo GEMINI_API_KEY=your_key_here > .env
+
+# Start server
+python -m uvicorn main:app --reload
 ```
 
----
+### Frontend
 
-## Development Workflow
-
-### Code Organization Principles
-
-1. **Single Responsibility**: Each file handles one concern (colors, auth, UI sections)
-2. **Reusable Sections**: UI components in `sections/` are composed into screens
-3. **Configuration Separation**: App-wide settings live in `config/`, not scattered across files
-4. **Service Layer**: Business logic isolated in `services/`, not embedded in screens
-
-### Naming Conventions
-
-- **Files**: snake_case (e.g., `app_colors.dart`, `auth_service.dart`)
-- **Classes**: PascalCase (e.g., `TopAppBar`, `HeroSection`)
-- **Variables**: camelCase (e.g., `userName`, `isSelected`)
-- **Constants**: UPPER_SNAKE_CASE for static values, camelCase for class properties
-
-### Building New Features
-
-1. Define the requirement in plain English (write comments first)
-2. List the data inputs needed
-3. Sketch the widget tree on paper
-4. Implement from smallest widget upward
-5. Test the integration
-
----
-
-## Core Algorithms
-
-### Watermark Embedding Pipeline
-
+```bash
+flutter pub get
+flutter run -d chrome
 ```
-Input Image → YCrCb Conversion → Extract Y Channel
-    → DWT (Haar Wavelet) → Extract LL Band
-    → DCT on LL Band → QIM Embedding → Inverse DCT
-    → Inverse DWT → Merge Channels → Watermarked Image
-```
-
-### Quantization Index Modulation (QIM)
-
-Each bit of the payload is embedded into a DCT coefficient:
-- Bit 0: Quantize coefficient to nearest even multiple of delta
-- Bit 1: Quantize coefficient to nearest odd multiple of delta
-
-This creates robust embedding that survives JPEG compression because JPEG operates on the same DCT domain.
-
-### Payload Structure
-
-```
-CreatorID | Timestamp | HMAC-SHA256 Signature
-(32 bytes)  (8 bytes)   (32 bytes)
-```
-
-The entire payload is Reed-Solomon encoded to recover from bit errors in compressed/degraded copies.
 
 ---
 
 ## API Endpoints
 
-### POST /protect
-
-Upload media for watermark protection.
-
-**Request**: multipart/form-data with video file  
-**Response**: JSON with payload hash, creator ID, timestamp, frame count
-
-### POST /verify
-
-Submit suspect media for forensic verification.
-
-**Request**: multipart/form-data with suspect file  
-**Response**: JSON with match status, confidence score, matched frames, proof report
+| Method | Endpoint | Body | Returns |
+|--------|----------|------|---------|
+| POST | `/protect` | `file` (multipart) + `user_uid` (form) | `creator_fingerprint`, `download_url`, `blockchain_tx` |
+| POST | `/verify` | `file` (multipart) | `status` (match_found/no_match), `proof_report` |
+| POST | `/scan-piracy` | `url` (form) | `ai_analysis`, `legal_notice_draft` |
+| GET | `/download/{filename}` | — | Binary file download |
 
 ---
 
-## Project Roadmap
+## Key Algorithms
 
-### Phase 1: Cryptographic Core (In Progress)
-- [x] Basic DWT-QIM pipeline (`watermark.py`)
-- [x] Color palette architecture (`app_colors.dart`)
-- [x] Login screen with Firebase Auth
-- [ ] DCT integration for compression robustness
-- [ ] HMAC-SHA256 payload signing
-- [ ] Reed-Solomon error correction encoding
-- [ ] Watermark extraction and verification
-
-### Phase 2: Video Pipeline & Indexing (Planned)
-- [ ] FFmpeg scene detection wrapper
-- [ ] Video watermarker (keyframe processing)
-- [ ] Perceptual hash (pHash) generation
-- [ ] BK-Tree index for similarity search
-- [ ] Frame buffer optimization
-
-### Phase 3: API & Flutter Bridge (Planned)
-- [ ] FastAPI application structure
-- [ ] /protect endpoint with multipart upload
-- [ ] /verify endpoint with BK-Tree search
-- [ ] Firebase Admin SDK integration
-- [ ] Flutter API service layer
-- [ ] Upload progress indicators
-- [ ] Proof report screen
-
-### Phase 4: Demo & Submission (Planned)
-- [ ] Mock blockchain ledger (Firestore)
-- [ ] Demo asset creation (pirated videos)
-- [ ] End-to-end demo recording
-- [ ] Pitch deck preparation
-
----
-
-## Learning Resources
-
-- **DEVELOPMENT_GUIDE.md** — Project setup and workflow documentation
-- **ROADMAP.md** — Detailed 26-day hackathon plan with technical specifications
+- **DWT (Haar)** — Decomposes image into frequency subbands (LL, LH, HL, HH)
+- **QIM (delta=80)** — Embeds bits by quantizing LL coefficients to even/odd grid points
+- **HMAC-SHA256** — Produces unforgeable signatures using a secret key
+- **Reed-Solomon (nsym=64)** — Corrects up to 32 byte-errors in extracted payloads
+- **SHA-256 Fingerprinting** — Derives deterministic `INDL-XXXX-XXXX-XXXX` from Firebase UID
 
 ---
 
 ## License
 
-This project is developed for educational and hackathon purposes. Not intended for production use without further security review.
-
----
+Hackathon project — educational use. Not production-ready without security audit.
 
 ## Acknowledgments
 
-- DWT-DCT watermarking based on classical signal processing research
-- QIM embedding algorithm inspired by Chen et al. "Quantization Index Modulation for Digital Watermarking"
-- Design inspiration from forensic/cybersecurity dashboard aesthetics
+- QIM: Chen & Wornell, "Quantization Index Modulation for Digital Watermarking"
+- Reed-Solomon: `reedsolo` library by Tomer Filiba
+- AI: Google Gemini 2.5 Flash multimodal API

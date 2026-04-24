@@ -1,20 +1,36 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../config/themes/app_colors.dart';
+import '../../services/api_service.dart';
+import '../../models/activity_event.dart';
 
-// ═══════════════════════════════════════════════════════════
 /// Displays audit trail of forensic events.
 ///
-/// Shows recent system notifications like:
-/// - Watermark verification results
-/// - Asset synchronization events
-/// - Routine maintenance snapshots
+/// Fetches real data from backend and shows recent activity like:
+/// - Asset protection events
+/// - Verification results
+/// - System alerts
 ///
-/// Each alert item shows icon, title, subtitle, ID, and time.
-/// Color-coded by severity (primary=success, secondary=warning).
-// ═══════════════════════════════════════════════════════════
-class RecentActivityList extends StatelessWidget {
+/// Each activity item shows:
+/// - Icon and color-coded type
+/// - Title and subtitle
+/// - Relative timestamp
+class RecentActivityList extends StatefulWidget {
   const RecentActivityList({super.key});
+
+  @override
+  State<RecentActivityList> createState() => _RecentActivityListState();
+}
+
+class _RecentActivityListState extends State<RecentActivityList> {
+  late Future<List<ActivityEvent>> _eventsFuture;
+  final ApiService _apiService = ApiService();
+
+  @override
+  void initState() {
+    super.initState();
+    _eventsFuture = _apiService.fetchActivityEvents(limit: 10);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -30,7 +46,7 @@ class RecentActivityList extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    'Recent Alerts',
+                    'Activity Timeline',
                     style: GoogleFonts.spaceGrotesk(
                       fontSize: 24,
                       fontWeight: FontWeight.bold,
@@ -38,7 +54,7 @@ class RecentActivityList extends StatelessWidget {
                     ),
                   ),
                   Text(
-                    'Audit trail of forensic events and system notifications.',
+                    'Recent protection and verification events',
                     style: GoogleFonts.inter(
                       fontSize: 14,
                       color: AppColors.onSurfaceVariant,
@@ -48,9 +64,18 @@ class RecentActivityList extends StatelessWidget {
               ),
             ),
             TextButton(
-              onPressed: () {},
+              onPressed: () {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text(
+                      'Full logs export coming soon',
+                      style: GoogleFonts.inter(),
+                    ),
+                  ),
+                );
+              },
               child: Text(
-                'VIEW FULL LOGS',
+                'VIEW ALL',
                 style: GoogleFonts.spaceGrotesk(
                   fontSize: 12,
                   fontWeight: FontWeight.bold,
@@ -62,114 +87,200 @@ class RecentActivityList extends StatelessWidget {
           ],
         ),
         const SizedBox(height: 16),
-        _buildAlertItem(
-          title: 'Watermark Re-Verification Success',
-          subtitle: 'Batch 884 completed with 100% integrity match.',
-          id: '#FW-9902-X',
-          time: '14:22:01 UTC',
-          icon: Icons.security,
-          color: AppColors.primary,
-        ),
-        const SizedBox(height: 12),
-        _buildAlertItem(
-          title: 'External Mirror Detected',
-          subtitle:
-              'Asset \'Campaign_Hero.png\' synchronized on secondary node.',
-          id: '#MS-1102-A',
-          time: '12:05:48 UTC',
-          icon: Icons.sync,
-          color: AppColors.secondary,
-        ),
-        const SizedBox(height: 12),
-        _buildAlertItem(
-          title: 'Routine Snapshot Taken',
-          subtitle: 'Global forensic state preserved for archival compliance.',
-          id: '#RS-0021-Z',
-          time: '09:00:00 UTC',
-          icon: Icons.history,
-          color: AppColors.outline,
+        FutureBuilder<List<ActivityEvent>>(
+          future: _eventsFuture,
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return _buildLoadingList();
+            } else if (snapshot.hasError) {
+              return _buildErrorWidget(snapshot.error.toString());
+            } else if (snapshot.hasData && snapshot.data!.isNotEmpty) {
+              final events = snapshot.data!;
+              return Column(
+                children: List.generate(
+                  events.length,
+                  (index) {
+                    return Padding(
+                      padding: const EdgeInsets.only(bottom: 12),
+                      child: _buildActivityCard(events[index]),
+                    );
+                  },
+                ),
+              );
+            } else {
+              return Center(
+                child: Padding(
+                  padding: const EdgeInsets.all(32.0),
+                  child: Text(
+                    'No activity yet',
+                    style: GoogleFonts.inter(
+                      color: AppColors.onSurfaceVariant,
+                      fontSize: 14,
+                    ),
+                  ),
+                ),
+              );
+            }
+          },
         ),
       ],
     );
   }
 
-  Widget _buildAlertItem({
-    required String title,
-    required String subtitle,
-    required String id,
-    required String time,
-    required IconData icon,
-    required Color color,
-  }) {
+  Widget _buildLoadingList() {
+    return Column(
+      children: List.generate(
+        3,
+        (index) => Padding(
+          padding: const EdgeInsets.only(bottom: 12),
+          child: Container(
+            height: 80,
+            decoration: BoxDecoration(
+              color: AppColors.surfaceContainer,
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: const Shimmer(),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildErrorWidget(String error) {
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: AppColors.surfaceContainer,
+        color: AppColors.errorContainer.withValues(alpha: 0.2),
         borderRadius: BorderRadius.circular(12),
-        border: Border(
-          left: BorderSide(color: color.withValues(alpha: 0.4), width: 4),
-        ),
+        border: Border.all(color: AppColors.errorContainer.withValues(alpha: 0.3)),
       ),
       child: Row(
         children: [
-          Container(
-            padding: const EdgeInsets.all(12),
-            decoration: BoxDecoration(
-              color: color.withValues(alpha: 0.1),
-              borderRadius: BorderRadius.circular(8),
-            ),
-            child: Icon(icon, color: color),
-          ),
-          const SizedBox(width: 24),
-          Expanded(
-            flex: 2,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  title,
-                  style: GoogleFonts.spaceGrotesk(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 16,
-                    color: AppColors.onSurface,
-                  ),
-                ),
-                Text(
-                  subtitle,
-                  style: GoogleFonts.inter(
-                    fontSize: 12,
-                    color: AppColors.onSurfaceVariant,
-                  ),
-                ),
-              ],
-            ),
-          ),
+          Icon(Icons.warning_rounded, color: AppColors.errorContainer),
+          const SizedBox(width: 12),
           Expanded(
             child: Text(
-              'ID: $id',
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-              style: GoogleFonts.spaceGrotesk(
-                fontSize: 10,
-                letterSpacing: 2,
-                color: AppColors.onSurfaceVariant,
-              ),
-            ),
-          ),
-          Expanded(
-            child: Text(
-              time,
-              textAlign: TextAlign.right,
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
+              'Failed to load activity: $error',
               style: GoogleFonts.inter(
+                color: AppColors.errorContainer,
                 fontSize: 12,
-                color: AppColors.onSurfaceVariant,
               ),
             ),
           ),
         ],
       ),
+    );
+  }
+
+  Widget _buildActivityCard(ActivityEvent event) {
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: AppColors.surfaceContainer,
+        borderRadius: BorderRadius.circular(12),
+        border: Border(
+          left: BorderSide(
+            color: event.color.withValues(alpha: 0.6),
+            width: 4,
+          ),
+        ),
+      ),
+      child: Row(
+        children: [
+          Container(
+            padding: const EdgeInsets.all(10),
+            decoration: BoxDecoration(
+              color: event.color.withValues(alpha: 0.15),
+              borderRadius: BorderRadius.circular(8),
+            ),
+            child: Icon(
+              event.icon,
+              color: event.color,
+              size: 20,
+            ),
+          ),
+          const SizedBox(width: 16),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  event.title,
+                  style: GoogleFonts.spaceGrotesk(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 14,
+                    color: AppColors.onSurface,
+                  ),
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  event.subtitle,
+                  style: GoogleFonts.inter(
+                    fontSize: 12,
+                    color: AppColors.onSurfaceVariant,
+                  ),
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(width: 12),
+          Text(
+            event.readableTime,
+            textAlign: TextAlign.right,
+            style: GoogleFonts.jetBrainsMono(
+              fontSize: 11,
+              color: AppColors.onSurfaceVariant.withValues(alpha: 0.7),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+/// Simple shimmer loading animation
+class Shimmer extends StatefulWidget {
+  const Shimmer({super.key});
+
+  @override
+  State<Shimmer> createState() => _ShimmerState();
+}
+
+class _ShimmerState extends State<Shimmer> with SingleTickerProviderStateMixin {
+  late AnimationController _controller;
+  late Animation<double> _opacity;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(
+      duration: const Duration(milliseconds: 1500),
+      vsync: this,
+    )..repeat(reverse: true);
+
+    _opacity = Tween<double>(begin: 0.3, end: 0.7).animate(
+      CurvedAnimation(parent: _controller, curve: Curves.easeInOut),
+    );
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return AnimatedBuilder(
+      animation: _opacity,
+      builder: (context, child) => Container(
+        color: AppColors.surfaceBright.withValues(alpha: _opacity.value),
+      ),
+    );
+  }
+}
     );
   }
 }
