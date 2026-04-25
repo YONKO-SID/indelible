@@ -14,6 +14,8 @@
 | **Phase 3** | FastAPI + Flutter Bridge | ✅ Complete |
 | **Phase 4** | AI Threat Intelligence (Stretch Goal) | ✅ Complete |
 | **Phase 5** | Creator Identity & Verification Loop | ✅ Complete |
+| **Phase 6** | Automated Testing & Cloud Deployment | ✅ Complete |
+| **Phase 7** | Automated Watchdog (pHash + BK-Tree) | ✅ Complete |
 
 ---
 
@@ -95,12 +97,41 @@ During `/verify`, the backend iterates all registered fingerprints, computes eac
 
 ---
 
+## Phase 6: Automated Testing & Cloud Deployment ✅
+
+### Deliverables
+- `tests/test_watermark.py`, `test_payload.py`, `test_api.py` — Pytest suite
+- `Dockerfile` — Containerized backend
+- Railway Deployment — Permanent HTTPS endpoint
+
+### Technical Details
+- **Mathematical Extraction Fix:** Replaced naive modulo math in QIM extraction with absolute geometric distance to quantization multiples.
+- **Dockerization:** Packaged `ffmpeg`, `libgl1`, and headless OpenCV to remove GUI dependencies on the cloud.
+- **Permanent Tunneling:** Replaced ephemeral ngrok/localtunnel with Railway's permanent edge network.
+
+---
+
+## Phase 7: Automated Watchdog & pHash Scaling ✅
+
+### Deliverables
+- `core/bktree_index.py` — pHash similarity search using BK-Tree
+- `core/monitoring_daemon.py` — Async background monitoring task
+- `/alerts` API — Real-time notification endpoint
+
+### Technical Details
+- **pHash Indexing:** Integrated `imagehash.phash` to create a perceptual signature for every protected asset.
+- **BK-Tree Search:** Implemented a Burkhard-Keller tree to enable $O(\log N)$ fuzzy matching across the global registry.
+- **Watchdog Daemon:** Created a background process that simulates an internet-wide crawler, using pHash as a fast-filter before running heavy DWT verification.
+- **Enterprise Logic:** Integrated subscription tier checks (`Enterprise` vs `Basic`) to trigger automatic Gemini-based DMCA drafting.
+
+---
+
 ## Future Roadmap (Post-Hackathon)
 
 | Feature | Technology | Impact |
 |---------|-----------|--------|
 | Real blockchain anchoring | Polygon + Solidity | Immutable proof ledger |
-| Vector similarity search | Milvus / Pinecone | Sub-ms search across 10M+ frames |
+| Global Web Crawler | Distributed Scrapy | Real internet-wide monitoring |
 | Distributed processing | Celery + Redis | Parallel video watermarking |
 | Mobile-native file handling | `path_provider` + `dio` | Replace `dart:html` web-only code |
 | Production auth | Proper OAuth2 Client IDs | Replace mock Google Sign-In |

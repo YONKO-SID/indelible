@@ -109,7 +109,12 @@ def extract_watermark_dct(image_path: str, num_bits: int, delta: float = 80) -> 
         if idx >= len(ll_flat):
             break
         coef = ll_flat[idx]
-        quant_level = int(np.round(coef / delta))
-        extracted_bits.append(int(quant_level % 2))
+        nearest_multiple = np.round(coef / delta) * delta
+        distance = abs(coef - nearest_multiple)
+        
+        if distance > delta / 4.0:
+            extracted_bits.append(1)
+        else:
+            extracted_bits.append(0)
     
     return np.array(extracted_bits, dtype=np.uint8)

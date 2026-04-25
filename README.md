@@ -9,9 +9,10 @@ INDELIBLE embeds cryptographically signed, invisible watermarks into images and 
 ## How It Works
 
 ```
-1. PROTECT ──▶ User uploads media → DWT+QIM embeds signed payload → PNG returned
-2. VERIFY  ──▶ User uploads suspect copy → Payload extracted → HMAC verified → Proof report
-3. SCAN    ──▶ AI scrapes URL → Gemini classifies piracy → Legal notice drafted
+1. PROTECT ──▶ User uploads media → DWT+QIM embeds signed payload → PNG returned → pHash saved to Index
+2. WATCHDOG ──▶ Background daemon scans web → pHash matches BK-Tree? → DWT extracts proof → Push alert
+3. ENFORCE  ──▶ Gemini drafted DMCA notice → Enterprise legal response triggered
+4. MANUAL   ──▶ Direct upload of suspect copy → Fast cryptographic verification
 ```
 
 ### Core Pipeline
@@ -30,13 +31,12 @@ The payload is: `CreatorFingerprint | UTC Timestamp | HMAC-SHA256`, Reed-Solomon
 ```
 ┌──────────────┐     ┌──────────────┐     ┌──────────────┐
 │   Flutter    │────▶│   FastAPI    │────▶│   Python DSP │
-│   Frontend   │     │   + Uvicorn  │     │   + Gemini AI│
-│   (Web/Mobile)│◀────│   API Layer  │◀────│   Engine     │
+│   Dashboard  │◀────│   Alerts API │◀────│   + BK-Tree  │
 └──────────────┘     └──────────────┘     └──────────────┘
-       │                    │                     │
-       ▼                    ▼                     ▼
- Firebase Auth      Creator Registry       FFmpeg Video I/O
-                   (JSON fingerprint DB)
+       │                    ▲                     ▲
+       ▼                    │                     │
+ Firebase Auth      Monitoring Daemon      pHash Filter Index
+                   (Automated Scraper)    (pybktree Search)
 ```
 
 ---
@@ -54,6 +54,7 @@ The payload is: `CreatorFingerprint | UTC Timestamp | HMAC-SHA256`, Reed-Solomon
 | AI | google-genai (Gemini 2.5 Flash) | Multimodal piracy detection |
 | Video | FFmpeg (subprocess) | Frame extraction & stitching |
 | Scraping | httpx, BeautifulSoup4 | Web content crawling |
+| Indexing | imagehash, pybktree | pHash similarity search (BK-Tree) |
 
 ---
 
@@ -125,13 +126,24 @@ flutter pub get
 flutter run -d chrome
 ```
 
+### Production Deployment (Docker & Railway)
+
+The backend relies on heavy system libraries (`ffmpeg`, `libgl1`) and must be deployed using **Docker**.
+
+1. Commit the `backend/Dockerfile` and `backend/requirements.txt`.
+2. Go to **Railway.app**, create a new project, and select "Deploy from GitHub repo".
+3. Under the service **Settings → Build → Root Directory**, enter `/backend`.
+4. Railway will automatically build the container and provide a permanent HTTPS domain.
+5. Update `lib/src/services/api_service.dart` in Flutter with your new Railway URL.
+
 ---
 
 ## API Endpoints
 
 | Method | Endpoint | Body | Returns |
 |--------|----------|------|---------|
-| POST | `/protect` | `file` (multipart) + `user_uid` (form) | `creator_fingerprint`, `download_url`, `blockchain_tx` |
+| POST | `/protect` | `file` (multipart) + `user_uid` (form) | `creator_fingerprint`, `download_url`, `pHash_indexed` |
+| GET | `/alerts/{user_uid}` | — | Real-time piracy detections & DMCA drafts |
 | POST | `/verify` | `file` (multipart) | `status` (match_found/no_match), `proof_report` |
 | POST | `/scan-piracy` | `url` (form) | `ai_analysis`, `legal_notice_draft` |
 | GET | `/download/{filename}` | — | Binary file download |

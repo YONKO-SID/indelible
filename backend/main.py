@@ -6,6 +6,7 @@ from core.payload import create_payload, verify_payload
 from core.video_processor import extract_frames, stitch_video
 from core.scraper import SmartScraper
 from core.ai_engine import IndelibleAIEngine
+from core.bktree_index import index as bktree_index
 import os
 import tempfile
 import shutil
@@ -14,6 +15,7 @@ import hashlib
 from datetime import datetime
 import asyncio
 from fastapi.staticfiles import StaticFiles
+from core.monitoring_daemon import daemon
 
 app = FastAPI(title="Indelible Core API")
 
@@ -30,6 +32,12 @@ app.add_middleware(
 
 SECRET_KEY = b"hackathon_secret_key_123"
 REGISTRY_PATH = "creator_registry.json"
+ALERTS_PATH = "alerts.json"
+
+@app.on_event("startup")
+async def startup_event():
+    # Start the monitoring daemon in the background
+    asyncio.create_task(daemon.run())
 
 # --- Creator Fingerprint System ---
 def _load_registry() -> dict:
@@ -56,6 +64,7 @@ def generate_creator_fingerprint(user_uid: str) -> str:
         registry[fingerprint] = {
             "uid_hash": hashlib.sha256(user_uid.encode()).hexdigest(),
             "registered_at": datetime.utcnow().isoformat(),
+            "tier": "Enterprise" # Defaulting to Enterprise for hackathon demo
         }
         _save_registry(registry)
     return fingerprint
@@ -73,6 +82,24 @@ async def download_file(filename: str):
     return {"error": "File not found"}
 
 
+@app.get("/alerts/{user_uid}")
+async def get_alerts(user_uid: str):
+    """
+    Returns alerts for the specific user.
+    """
+    fingerprint = generate_creator_fingerprint(user_uid)
+    
+    if not os.path.exists(ALERTS_PATH):
+        return {"alerts": []}
+        
+    try:
+        with open(ALERTS_PATH, "r") as f:
+            all_alerts = json.load(f)
+            # Filter alerts for this specific user
+            user_alerts = [a for a in all_alerts if a.get("creator_fingerprint") == fingerprint]
+            return {"alerts": user_alerts}
+    except Exception as e:
+        return {"alerts": [], "error": str(e)}
 @app.get("/logs")
 async def get_upload_logs():
     """
@@ -174,6 +201,10 @@ async def protect_asset(
         meta_src = final_file + '.meta'
         if os.path.exists(meta_src):
             shutil.copy2(meta_src, final_out_path + '.meta')
+            
+        # Add to BKTree index (if image)
+        if not is_video:
+            bktree_index.add_asset(final_out_path, creator_fp)
         
         return {
             "status": "protected",

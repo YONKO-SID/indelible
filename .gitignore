@@ -47,10 +47,10 @@ app.*.map.json
 .env
 .venv/
 __pycache__/
-backend_shit/
 firebase.json
 LEARNING_GUIDE.md
 PROJECT_STATUS.md
+.pytest_cache/
 
 # Backend test artifacts & outputs (not for version control)
 backend/outputs/
@@ -60,3 +60,6 @@ backend/sim_output.png
 backend/sim_output.png.meta
 backend/*.meta
 backend/creator_registry.json
+backend/alerts.json
+backend/phash_registry.json
+backend/dummy_pirate_web/

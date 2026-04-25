@@ -3,6 +3,7 @@ import 'dart:convert';
 import '../models/asset_log.dart';
 import '../models/activity_event.dart';
 import '../models/protection_stats.dart';
+import '../models/alert.dart';
 
 /// HTTP service for communicating with the INDELIBLE backend API.
 ///
@@ -93,6 +94,28 @@ class ApiService {
       return events.take(limit).toList();
     } catch (e) {
       throw Exception('Error fetching activity events: $e');
+    }
+  }
+
+  /// Fetch piracy alerts for the current user
+  Future<List<PiracyAlert>> fetchAlerts(String userUid) async {
+    try {
+      final response = await http.get(
+        Uri.parse('$_baseUrl/alerts/$userUid'),
+        headers: {'Accept': 'application/json'},
+      ).timeout(const Duration(seconds: 10));
+
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
+        final alerts = data['alerts'] as List<dynamic>? ?? [];
+        return alerts
+            .map((item) => PiracyAlert.fromJson(item as Map<String, dynamic>))
+            .toList();
+      } else {
+        throw Exception('Failed to fetch alerts: ${response.statusCode}');
+      }
+    } catch (e) {
+      throw Exception('Error fetching alerts: $e');
     }
   }
 

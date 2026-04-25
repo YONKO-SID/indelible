@@ -64,6 +64,7 @@ indelible/
 | `POST` | `/protect` | `file` (multipart) + `user_uid` (form) | `creator_fingerprint`, `payload_hash`, `download_url` |
 | `POST` | `/verify` | `file` (multipart) | `status`, `confidence`, `proof_report` |
 | `POST` | `/scan-piracy` | `url` (form) | `ai_analysis`, `legal_notice_draft` |
+| `GET` | `/alerts/{uid}` | — | Real-time piracy detection notifications |
 | `GET` | `/logs` | — | `logs[]` with fingerprint + timestamps |
 | `GET` | `/download/{filename}` | — | Binary `FileResponse` |
 
@@ -153,28 +154,29 @@ graph TD
 
     I --> M[Scrape URL → Gemini classify → DMCA notice]
     J --> N[GET /logs → fingerprint + timestamps per asset]
+    
+    E --> O[Monitoring Daemon]
+    O -- Loop --> P{New file in wild?}
+    P -- Yes --> Q[pHash Filter → DWT Proof → /alerts Push]
+    Q --> R[Dashboard Alert Banner]
 ```
 
 ---
 
 ## 9. Running Tests
 
+We use `pytest` for automated test suites.
+
 ```bash
 # From backend/ with venv active:
-
-# Test watermark round-trip
-python -c "
-from core.watermark import embed_watermark_dct, extract_watermark_dct
-from core.payload import create_payload, verify_payload
-import numpy as np
-
-SECRET = b'hackathon_secret_key_123'
-ps, _, rs = create_payload('INDL-TEST', SECRET)
-path = embed_watermark_dct('test.jpg', rs, 'out.png', delta=80)
-bits = extract_watermark_dct(path, len(rs), delta=80)
-print(verify_payload(bits, SECRET))
-"
+$env:PYTHONPATH="."  # For Windows PowerShell
+pytest tests/ -v
 ```
+
+This runs:
+- `test_payload.py` (HMAC signing + Reed-Solomon recovery)
+- `test_watermark.py` (DWT-QIM embedding + blind extraction math)
+- `test_api.py` (FastAPI TestClient end-to-end endpoints)
 
 ---
 
@@ -187,3 +189,24 @@ print(verify_payload(bits, SECRET))
 | Download button does nothing | Browser popup blocked | Allow popups, or use `dart:html` AnchorElement |
 | Verify returns `no_match` | `.meta` sidecar not copied | Ensure `outputs/protected_X.png.meta` exists |
 | Same timestamp for two files | Uploaded within same second | Expected behaviour — timestamps are UTC, 1s resolution |
+
+---
+
+## 11. Deployment (Docker + Railway)
+
+Because of OpenCV and FFmpeg system dependencies, the backend is containerized.
+1. `Dockerfile` installs `python:3.10-slim`, `ffmpeg`, `libgl1`.
+2. Connect the GitHub repo to **Railway**.
+3. Under Railway Settings → Build → Root Directory, set `/backend`.
+4. Update Flutter's `api_service.dart` with the Railway URL.
+
+---
+
+## 12. The Automated Watchdog Daemon
+
+The watchdog system ensures passive protection without user intervention.
+
+- **`core/bktree_index.py`**: A Burkhard-Keller tree that stores the `pHash` of every protected asset. It allows for fast "fuzzy" similarity searches across the database.
+- **`core/monitoring_daemon.py`**: A background task that runs every 15 seconds. It simulates an internet crawler by scanning target directories.
+- **Flow**: `New Image` → `pHash Match (BK-Tree)` → `DWT Verification` → `Subscription Check` → `Alert Generation`.
+- **Alerts**: Stored in `alerts.json` and served via `/alerts/{user_uid}` for the Flutter polling system.
