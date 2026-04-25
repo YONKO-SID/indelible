@@ -23,6 +23,11 @@ app = FastAPI(title="Indelible Core API")
 os.makedirs("outputs", exist_ok=True)
 app.mount("/outputs", StaticFiles(directory="outputs"), name="outputs")
 
+@app.get("/")
+async def root():
+    return {"status": "online", "message": "Indelible Core API is running", "timestamp": datetime.utcnow().isoformat()}
+
+
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
