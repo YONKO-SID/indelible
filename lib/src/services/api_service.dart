@@ -13,7 +13,7 @@ import '../models/alert.dart';
 /// - Error handling and caching
 /// - Base URL management
 class ApiService {
-  static const String _baseUrl = 'https://indelible-production-702a.up.railway.app';
+  static const String _baseUrl = 'https://indelible.up.railway.app';
   static const Duration _cacheDuration = Duration(seconds: 30);
 
   // Simple in-memory cache

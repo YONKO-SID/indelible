@@ -11,6 +11,7 @@ ffmpeg-python==0.2.0
 
 # Image Processing/fallback
 Pillow
+beautifulsoup4==4.12.3
 
 # Indexing & Search
 imagehash==4.3.1
