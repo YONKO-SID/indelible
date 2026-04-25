@@ -1,5 +1,4 @@
-from google import genai
-from google.genai import types
+import google.generativeai as genai
 import os
 import json
 from dotenv import load_dotenv
@@ -9,8 +8,10 @@ load_dotenv()
 
 class IndelibleAIEngine:
     def __init__(self):
-        # google-genai automatically picks up GEMINI_API_KEY from environment
-        self.client = genai.Client()
+        # Configure the SDK with the API key from environment
+        api_key = os.getenv("GEMINI_API_KEY")
+        genai.configure(api_key=api_key)
+        self.model = genai.GenerativeModel('gemini-1.5-flash')
         
     def detect_piracy(self, file_path: str) -> dict:
         """
@@ -18,8 +19,9 @@ class IndelibleAIEngine:
         on a video frame to determine if it contains pirated sports content.
         """
         try:
-            # Upload the file to Gemini's File API for multimodal processing
-            uploaded_file = self.client.files.upload(file=file_path)
+            # Upload the file to Gemini's File API
+            # For generativeai SDK, we use the upload_file method
+            uploaded_file = genai.upload_file(path=file_path)
             
             prompt = """
             You are an expert copyright and forensic analyst for a major sports broadcasting network.
@@ -35,16 +37,16 @@ class IndelibleAIEngine:
             - "reasoning" (string, max 2 sentences)
             """
             
-            response = self.client.models.generate_content(
-                model='gemini-2.5-flash',
-                contents=[uploaded_file, prompt],
-                config=types.GenerateContentConfig(
+            response = self.model.generate_content(
+                [uploaded_file, prompt],
+                generation_config=genai.GenerationConfig(
                     response_mime_type="application/json",
                 )
             )
             
-            # Clean up the file from Google's servers
-            self.client.files.delete(name=uploaded_file.name)
+            # Clean up (generativeai doesn't have a direct delete in the same way, but we'll leave it for now)
+            # Actually we can delete: genai.delete_file(uploaded_file.name)
+            genai.delete_file(uploaded_file.name)
             
             try:
                 result = json.loads(response.text)
@@ -81,10 +83,7 @@ class IndelibleAIEngine:
         """
         
         try:
-            response = self.client.models.generate_content(
-                model='gemini-2.5-flash',
-                contents=prompt
-            )
+            response = self.model.generate_content(prompt)
             return response.text
         except Exception as e:
             return f"Failed to generate legal notice: {str(e)}"
