@@ -3,6 +3,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import '../../config/themes/app_colors.dart';
+import '../../services/api_service.dart';
 
 // ═══════════════════════════════════════════════════════════
 /// AI-powered piracy scanner card.
@@ -48,7 +49,7 @@ class _PiracyScannerCardState extends State<PiracyScannerCard> {
     try {
       final request = http.MultipartRequest(
         'POST',
-        Uri.parse('https://indelible-production-702a.up.railway.app/scan-piracy'),
+        Uri.parse('${ApiService.baseUrl}/scan-piracy'),
       );
       request.fields['url'] = url;
 

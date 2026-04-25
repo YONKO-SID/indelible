@@ -4,6 +4,7 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:file_picker/file_picker.dart';
 import '../config/themes/app_colors.dart';
+import '../services/api_service.dart';
 import 'layouts/dashboard_layout.dart';
 
 // ═══════════════════════════════════════════════════════════════
@@ -62,7 +63,7 @@ class _VerifyScreenState extends State<VerifyScreen> {
     try {
       final request = http.MultipartRequest(
         'POST',
-        Uri.parse('https://indelible-production-702a.up.railway.app/verify'),
+        Uri.parse('${ApiService.baseUrl}/verify'),
       );
       request.files.add(http.MultipartFile.fromBytes(
         'file',
@@ -89,7 +90,7 @@ class _VerifyScreenState extends State<VerifyScreen> {
     } catch (e) {
       if (!mounted) return;
       setState(() {
-        _error = 'Connection error: $e\n\nMake sure the backend is running at the production endpoint.';
+        _error = 'Connection error: $e\n\nMake sure the backend is running on port 8000.';
         _isVerifying = false;
       });
     }

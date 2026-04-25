@@ -62,7 +62,7 @@ MP4 input → FFmpeg (1 fps) → N frames → watermark each → FFmpeg stitch �
 ### Endpoints
 | Endpoint | Method | Input | Output |
 |----------|--------|-------|--------|
-| `/protect` | POST | file + user_uid | fingerprint, download_url, pHash_indexed |
+| `/protect` | POST | file + user_uid | fingerprint, download_url, blockchain_tx |
 | `/verify` | POST | file | match status, HMAC proof report |
 | `/scan-piracy` | POST | url | AI analysis, DMCA legal draft |
 | `/download/{f}` | GET | — | FileResponse (octet-stream) |

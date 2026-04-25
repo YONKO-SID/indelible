@@ -7,6 +7,7 @@ import 'package:file_picker/file_picker.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../config/themes/app_colors.dart';
 import '../services/auth_service.dart';
+import '../services/api_service.dart';
 import 'layouts/dashboard_layout.dart';
 
 // ═══════════════════════════════════════════════════════════════
@@ -82,7 +83,7 @@ class _ProtectScreenState extends State<ProtectScreen> {
       final uid = _authService.currentUser?.uid ?? 'anonymous';
       final request = http.MultipartRequest(
         'POST',
-        Uri.parse('https://indelible-production-702a.up.railway.app/protect'),
+        Uri.parse('${ApiService.baseUrl}/protect'),
       );
       request.files.add(http.MultipartFile.fromBytes(
         'file',
@@ -112,7 +113,7 @@ class _ProtectScreenState extends State<ProtectScreen> {
     } catch (e) {
       if (!mounted) return;
       setState(() {
-        _error = 'Connection failed: $e\n\nMake sure the backend is running at the production endpoint.';
+        _error = 'Connection failed: $e\n\nMake sure the backend is running on port 8000.';
         _currentStep = -1;
         _isProcessing = false;
       });
