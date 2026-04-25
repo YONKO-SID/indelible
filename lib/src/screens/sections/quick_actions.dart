@@ -6,6 +6,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'dart:convert';
 import 'package:url_launcher/url_launcher.dart';
 import '../../config/themes/app_colors.dart';
+import '../../services/api_service.dart';
 
 // ═══════════════════════════════════════════════════════════
 /// Primary action buttons for core app functions.
@@ -47,7 +48,7 @@ class _QuickActionsState extends State<QuickActions> {
 
         var request = http.MultipartRequest(
           'POST',
-          Uri.parse('http://192.168.1.49:8000/$endpoint'),
+          Uri.parse('${ApiService.baseUrl}/$endpoint'),
         );
 
         // Attach the file

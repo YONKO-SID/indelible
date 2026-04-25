@@ -13,7 +13,7 @@ import '../models/alert.dart';
 /// - Error handling and caching
 /// - Base URL management
 class ApiService {
-  static const String _baseUrl = 'https://indelible.up.railway.app';
+  static const String baseUrl = 'https://indelible.up.railway.app';
   static const Duration _cacheDuration = Duration(seconds: 30);
 
   // Simple in-memory cache
@@ -23,7 +23,7 @@ class ApiService {
   Future<List<AssetLog>> fetchAssetLogs() async {
     try {
       final response = await http.get(
-        Uri.parse('$_baseUrl/logs'),
+        Uri.parse('$baseUrl/logs'),
         headers: {'Accept': 'application/json'},
       ).timeout(const Duration(seconds: 10));
 
@@ -101,7 +101,7 @@ class ApiService {
   Future<List<PiracyAlert>> fetchAlerts(String userUid) async {
     try {
       final response = await http.get(
-        Uri.parse('$_baseUrl/alerts/$userUid'),
+        Uri.parse('$baseUrl/alerts/$userUid'),
         headers: {'Accept': 'application/json'},
       ).timeout(const Duration(seconds: 10));
 
@@ -123,7 +123,7 @@ class ApiService {
   Future<bool> isBackendAvailable() async {
     try {
       final response = await http
-          .get(Uri.parse('$_baseUrl/logs'))
+          .get(Uri.parse('$baseUrl/logs'))
           .timeout(const Duration(seconds: 5));
       return response.statusCode == 200;
     } catch (e) {

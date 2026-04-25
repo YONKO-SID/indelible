@@ -4,6 +4,7 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:url_launcher/url_launcher.dart';
 import '../../config/themes/app_colors.dart';
+import '../../services/api_service.dart';
 
 // ═══════════════════════════════════════════════════════════
 /// Live upload log fetched from the FastAPI /logs endpoint.
@@ -41,7 +42,7 @@ class _UploadLogSectionState extends State<UploadLogSection> {
     });
     try {
       final response = await http
-          .get(Uri.parse('http://192.168.1.49:8000/logs'))
+          .get(Uri.parse('${ApiService.baseUrl}/logs'))
           .timeout(const Duration(seconds: 8));
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);

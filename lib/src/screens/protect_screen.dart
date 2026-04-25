@@ -7,6 +7,7 @@ import 'package:file_picker/file_picker.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../config/themes/app_colors.dart';
 import '../services/auth_service.dart';
+import '../services/api_service.dart';
 import 'layouts/dashboard_layout.dart';
 
 // ═══════════════════════════════════════════════════════════════
@@ -82,7 +83,7 @@ class _ProtectScreenState extends State<ProtectScreen> {
       final uid = _authService.currentUser?.uid ?? 'anonymous';
       final request = http.MultipartRequest(
         'POST',
-        Uri.parse('http://192.168.1.49:8000/protect'),
+        Uri.parse('${ApiService.baseUrl}/protect'),
       );
       request.files.add(http.MultipartFile.fromBytes(
         'file',

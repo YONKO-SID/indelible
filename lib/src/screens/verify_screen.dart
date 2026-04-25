@@ -4,6 +4,7 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:file_picker/file_picker.dart';
 import '../config/themes/app_colors.dart';
+import '../services/api_service.dart';
 import 'layouts/dashboard_layout.dart';
 
 // ═══════════════════════════════════════════════════════════════
@@ -62,7 +63,7 @@ class _VerifyScreenState extends State<VerifyScreen> {
     try {
       final request = http.MultipartRequest(
         'POST',
-        Uri.parse('http://192.168.1.49:8000/verify'),
+        Uri.parse('${ApiService.baseUrl}/verify'),
       );
       request.files.add(http.MultipartFile.fromBytes(
         'file',
