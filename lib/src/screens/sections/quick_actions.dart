@@ -4,8 +4,7 @@ import 'package:file_picker/file_picker.dart';
 import 'package:http/http.dart' as http;
 import 'package:firebase_auth/firebase_auth.dart';
 import 'dart:convert';
-// ignore: avoid_web_libraries_in_flutter
-import 'dart:html' as html;
+import 'package:url_launcher/url_launcher.dart';
 import '../../config/themes/app_colors.dart';
 
 // ═══════════════════════════════════════════════════════════
@@ -48,7 +47,7 @@ class _QuickActionsState extends State<QuickActions> {
 
         var request = http.MultipartRequest(
           'POST',
-          Uri.parse('http://127.0.0.1:8000/$endpoint'),
+          Uri.parse('http://192.168.1.49:8000/$endpoint'),
         );
 
         // Attach the file
@@ -88,10 +87,11 @@ class _QuickActionsState extends State<QuickActions> {
   }
 
   /// Triggers a real browser download using an anchor element.
-  void _downloadFile(String url) {
-    html.AnchorElement(href: url)
-      ..setAttribute('download', '')
-      ..click();
+  void _downloadFile(String url) async {
+    final uri = Uri.parse(url);
+    if (await canLaunchUrl(uri)) {
+      await launchUrl(uri);
+    }
   }
 
   void _showResultDialog(String actionName, Map<String, dynamic> data) {

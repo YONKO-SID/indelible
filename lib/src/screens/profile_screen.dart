@@ -5,6 +5,7 @@ import '../services/api_service.dart';
 import '../services/auth_service.dart';
 import '../models/protection_stats.dart';
 import '../widgets/animations/animation_builders.dart';
+import 'layouts/dashboard_layout.dart';
 
 /// Enhanced Profile Screen with real user stats and smooth animations
 ///
@@ -57,25 +58,23 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: AppColors.surface,
-      appBar: AppBar(
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-        iconTheme: const IconThemeData(color: AppColors.onSurfaceVariant),
-        title: Text(
-          'Profile & Statistics',
-          style: GoogleFonts.spaceGrotesk(
-            color: AppColors.onSurface,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-      ),
-      body: SingleChildScrollView(
+    return DashboardLayout(
+      currentRoute: '/profile',
+      child: SingleChildScrollView(
         padding: const EdgeInsets.all(24.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            Text(
+              'Profile & Statistics',
+              style: GoogleFonts.spaceGrotesk(
+                color: AppColors.onSurface,
+                fontSize: 22,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            const SizedBox(height: 32),
+
             // User profile header with stats
             SlideInAnimation(
               child: _buildProfileHeader(),

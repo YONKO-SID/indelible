@@ -165,8 +165,8 @@ async def protect_asset(
             final_file = embed_watermark_dct(temp_in, rs_bits, temp_out, delta=80)
         
         # Save to static outputs folder so user can download it
-        # Always save as PNG for lossless watermark integrity
-        out_filename = f"protected_{file.filename.rsplit('.', 1)[0]}.png"
+        ext = ".mp4" if is_video else ".png"
+        out_filename = f"protected_{file.filename.rsplit('.', 1)[0]}{ext}"
         final_out_path = os.path.join("outputs", out_filename)
         shutil.copy2(final_file, final_out_path)
         

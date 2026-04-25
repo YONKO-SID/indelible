@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+// ignore: avoid_web_libraries_in_flutter
+import 'package:file_picker/file_picker.dart';
+import 'package:url_launcher/url_launcher.dart';
 import '../config/themes/app_colors.dart';
 import '../services/auth_service.dart';
 import 'layouts/dashboard_layout.dart';
@@ -20,7 +23,7 @@ class ProtectScreen extends StatefulWidget {
 
 class _ProtectScreenState extends State<ProtectScreen> {
   // ── State ──────────────────────────────────────────────────
-  bool _isDragOver = false;
+  final bool _isDragOver = false;
   bool _isProcessing = false;
   int _currentStep = -1; // -1 = idle, 0-4 = pipeline step
   Map<String, dynamic>? _result;
@@ -30,35 +33,31 @@ class _ProtectScreenState extends State<ProtectScreen> {
 
   final AuthService _authService = AuthService();
 
-  static const _steps = [
+  static final _steps = [
     ('Upload', 'Sending file to backend', Icons.upload_file_rounded),
-    ('Extract', 'FFmpeg frame extraction', Icons.photo_film_rounded),
+    ('Extract', 'FFmpeg frame extraction', Icons.movie_creation_rounded),
     ('DWT', 'Wavelet transform (LL-band)', Icons.waves_rounded),
     ('Watermark', 'QIM + HMAC embedding', Icons.fingerprint_rounded),
     ('Store', 'Writing .meta sidecar', Icons.save_rounded),
   ];
 
   // ── File picking ───────────────────────────────────────────
-  void _pickFile() {
-    final input = html.FileUploadInputElement()
-      ..accept = 'image/*,video/*'
-      ..click();
+  void _pickFile() async {
+    FilePickerResult? result = await FilePicker.platform.pickFiles(
+      type: FileType.custom,
+      allowedExtensions: ['jpg', 'png', 'mp4', 'webm', 'mov'],
+      withData: true,
+    );
 
-    input.onChange.listen((event) {
-      final file = input.files?.first;
-      if (file == null) return;
-      final reader = html.FileReader();
-      reader.readAsArrayBuffer(file);
-      reader.onLoadEnd.listen((_) {
-        setState(() {
-          _selectedFileName = file.name;
-          _selectedFileBytes = (reader.result as List<int>);
-          _result = null;
-          _error = null;
-          _currentStep = -1;
-        });
+    if (result != null && result.files.first.bytes != null) {
+      setState(() {
+        _selectedFileName = result.files.first.name;
+        _selectedFileBytes = result.files.first.bytes!.toList();
+        _result = null;
+        _error = null;
+        _currentStep = -1;
       });
-    });
+    }
   }
 
   // ── Protection pipeline ────────────────────────────────────
@@ -83,7 +82,7 @@ class _ProtectScreenState extends State<ProtectScreen> {
       final uid = _authService.currentUser?.uid ?? 'anonymous';
       final request = http.MultipartRequest(
         'POST',
-        Uri.parse('http://127.0.0.1:8000/protect'),
+        Uri.parse('http://192.168.1.49:8000/protect'),
       );
       request.files.add(http.MultipartFile.fromBytes(
         'file',
@@ -94,6 +93,8 @@ class _ProtectScreenState extends State<ProtectScreen> {
 
       final response = await request.send();
       final body = await response.stream.bytesToString();
+
+      if (!mounted) return;
 
       if (response.statusCode == 200) {
         setState(() {
@@ -109,6 +110,7 @@ class _ProtectScreenState extends State<ProtectScreen> {
         });
       }
     } catch (e) {
+      if (!mounted) return;
       setState(() {
         _error = 'Connection failed: $e\n\nMake sure the backend is running on port 8000.';
         _currentStep = -1;
@@ -117,12 +119,13 @@ class _ProtectScreenState extends State<ProtectScreen> {
     }
   }
 
-  void _downloadProtected() {
+  void _downloadProtected() async {
     final url = _result?['download_url'] as String?;
     if (url == null) return;
-    html.AnchorElement(href: url)
-      ..setAttribute('download', '')
-      ..click();
+    final uri = Uri.parse(url);
+    if (await canLaunchUrl(uri)) {
+      await launchUrl(uri);
+    }
   }
 
   void _reset() {
@@ -255,8 +258,10 @@ class _ProtectScreenState extends State<ProtectScreen> {
               ),
               const SizedBox(height: 24),
               if (_selectedFileName != null && !_isProcessing)
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
+                Wrap(
+                  alignment: WrapAlignment.center,
+                  spacing: 16,
+                  runSpacing: 16,
                   children: [
                     OutlinedButton.icon(
                       onPressed: _reset,
@@ -267,7 +272,6 @@ class _ProtectScreenState extends State<ProtectScreen> {
                         side: const BorderSide(color: AppColors.outlineVariant),
                       ),
                     ),
-                    const SizedBox(width: 16),
                     FilledButton.icon(
                       onPressed: _protect,
                       icon: const Icon(Icons.shield_rounded, size: 18),
@@ -601,21 +605,21 @@ class _ProtectScreenState extends State<ProtectScreen> {
           const SizedBox(height: 20),
 
           // ── Actions ──
-          Row(
+          Wrap(
+            alignment: WrapAlignment.start,
+            spacing: 12,
+            runSpacing: 12,
             children: [
-              Expanded(
-                child: FilledButton.icon(
-                  onPressed: _downloadProtected,
-                  icon: const Icon(Icons.download_rounded, size: 18),
-                  label: const Text('Download Protected File'),
-                  style: FilledButton.styleFrom(
-                    backgroundColor: AppColors.primary,
-                    foregroundColor: AppColors.onPrimary,
-                    padding: const EdgeInsets.symmetric(vertical: 14),
-                  ),
+              FilledButton.icon(
+                onPressed: _downloadProtected,
+                icon: const Icon(Icons.download_rounded, size: 18),
+                label: const Text('Download Protected File'),
+                style: FilledButton.styleFrom(
+                  backgroundColor: AppColors.primary,
+                  foregroundColor: AppColors.onPrimary,
+                  padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 14),
                 ),
               ),
-              const SizedBox(width: 12),
               OutlinedButton.icon(
                 onPressed: _reset,
                 icon: const Icon(Icons.add_rounded, size: 16),
@@ -623,8 +627,7 @@ class _ProtectScreenState extends State<ProtectScreen> {
                 style: OutlinedButton.styleFrom(
                   foregroundColor: AppColors.onSurface,
                   side: const BorderSide(color: AppColors.outlineVariant),
-                  padding: const EdgeInsets.symmetric(
-                      horizontal: 20, vertical: 14),
+                  padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 14),
                 ),
               ),
             ],

@@ -281,6 +281,3 @@ class _ShimmerState extends State<Shimmer> with SingleTickerProviderStateMixin {
     );
   }
 }
-    );
-  }
-}

@@ -2,8 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
-// ignore: avoid_web_libraries_in_flutter
-import 'dart:html' as html;
+import 'package:file_picker/file_picker.dart';
 import '../config/themes/app_colors.dart';
 import 'layouts/dashboard_layout.dart';
 
@@ -33,25 +32,21 @@ class _VerifyScreenState extends State<VerifyScreen> {
   List<int>? _selectedFileBytes;
 
   // ── File picking ───────────────────────────────────────────
-  void _pickFile() {
-    final input = html.FileUploadInputElement()
-      ..accept = 'image/*,video/*'
-      ..click();
+  void _pickFile() async {
+    FilePickerResult? result = await FilePicker.platform.pickFiles(
+      type: FileType.custom,
+      allowedExtensions: ['jpg', 'png', 'mp4', 'webm', 'mov'],
+      withData: true,
+    );
 
-    input.onChange.listen((event) {
-      final file = input.files?.first;
-      if (file == null) return;
-      final reader = html.FileReader();
-      reader.readAsArrayBuffer(file);
-      reader.onLoadEnd.listen((_) {
-        setState(() {
-          _selectedFileName = file.name;
-          _selectedFileBytes = (reader.result as List<int>);
-          _result = null;
-          _error = null;
-        });
+    if (result != null && result.files.first.bytes != null) {
+      setState(() {
+        _selectedFileName = result.files.first.name;
+        _selectedFileBytes = result.files.first.bytes!.toList();
+        _result = null;
+        _error = null;
       });
-    });
+    }
   }
 
   // ── Verification call ──────────────────────────────────────
@@ -67,7 +62,7 @@ class _VerifyScreenState extends State<VerifyScreen> {
     try {
       final request = http.MultipartRequest(
         'POST',
-        Uri.parse('http://127.0.0.1:8000/verify'),
+        Uri.parse('http://192.168.1.49:8000/verify'),
       );
       request.files.add(http.MultipartFile.fromBytes(
         'file',
@@ -77,6 +72,8 @@ class _VerifyScreenState extends State<VerifyScreen> {
 
       final response = await request.send();
       final body = await response.stream.bytesToString();
+
+      if (!mounted) return;
 
       if (response.statusCode == 200) {
         setState(() {
@@ -90,6 +87,7 @@ class _VerifyScreenState extends State<VerifyScreen> {
         });
       }
     } catch (e) {
+      if (!mounted) return;
       setState(() {
         _error = 'Connection error: $e\n\nMake sure the backend is running on port 8000.';
         _isVerifying = false;

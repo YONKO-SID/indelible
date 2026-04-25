@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'left_sidebar.dart';
-import 'top_app_bar.dart';
+import '../sections/left_sidebar.dart';
+import '../sections/top_app_bar.dart';
 import '../../config/themes/app_colors.dart';
 
 class DashboardLayout extends StatelessWidget {

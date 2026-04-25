@@ -48,7 +48,7 @@ class _PiracyScannerCardState extends State<PiracyScannerCard> {
     try {
       final request = http.MultipartRequest(
         'POST',
-        Uri.parse('http://127.0.0.1:8000/scan-piracy'),
+        Uri.parse('http://192.168.1.49:8000/scan-piracy'),
       );
       request.fields['url'] = url;
 

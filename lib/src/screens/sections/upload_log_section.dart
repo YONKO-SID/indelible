@@ -2,8 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
-// ignore: avoid_web_libraries_in_flutter
-import 'dart:html' as html;
+import 'package:url_launcher/url_launcher.dart';
 import '../../config/themes/app_colors.dart';
 
 // ═══════════════════════════════════════════════════════════
@@ -42,7 +41,7 @@ class _UploadLogSectionState extends State<UploadLogSection> {
     });
     try {
       final response = await http
-          .get(Uri.parse('http://127.0.0.1:8000/logs'))
+          .get(Uri.parse('http://192.168.1.49:8000/logs'))
           .timeout(const Duration(seconds: 8));
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
@@ -74,10 +73,11 @@ class _UploadLogSectionState extends State<UploadLogSection> {
   }
 
   /// Triggers a browser download for a protected asset.
-  void _downloadFile(String url) {
-    html.AnchorElement(href: url)
-      ..setAttribute('download', '')
-      ..click();
+  void _downloadFile(String url) async {
+    final uri = Uri.parse(url);
+    if (await canLaunchUrl(uri)) {
+      await launchUrl(uri);
+    }
   }
 
   @override

@@ -95,56 +95,6 @@ class _HeroSectionState extends State<HeroSection>
               ],
             ),
           ),
-          // System Status Indicator
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-            decoration: BoxDecoration(
-              color: AppColors.surfaceContainerHigh.withValues(alpha: 0.8),
-              borderRadius: BorderRadius.circular(20),
-              border: Border.all(
-                color: AppColors.outlineVariant.withValues(alpha: 0.15),
-              ),
-            ),
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                AnimatedBuilder(
-                  animation: _pulseController,
-                  builder: (context, child) {
-                    return Container(
-                      width: 8,
-                      height: 8,
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        color: AppColors.secondary.withValues(
-                          alpha: _pulseController.value > 0.5 ? 1.0 : 0.4,
-                        ),
-                        boxShadow: [
-                          BoxShadow(
-                            color: AppColors.secondary.withValues(
-                              alpha: _pulseController.value,
-                            ),
-                            blurRadius: 8,
-                            spreadRadius: 2,
-                          )
-                        ],
-                      ),
-                    );
-                  },
-                ),
-                const SizedBox(width: 8),
-                Text(
-                  'SYSTEM ONLINE',
-                  style: GoogleFonts.jetBrainsMono(
-                    color: AppColors.secondary,
-                    fontSize: 10,
-                    fontWeight: FontWeight.w700,
-                    letterSpacing: 1.0,
-                  ),
-                ),
-              ],
-            ),
-          )
         ],
       ),
     );

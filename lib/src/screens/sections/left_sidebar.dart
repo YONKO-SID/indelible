@@ -19,17 +19,14 @@ class LeftSidebar extends StatelessWidget {
             padding: const EdgeInsets.all(24.0),
             child: Row(
               children: [
-                Container(
-                  padding: const EdgeInsets.all(8),
-                  decoration: BoxDecoration(
-                    color: AppColors.primary,
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  child: const Icon(Icons.shield_rounded, color: Colors.white, size: 24),
+                Image.asset(
+                  'assets/images/Indelible_logo.png',
+                  width: 32,
+                  height: 32,
                 ),
                 const SizedBox(width: 12),
                 Text(
-                  'FlareLine', // Mocking the FlareLine style, but maybe we should use Indelible
+                  'INDELIBLE', 
                   style: GoogleFonts.spaceGrotesk(
                     color: AppColors.onSurface,
                     fontSize: 24,

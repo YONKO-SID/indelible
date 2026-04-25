@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
-import 'package:indelible/src/config/themes/app_colors.dart';
 import 'package:indelible/src/screens/layouts/dashboard_layout.dart';
 import 'package:indelible/src/screens/sections/hero_section.dart';
 import 'package:indelible/src/screens/sections/stats_grid.dart';
