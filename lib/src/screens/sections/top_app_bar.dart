@@ -61,7 +61,7 @@ class _TopAppBarState extends State<TopAppBar> {
 
   Future<void> _checkBackendStatus() async {
     try {
-      final response = await http.get(Uri.parse('http://192.168.1.49:8000/logs')).timeout(const Duration(seconds: 3));
+      final response = await http.get(Uri.parse('https://indelible-production-702a.up.railway.app/logs')).timeout(const Duration(seconds: 3));
       if (mounted && !_isBackendOnline && response.statusCode == 200) {
         setState(() => _isBackendOnline = true);
       } else if (mounted && response.statusCode != 200) {

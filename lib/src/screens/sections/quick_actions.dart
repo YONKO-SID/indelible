@@ -47,7 +47,7 @@ class _QuickActionsState extends State<QuickActions> {
 
         var request = http.MultipartRequest(
           'POST',
-          Uri.parse('http://192.168.1.49:8000/$endpoint'),
+          Uri.parse('https://indelible-production-702a.up.railway.app/$endpoint'),
         );
 
         // Attach the file

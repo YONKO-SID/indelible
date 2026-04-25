@@ -41,7 +41,7 @@ class _UploadLogSectionState extends State<UploadLogSection> {
     });
     try {
       final response = await http
-          .get(Uri.parse('http://192.168.1.49:8000/logs'))
+          .get(Uri.parse('https://indelible-production-702a.up.railway.app/logs'))
           .timeout(const Duration(seconds: 8));
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);

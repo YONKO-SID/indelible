@@ -82,7 +82,7 @@ class _ProtectScreenState extends State<ProtectScreen> {
       final uid = _authService.currentUser?.uid ?? 'anonymous';
       final request = http.MultipartRequest(
         'POST',
-        Uri.parse('http://192.168.1.49:8000/protect'),
+        Uri.parse('https://indelible-production-702a.up.railway.app/protect'),
       );
       request.files.add(http.MultipartFile.fromBytes(
         'file',
@@ -112,7 +112,7 @@ class _ProtectScreenState extends State<ProtectScreen> {
     } catch (e) {
       if (!mounted) return;
       setState(() {
-        _error = 'Connection failed: $e\n\nMake sure the backend is running on port 8000.';
+        _error = 'Connection failed: $e\n\nMake sure the backend is running at the production endpoint.';
         _currentStep = -1;
         _isProcessing = false;
       });
