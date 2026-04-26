@@ -14,7 +14,6 @@ import '../models/alert.dart';
 /// - Base URL management
 class ApiService {
   static const String baseUrl = 'https://indelible.up.railway.app';
-  static const Duration _cacheDuration = Duration(seconds: 30);
 
   // Simple in-memory cache
   static final Map<String, _CacheEntry> _cache = {};
@@ -134,24 +133,6 @@ class ApiService {
   /// Clear cache
   void clearCache() {
     _cache.clear();
-  }
-
-  /// Get single cached entry or null if expired
-  static T? _getCached<T>(String key) {
-    final entry = _cache[key];
-    if (entry == null) return null;
-
-    if (DateTime.now().difference(entry.timestamp) > _cacheDuration) {
-      _cache.remove(key);
-      return null;
-    }
-
-    return entry.value as T?;
-  }
-
-  /// Set cache entry
-  static void _setCached<T>(String key, T value) {
-    _cache[key] = _CacheEntry(value, DateTime.now());
   }
 }
 

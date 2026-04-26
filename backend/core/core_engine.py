@@ -8,7 +8,16 @@ import pywt
 import reedsolo
 
 # --- CONFIGURATION ---
-SECRET_KEY = b"indelible_hackathon_key"
+import os
+from dotenv import load_dotenv
+load_dotenv()
+
+# Prefer environment-provided secret, fallback to built-in test key for local dev.
+_SECRET = os.getenv("SECRET_KEY", "indelible_hackathon_key")
+if _SECRET == "indelible_hackathon_key":
+    # runtime warning for dev mode
+    print("[WARN] Using bundled fallback SECRET_KEY — do not use in production.")
+SECRET_KEY = _SECRET.encode()
 
 DELTA = 30  # QIM Quantization Step Size
 INPUT_IMAGE = "test.jpg"

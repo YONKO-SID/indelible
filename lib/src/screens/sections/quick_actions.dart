@@ -23,7 +23,6 @@ class QuickActions extends StatefulWidget {
 }
 
 class _QuickActionsState extends State<QuickActions> {
-  bool _isLoading = false;
 
   /// Returns the logged-in user's Firebase UID, or "anonymous" as fallback.
   String get _userUid => FirebaseAuth.instance.currentUser?.uid ?? 'anonymous';
@@ -35,16 +34,14 @@ class _QuickActionsState extends State<QuickActions> {
       );
 
       if (result != null && result.files.single.bytes != null) {
-        setState(() {
-          _isLoading = true;
-        });
-
-        ScaffoldMessenger.of(context).showSnackBar(
-           SnackBar(
-             content: Text('Uploading to $actionName engine...'),
-             backgroundColor: AppColors.primary,
-           ),
-        );
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('Uploading to $actionName engine...'),
+              backgroundColor: AppColors.primary,
+            ),
+          );
+        }
 
         var request = http.MultipartRequest(
           'POST',
@@ -72,17 +69,13 @@ class _QuickActionsState extends State<QuickActions> {
         }
       }
     } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Error: $e'),
-          backgroundColor: AppColors.errorContainer,
-        ),
-      );
-    } finally {
       if (mounted) {
-        setState(() {
-          _isLoading = false;
-        });
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Error: $e'),
+            backgroundColor: AppColors.errorContainer,
+          ),
+        );
       }
     }
   }
@@ -131,67 +124,43 @@ class _QuickActionsState extends State<QuickActions> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(24),
-      decoration: BoxDecoration(
-        color: AppColors.surfaceContainerLow,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(
-          color: AppColors.outlineVariant.withValues(alpha: 0.2),
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          'PRIMARY COMMANDS',
+          style: GoogleFonts.spaceGrotesk(
+            fontSize: 12,
+            fontWeight: FontWeight.bold,
+            color: AppColors.onSurfaceVariant,
+            letterSpacing: 2.0,
+          ),
         ),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.3),
-            blurRadius: 40,
-            offset: const Offset(0, 20),
-          ),
-        ],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(
-                'Quick Actions',
-                style: GoogleFonts.spaceGrotesk(
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
-                  color: AppColors.onSurface,
-                ),
-              ),
-              if (_isLoading)
-                const SizedBox(
-                  width: 20,
-                  height: 20,
-                  child: CircularProgressIndicator(
-                    strokeWidth: 2,
-                    color: AppColors.primary,
-                  ),
-                )
-              else
-                const Icon(Icons.bolt, color: AppColors.primary, size: 20),
-            ],
-          ),
-          const SizedBox(height: 24),
-          _buildActionButton(
-            title: 'Protect New Asset',
-            subtitle: 'Inject forensic DWT-DCT watermark',
-            icon: Icons.shield,
-            color: AppColors.primary,
-            onTap: () => Navigator.pushNamed(context, '/protect'),
-          ),
-          const SizedBox(height: 16),
-          _buildActionButton(
-            title: 'Verify Asset',
-            subtitle: 'Extract and decode HMAC hashes',
-            icon: Icons.radar,
-            color: AppColors.tertiary,
-            onTap: () => Navigator.pushNamed(context, '/verify'),
-          ),
-        ],
-      ),
+        const SizedBox(height: 20),
+        _buildActionButton(
+          title: 'Upload Media',
+          subtitle: 'Encrypted tunnel for new assets',
+          icon: Icons.cloud_upload_rounded,
+          accentColor: AppColors.tertiary,
+          onTap: () => _handleUpload('protect', 'Protection'),
+        ),
+        const SizedBox(height: 16),
+        _buildActionButton(
+          title: 'Verify Ownership',
+          subtitle: 'Blockchain timestamp validation',
+          icon: Icons.verified_user_rounded,
+          accentColor: AppColors.primary,
+          onTap: () => Navigator.pushNamed(context, '/verify'),
+        ),
+        const SizedBox(height: 16),
+        _buildActionButton(
+          title: 'Activity Log',
+          subtitle: 'Full audit trail & telemetry',
+          icon: Icons.history_rounded,
+          accentColor: AppColors.secondary,
+          onTap: () => Navigator.pushNamed(context, '/activity'),
+        ),
+      ],
     );
   }
 
@@ -199,54 +168,69 @@ class _QuickActionsState extends State<QuickActions> {
     required String title,
     required String subtitle,
     required IconData icon,
-    required Color color,
+    required Color accentColor,
     required VoidCallback? onTap,
   }) {
     return InkWell(
       onTap: onTap,
-      borderRadius: BorderRadius.circular(12),
+      borderRadius: BorderRadius.circular(16),
       child: Container(
-        padding: const EdgeInsets.all(16),
+        height: 100,
         decoration: BoxDecoration(
-          color: AppColors.surfaceContainerHigh,
-          borderRadius: BorderRadius.circular(12),
-          border: Border.all(color: color.withValues(alpha: 0.3)),
+          color: AppColors.surfaceContainer,
+          borderRadius: BorderRadius.circular(16),
         ),
-        child: Row(
+        clipBehavior: Clip.antiAlias,
+        child: Stack(
           children: [
-            Container(
-              padding: const EdgeInsets.all(12),
-              decoration: BoxDecoration(
-                color: color.withValues(alpha: 0.1),
-                borderRadius: BorderRadius.circular(8),
+            // Left Accent Bar
+            Positioned(
+              left: 0,
+              top: 15,
+              bottom: 15,
+              width: 4,
+              child: Container(
+                decoration: BoxDecoration(
+                  color: accentColor,
+                  borderRadius: const BorderRadius.horizontal(right: Radius.circular(4)),
+                  boxShadow: [
+                    BoxShadow(color: accentColor.withValues(alpha: 0.5), blurRadius: 10, spreadRadius: 1),
+                  ],
+                ),
               ),
-              child: Icon(icon, color: color),
             ),
-            const SizedBox(width: 16),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
+              child: Row(
                 children: [
-                  Text(
-                    title,
-                    style: GoogleFonts.inter(
-                      color: AppColors.onSurface,
-                      fontWeight: FontWeight.bold,
-                      fontSize: 16,
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text(
+                          title,
+                          style: GoogleFonts.inter(
+                            color: AppColors.onSurface,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 18,
+                          ),
+                        ),
+                        const SizedBox(height: 6),
+                        Text(
+                          subtitle,
+                          style: GoogleFonts.inter(
+                            color: AppColors.onSurfaceVariant,
+                            fontSize: 13,
+                          ),
+                        ),
+                      ],
                     ),
                   ),
-                  const SizedBox(height: 4),
-                  Text(
-                    subtitle,
-                    style: GoogleFonts.inter(
-                      color: AppColors.onSurfaceVariant,
-                      fontSize: 12,
-                    ),
-                  ),
+                  Icon(icon, color: AppColors.tertiary, size: 28),
                 ],
               ),
             ),
-            const Icon(Icons.chevron_right, color: AppColors.onSurfaceVariant),
           ],
         ),
       ),

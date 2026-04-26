@@ -20,38 +20,14 @@ class TopAppBar extends StatefulWidget implements PreferredSizeWidget {
 }
 
 class _TopAppBarState extends State<TopAppBar> {
-  final AuthService _authService = AuthService();
   bool _isBackendOnline = true;
   Timer? _pingTimer;
-  String _userName = 'Creator';
-  String _userEmail = 'Developer';
-  String _userInitials = 'CR';
 
   @override
   void initState() {
     super.initState();
-    _loadUserData();
     _checkBackendStatus();
     _pingTimer = Timer.periodic(const Duration(seconds: 10), (_) => _checkBackendStatus());
-  }
-
-  void _loadUserData() {
-    final user = _authService.currentUser;
-    if (user != null) {
-      setState(() {
-        _userName = user.displayName ?? user.email?.split('@')[0] ?? 'Creator';
-        _userEmail = user.email ?? 'Developer';
-        _userInitials = _getInitials(_userName);
-      });
-    }
-  }
-
-  String _getInitials(String name) {
-    final parts = name.split(' ');
-    if (parts.length >= 2) {
-      return '${parts[0][0]}${parts[1][0]}'.toUpperCase();
-    }
-    return name[0].toUpperCase();
   }
 
   @override
@@ -80,58 +56,82 @@ class _TopAppBarState extends State<TopAppBar> {
     final width = MediaQuery.of(context).size.width;
     final isMobile = width < 900;
     final showSearchBar = width > 700;
-    final showIcons = width > 600;
     final showStatusBadge = width > 500;
 
     return Container(
       height: widget.preferredSize.height,
-      padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 16.0),
+      padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
       decoration: BoxDecoration(
         color: AppColors.surface,
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.1),
-            blurRadius: 4,
-            offset: const Offset(0, 2),
-          ),
-        ],
+        border: Border(bottom: BorderSide(color: AppColors.outlineVariant.withValues(alpha: 0.5))),
       ),
       child: Row(
         children: [
-          if (isMobile) ...[
+          // Logo or Hamburger
+          if (isMobile)
             IconButton(
               onPressed: () => Scaffold.of(context).openDrawer(),
-              icon: const Icon(Icons.menu, color: AppColors.onSurfaceVariant),
+              icon: const Icon(Icons.menu, color: AppColors.onSurface),
+            )
+          else
+            Row(
+              children: [
+                const Icon(Icons.shield_rounded, color: AppColors.primary, size: 28),
+                const SizedBox(width: 12),
+                Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'THE',
+                      style: GoogleFonts.spaceGrotesk(
+                        color: AppColors.onSurfaceVariant,
+                        fontSize: 10,
+                        fontWeight: FontWeight.bold,
+                        letterSpacing: 1.5,
+                      ),
+                    ),
+                    Text(
+                      'VAULT',
+                      style: GoogleFonts.spaceGrotesk(
+                        color: AppColors.onSurface,
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                        letterSpacing: 0.5,
+                      ),
+                    ),
+                  ],
+                ),
+              ],
             ),
-            const SizedBox(width: 16),
-          ],
           
-          // Search Bar
+          const Spacer(),
+          
+          // Centered Search Bar
           if (showSearchBar)
             Expanded(
+              flex: 3,
               child: Container(
-                height: 40,
-                constraints: const BoxConstraints(maxWidth: 400),
+                height: 44,
                 decoration: BoxDecoration(
-                  color: AppColors.surfaceContainerLow,
-                  borderRadius: BorderRadius.circular(8),
-                  border: Border.all(color: AppColors.outlineVariant.withValues(alpha: 0.5)),
+                  color: AppColors.surfaceContainerHigh,
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(color: AppColors.outlineVariant),
                 ),
                 child: Row(
                   children: [
                     const Padding(
                       padding: EdgeInsets.symmetric(horizontal: 12),
-                      child: Icon(Icons.search, color: AppColors.onSurfaceVariant, size: 20),
+                      child: Icon(Icons.search, color: AppColors.onSurfaceVariant, size: 18),
                     ),
                     Expanded(
                       child: TextField(
-                        style: GoogleFonts.inter(color: AppColors.onSurface),
+                        style: GoogleFonts.inter(color: AppColors.onSurface, fontSize: 14),
                         decoration: InputDecoration(
-                          hintText: 'Search or type keyword',
+                          hintText: 'Search archives...',
                           hintStyle: GoogleFonts.inter(color: AppColors.onSurfaceVariant, fontSize: 14),
                           border: InputBorder.none,
                           isDense: true,
-                          contentPadding: const EdgeInsets.symmetric(vertical: 10),
                         ),
                       ),
                     ),
@@ -140,136 +140,61 @@ class _TopAppBarState extends State<TopAppBar> {
               ),
             ),
 
-          if (!showSearchBar) const Spacer(),
-          if (showSearchBar) const Spacer(),
+          const Spacer(),
 
-          // Backend Status Badge
-          if (showStatusBadge) ...[
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-              decoration: BoxDecoration(
-                color: _isBackendOnline 
-                    ? AppColors.success.withValues(alpha: 0.1)
-                    : AppColors.errorContainer.withValues(alpha: 0.1),
-                borderRadius: BorderRadius.circular(20),
-                border: Border.all(
-                  color: _isBackendOnline ? AppColors.success : AppColors.errorContainer,
-                  width: 1,
-                ),
-              ),
-              child: Row(
-                children: [
-                  Container(
-                    width: 8,
-                    height: 8,
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      color: _isBackendOnline ? AppColors.success : AppColors.errorContainer,
-                    ),
-                  ),
-                  const SizedBox(width: 6),
-                  Text(
-                    _isBackendOnline ? 'System Online' : 'System Offline',
-                    style: GoogleFonts.inter(
-                      color: _isBackendOnline ? AppColors.success : AppColors.errorContainer,
-                      fontSize: 12,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            const SizedBox(width: 16),
-          ],
-
-          // Icons
-          if (showIcons) ...[
-            _buildIconButton(Icons.light_mode_outlined),
-            const SizedBox(width: 12),
-            _buildIconButton(Icons.notifications_none_outlined, hasBadge: true),
-            const SizedBox(width: 12),
-            _buildIconButton(Icons.chat_bubble_outline_rounded),
-            const SizedBox(width: 20),
-          ],
-
-          // Profile
-          GestureDetector(
-            onTap: () => Navigator.of(context).pushNamed('/profile'),
-            child: Row(
-              children: [
-                if (width > 600) ...[
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.end,
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Text(
-                        _userName,
-                        style: GoogleFonts.inter(
-                          color: AppColors.onSurface,
-                          fontSize: 14,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                      Text(
-                        _userEmail,
-                        style: GoogleFonts.inter(
-                          color: AppColors.onSurfaceVariant,
-                          fontSize: 12,
-                        ),
-                      ),
+          // Profile / Status
+          Row(
+            children: [
+              if (showStatusBadge && _isBackendOnline)
+                Container(
+                  width: 10,
+                  height: 10,
+                  decoration: const BoxDecoration(
+                    color: AppColors.primary,
+                    shape: BoxShape.circle,
+                    boxShadow: [
+                      BoxShadow(color: AppColors.primary, blurRadius: 8, spreadRadius: 1),
                     ],
                   ),
-                  const SizedBox(width: 12),
-                ],
-                CircleAvatar(
-                  radius: 18,
-                  backgroundColor: AppColors.primary,
-                  child: Text(
-                    _userInitials,
-                    style: GoogleFonts.inter(
-                      color: AppColors.onPrimary,
-                      fontSize: 14,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
                 ),
-                const SizedBox(width: 4),
-                const Icon(Icons.keyboard_arrow_down, color: AppColors.onSurfaceVariant),
-              ],
-            ),
+              const SizedBox(width: 20),
+              _UserAvatar(),
+            ],
           ),
         ],
       ),
     );
   }
+}
 
-  Widget _buildIconButton(IconData icon, {bool hasBadge = false}) {
-    return Container(
-      width: 36,
-      height: 36,
-      decoration: BoxDecoration(
-        color: AppColors.surfaceContainerLow,
-        shape: BoxShape.circle,
-        border: Border.all(color: AppColors.outlineVariant.withValues(alpha: 0.5)),
-      ),
-      child: Stack(
-        alignment: Alignment.center,
-        children: [
-          Icon(icon, color: AppColors.onSurfaceVariant, size: 20),
-          if (hasBadge)
-            Positioned(
-              top: 6,
-              right: 6,
-              child: Container(
-                width: 8,
-                height: 8,
-                decoration: const BoxDecoration(
-                  color: AppColors.errorContainer,
-                  shape: BoxShape.circle,
-                ),
-              ),
-            ),
-        ],
+// ── Standalone user-initial avatar ─────────────────────────────
+class _UserAvatar extends StatelessWidget {
+  const _UserAvatar();
+
+  @override
+  Widget build(BuildContext context) {
+    final auth = AuthService();
+    final user = auth.currentUser;
+    final name = user?.displayName ?? user?.email?.split('@')[0] ?? 'U';
+    final initial = name.isNotEmpty ? name[0].toUpperCase() : 'U';
+
+    return GestureDetector(
+      onTap: () {
+        if (ModalRoute.of(context)?.settings.name != '/profile') {
+          Navigator.pushNamed(context, '/profile');
+        }
+      },
+      child: CircleAvatar(
+        radius: 20,
+        backgroundColor: AppColors.surfaceContainerHighest,
+        child: Text(
+          initial,
+          style: GoogleFonts.spaceGrotesk(
+            color: AppColors.primary,
+            fontSize: 18,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
       ),
     );
   }
