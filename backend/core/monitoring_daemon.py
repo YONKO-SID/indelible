@@ -19,7 +19,16 @@ PIRATE_DIR = "dummy_pirate_web"
 PROCESSED_DIR = os.path.join(PIRATE_DIR, "processed")
 ALERTS_FILE = "alerts.json"
 REGISTRY_FILE = "creator_registry.json"
-SECRET_KEY = b"hackathon_secret_key_123"
+import os
+from dotenv import load_dotenv
+
+load_dotenv()
+
+SECRET_KEY = os.getenv("SECRET_KEY")
+if not SECRET_KEY:
+    raise RuntimeError("SECRET_KEY environment variable not set. Create backend/.env with SECRET_KEY and do not commit it.")
+SECRET_KEY = SECRET_KEY.encode()
+
 
 # Initialize directories
 os.makedirs(PIRATE_DIR, exist_ok=True)

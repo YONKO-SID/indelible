@@ -88,7 +88,6 @@ class LeftSidebar extends StatelessWidget {
                   icon: Icons.settings_outlined,
                   route: '/settings',
                   isActive: currentRoute == '/settings',
-                  isComingSoon: true,
                 ),
               ],
             ),

@@ -49,6 +49,8 @@ dependencies:
   smooth_page_indicator: ^2.0.1
   shared_preferences: ^2.2.3
   url_launcher: ^6.3.2
+  pdf: ^3.10.8
+  printing: ^5.13.1
 
 flutter_native_splash:
   color: "#0E0E0D"

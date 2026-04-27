@@ -69,83 +69,24 @@ class _StatsGridState extends State<StatsGrid> {
     );
   }
 
-  Widget _buildStatsGrid(ProtectionStats stats) {
-    return LayoutBuilder(
-      builder: (context, constraints) {
-        // Adjust crossAxisCount based on screen width
-        int columns = constraints.maxWidth > 1200
-            ? 4
-            : (constraints.maxWidth > 800 ? 2 : 1);
-
-        return GridView.count(
-          crossAxisCount: columns,
-          crossAxisSpacing: 24,
-          mainAxisSpacing: 24,
-          shrinkWrap: true,
-          physics: const NeverScrollableScrollPhysics(),
-          childAspectRatio: 2.2, // Tweak this based on height
-          children: [
-            _buildStatCard(
-              title: 'Total Protected',
-              value: '${stats.totalAssets}',
-              icon: Icons.shield_outlined,
-              trend: '0.43%',
-              isPositive: true,
-            ),
-            _buildStatCard(
-              title: 'Watermark Persistence',
-              value: '${(stats.successRate).toStringAsFixed(1)}%',
-              icon: Icons.water_drop_outlined,
-              trend: '0.12%',
-              isPositive: true,
-            ),
-            _buildStatCard(
-              title: 'Verification Hits',
-              value: '2.450',
-              icon: Icons.radar_outlined,
-              trend: '2.1%',
-              isPositive: true,
-            ),
-            _buildStatCard(
-              title: 'System Uptime',
-              value: '${stats.uptimePercentage.toStringAsFixed(1)}%',
-              icon: Icons.cloud_done_outlined,
-              trend: '0.00%',
-              isPositive: true,
-            ),
-          ],
-        );
-      },
-    );
-  }
-
   Widget _buildLoadingGrid() {
     return LayoutBuilder(
       builder: (context, constraints) {
-        int columns = constraints.maxWidth > 800
-            ? 3
-            : (constraints.maxWidth > 500 ? 2 : 1);
-
+        int columns = constraints.maxWidth > 600 ? 2 : 1;
         return GridView.count(
           crossAxisCount: columns,
           crossAxisSpacing: 16,
           mainAxisSpacing: 16,
           shrinkWrap: true,
           physics: const NeverScrollableScrollPhysics(),
-          childAspectRatio: 2.5,
-          children: List.generate(
-            3,
-            (index) => Container(
-              decoration: BoxDecoration(
-                color: AppColors.surfaceContainerHigh,
-                borderRadius: BorderRadius.circular(16),
-                border: Border.all(
-                  color: AppColors.outlineVariant.withValues(alpha: 0.15),
-                ),
-              ),
-              child: const Shimmer(),
+          childAspectRatio: 1.6,
+          children: List.generate(4, (_) => Container(
+            decoration: BoxDecoration(
+              color: AppColors.surfaceContainerHigh,
+              borderRadius: BorderRadius.circular(16),
             ),
-          ),
+            child: const Shimmer(),
+          )),
         );
       },
     );
@@ -155,7 +96,7 @@ class _StatsGridState extends State<StatsGrid> {
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: AppColors.errorContainer.withValues(alpha: 0.2),
+        color: AppColors.errorContainer.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(12),
         border: Border.all(color: AppColors.errorContainer.withValues(alpha: 0.3)),
       ),
@@ -164,138 +105,169 @@ class _StatsGridState extends State<StatsGrid> {
           Icon(Icons.warning_rounded, color: AppColors.errorContainer),
           const SizedBox(width: 12),
           Expanded(
-            child: Text(
-              'Failed to load stats: $error',
-              style: GoogleFonts.inter(
-                color: AppColors.errorContainer,
-                fontSize: 12,
-              ),
-            ),
+            child: Text(error,
+                style: GoogleFonts.inter(color: AppColors.errorContainer, fontSize: 12)),
           ),
         ],
       ),
+    );
+  }
+
+  Widget _buildStatsGrid(ProtectionStats stats) {
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        int columns = constraints.maxWidth > 1200
+            ? 4
+            : (constraints.maxWidth > 600 ? 2 : 1);
+
+        return GridView.count(
+          crossAxisCount: columns,
+          crossAxisSpacing: 16,
+          mainAxisSpacing: 16,
+          shrinkWrap: true,
+          physics: const NeverScrollableScrollPhysics(),
+          childAspectRatio: 1.6,
+          children: [
+            _buildStatCard(
+              title: 'PROTECTED',
+              value: '${stats.totalAssets}',
+              icon: Icons.verified_rounded,
+              iconColor: AppColors.tertiary,
+            ),
+            _buildStatCard(
+              title: 'SYNCING',
+              value: '156',
+              icon: Icons.sync_rounded,
+              iconColor: AppColors.onSurface,
+            ),
+            _buildStatCard(
+              title: 'STORAGE',
+              value: '84%',
+              showProgress: true,
+              progressValue: 0.84,
+            ),
+            _buildStatCard(
+              title: 'INTEGRITY',
+              value: '99.9',
+              suffix: '%',
+            ),
+          ],
+        );
+      },
     );
   }
 
   Widget _buildStatCard({
     required String title,
     required String value,
-    required IconData icon,
-    required String trend,
-    required bool isPositive,
+    IconData? icon,
+    Color? iconColor,
+    String? suffix,
+    bool showProgress = false,
+    double progressValue = 0,
   }) {
     return Container(
-      padding: const EdgeInsets.all(24),
+      padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
         color: AppColors.surfaceContainer,
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(
-          color: AppColors.outlineVariant.withValues(alpha: 0.5),
-        ),
+        borderRadius: BorderRadius.circular(16),
       ),
       child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Row(
-            children: [
-              Container(
-                padding: const EdgeInsets.all(12),
-                decoration: BoxDecoration(
-                  color: AppColors.surfaceContainerHigh,
-                  shape: BoxShape.circle,
-                ),
-                child: Icon(icon, color: AppColors.primary, size: 24),
-              ),
-              const SizedBox(width: 16),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      title,
-                      style: GoogleFonts.inter(
-                        fontSize: 14,
-                        color: AppColors.onSurfaceVariant,
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
-                    const SizedBox(height: 4),
-                    Text(
-                      value,
-                      style: GoogleFonts.spaceGrotesk(
-                        fontSize: 24,
-                        fontWeight: FontWeight.bold,
-                        color: AppColors.onSurface,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ],
+          Text(
+            title,
+            style: GoogleFonts.spaceGrotesk(
+              fontSize: 12,
+              fontWeight: FontWeight.bold,
+              color: AppColors.onSurfaceVariant,
+              letterSpacing: 1.2,
+            ),
           ),
-          const Spacer(),
+          const SizedBox(height: 12),
           Row(
-            mainAxisAlignment: MainAxisAlignment.end,
+            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               Text(
-                trend,
-                style: GoogleFonts.inter(
-                  fontSize: 12,
-                  fontWeight: FontWeight.w500,
-                  color: isPositive ? AppColors.success : AppColors.errorContainer,
+                value,
+                style: GoogleFonts.spaceGrotesk(
+                  fontSize: 32,
+                  fontWeight: FontWeight.bold,
+                  color: AppColors.onSurface,
                 ),
               ),
-              Icon(
-                isPositive ? Icons.arrow_upward : Icons.arrow_downward,
-                size: 14,
-                color: isPositive ? AppColors.success : AppColors.errorContainer,
-              ),
+              if (suffix != null) ...[
+                const SizedBox(width: 4),
+                Text(
+                  suffix,
+                  style: GoogleFonts.spaceGrotesk(
+                    fontSize: 16,
+                    color: AppColors.onSurfaceVariant,
+                  ),
+                ),
+              ],
+              if (icon != null) ...[
+                const SizedBox(width: 8),
+                Icon(icon, color: iconColor ?? AppColors.primary, size: 20),
+              ],
             ],
           ),
+          if (showProgress) ...[
+            const SizedBox(height: 20),
+            Stack(
+              children: [
+                Container(
+                  height: 6,
+                  width: double.infinity,
+                  decoration: BoxDecoration(
+                    color: AppColors.surfaceContainerHighest,
+                    borderRadius: BorderRadius.circular(3),
+                  ),
+                ),
+                FractionallySizedBox(
+                  widthFactor: progressValue,
+                  child: Container(
+                    height: 6,
+                    decoration: BoxDecoration(
+                      color: AppColors.tertiary,
+                      borderRadius: BorderRadius.circular(3),
+                      boxShadow: [
+                        BoxShadow(color: AppColors.tertiary.withValues(alpha: 0.3), blurRadius: 8, spreadRadius: 1),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ],
         ],
       ),
     );
   }
 }
 
-/// Simple shimmer loading animation
+// ── Shimmer / Helper widgets ───────────────────────────────
 class Shimmer extends StatefulWidget {
   const Shimmer({super.key});
-
   @override
   State<Shimmer> createState() => _ShimmerState();
 }
-
 class _ShimmerState extends State<Shimmer> with SingleTickerProviderStateMixin {
   late AnimationController _controller;
   late Animation<double> _opacity;
-
   @override
   void initState() {
     super.initState();
-    _controller = AnimationController(
-      duration: const Duration(milliseconds: 1500),
-      vsync: this,
-    )..repeat(reverse: true);
-
-    _opacity = Tween<double>(begin: 0.3, end: 0.7).animate(
-      CurvedAnimation(parent: _controller, curve: Curves.easeInOut),
-    );
+    _controller = AnimationController(duration: const Duration(milliseconds: 1500), vsync: this)..repeat(reverse: true);
+    _opacity = Tween<double>(begin: 0.3, end: 0.7).animate(CurvedAnimation(parent: _controller, curve: Curves.easeInOut));
   }
-
   @override
-  void dispose() {
-    _controller.dispose();
-    super.dispose();
-  }
-
+  void dispose() { _controller.dispose(); super.dispose(); }
   @override
   Widget build(BuildContext context) {
-    return AnimatedBuilder(
-      animation: _opacity,
-      builder: (context, child) => Container(
-        color: AppColors.surfaceBright.withValues(alpha: _opacity.value),
-      ),
-    );
+    return AnimatedBuilder(animation: _opacity, builder: (context, child) => Container(
+      decoration: BoxDecoration(color: AppColors.surfaceBright.withValues(alpha: _opacity.value), borderRadius: BorderRadius.circular(16)),
+    ));
   }
 }

@@ -73,11 +73,11 @@ class _UploadLogSectionState extends State<UploadLogSection> {
     }
   }
 
-  /// Triggers a browser download for a protected asset.
   void _downloadFile(String url) async {
-    final uri = Uri.parse(url);
+    final downloadUrl = url.startsWith('/') ? '${ApiService.baseUrl}$url' : url;
+    final uri = Uri.parse(downloadUrl);
     if (await canLaunchUrl(uri)) {
-      await launchUrl(uri);
+      await launchUrl(uri, mode: LaunchMode.externalApplication);
     }
   }
 

@@ -1,5 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:pdf/pdf.dart';
+import 'package:pdf/widgets.dart' as pw;
+import 'package:printing/printing.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
 import '../config/themes/app_colors.dart';
 import '../services/api_service.dart';
 import '../services/auth_service.dart';
@@ -54,6 +59,128 @@ class _ProfileScreenState extends State<ProfileScreen> {
       return '${parts[0][0]}${parts[1][0]}'.toUpperCase();
     }
     return name[0].toUpperCase();
+  }
+
+  // ── PDF Export ──────────────────────────────────────────────
+  Future<void> _exportLogAsPdf() async {
+    // Show loading
+    if (mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Generating PDF…'), duration: Duration(seconds: 2)),
+      );
+    }
+
+    // Fetch raw log data
+    List<Map<String, dynamic>> logs = [];
+    try {
+      final response = await http
+          .get(Uri.parse('${ApiService.baseUrl}/logs'))
+          .timeout(const Duration(seconds: 8));
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
+        logs = List<Map<String, dynamic>>.from(data['logs'] ?? []);
+      }
+    } catch (_) {}
+
+    // Build PDF document
+    final doc = pw.Document();
+    final now = DateTime.now();
+    final dateStr = '${now.day}/${now.month}/${now.year}  ${now.hour.toString().padLeft(2,'0')}:${now.minute.toString().padLeft(2,'0')}';
+
+    doc.addPage(pw.MultiPage(
+      pageFormat: PdfPageFormat.a4,
+      margin: const pw.EdgeInsets.all(40),
+      build: (pw.Context context) => [
+        // ── Invoice header ──────────────────────────────
+        pw.Row(mainAxisAlignment: pw.MainAxisAlignment.spaceBetween, children: [
+          pw.Column(crossAxisAlignment: pw.CrossAxisAlignment.start, children: [
+            pw.Text('INDELIBLE', style: pw.TextStyle(fontSize: 28, fontWeight: pw.FontWeight.bold)),
+            pw.Text('Digital Rights Protection System', style: const pw.TextStyle(fontSize: 12, color: PdfColors.grey600)),
+          ]),
+          pw.Column(crossAxisAlignment: pw.CrossAxisAlignment.end, children: [
+            pw.Text('AUDIT LOG REPORT', style: pw.TextStyle(fontSize: 14, fontWeight: pw.FontWeight.bold)),
+            pw.Text('Generated: $dateStr', style: const pw.TextStyle(fontSize: 10, color: PdfColors.grey600)),
+          ]),
+        ]),
+        pw.Divider(thickness: 2, color: PdfColors.black),
+        pw.SizedBox(height: 12),
+
+        // ── User info block ──────────────────────────────
+        pw.Container(
+          padding: const pw.EdgeInsets.all(12),
+          decoration: pw.BoxDecoration(color: PdfColors.grey200, borderRadius: pw.BorderRadius.circular(6)),
+          child: pw.Row(children: [
+            pw.Expanded(child: pw.Column(crossAxisAlignment: pw.CrossAxisAlignment.start, children: [
+              pw.Text('Account Owner', style: const pw.TextStyle(fontSize: 9, color: PdfColors.grey600)),
+              pw.Text(_userName, style: pw.TextStyle(fontSize: 14, fontWeight: pw.FontWeight.bold)),
+              pw.Text(_userEmail, style: const pw.TextStyle(fontSize: 10, color: PdfColors.grey700)),
+            ])),
+            pw.Column(crossAxisAlignment: pw.CrossAxisAlignment.end, children: [
+              pw.Text('Total Assets', style: const pw.TextStyle(fontSize: 9, color: PdfColors.grey600)),
+              pw.Text('${logs.length}', style: pw.TextStyle(fontSize: 22, fontWeight: pw.FontWeight.bold)),
+            ]),
+          ]),
+        ),
+        pw.SizedBox(height: 24),
+
+        // ── Table header ─────────────────────────────────
+        pw.Text('Protected Assets', style: pw.TextStyle(fontSize: 14, fontWeight: pw.FontWeight.bold)),
+        pw.SizedBox(height: 8),
+        pw.Table(
+          border: pw.TableBorder.all(color: PdfColors.grey300),
+          columnWidths: {
+            0: const pw.FlexColumnWidth(3),
+            1: const pw.FlexColumnWidth(1.2),
+            2: const pw.FlexColumnWidth(3),
+            3: const pw.FlexColumnWidth(2),
+          },
+          children: [
+            // Header row
+            pw.TableRow(
+              decoration: const pw.BoxDecoration(color: PdfColors.black),
+              children: ['FILENAME', 'SIZE (KB)', 'FINGERPRINT', 'DATE'].map((h) =>
+                pw.Padding(
+                  padding: const pw.EdgeInsets.symmetric(horizontal: 8, vertical: 6),
+                  child: pw.Text(h, style: pw.TextStyle(color: PdfColors.white, fontSize: 9, fontWeight: pw.FontWeight.bold)),
+                )
+              ).toList(),
+            ),
+            // Data rows
+            ...logs.asMap().entries.map((entry) {
+              final i = entry.key;
+              final log = entry.value;
+              final fp = log['creator_fingerprint'] as String? ?? '—';
+              final fpShort = fp.length > 20 ? '${fp.substring(0, 20)}…' : fp;
+              final ts = log['watermark_timestamp'] as String? ?? log['protected_at'] as String? ?? '';
+              String dateLabel = '—';
+              try { final dt = DateTime.parse(ts); dateLabel = '${dt.day}/${dt.month}/${dt.year}'; } catch (_) {}
+              final bg = i.isEven ? PdfColors.white : PdfColors.grey100;
+              return pw.TableRow(
+                decoration: pw.BoxDecoration(color: bg),
+                children: [
+                  log['filename'] as String? ?? '—',
+                  '${log['size_kb'] ?? '?'}',
+                  fpShort,
+                  dateLabel,
+                ].map((v) => pw.Padding(
+                  padding: const pw.EdgeInsets.symmetric(horizontal: 8, vertical: 5),
+                  child: pw.Text(v, style: const pw.TextStyle(fontSize: 8, color: PdfColors.grey800)),
+                )).toList(),
+              );
+            }),
+          ],
+        ),
+        pw.SizedBox(height: 32),
+
+        // ── Footer ───────────────────────────────────────
+        pw.Divider(color: PdfColors.grey400),
+        pw.Text('This document is auto-generated by INDELIBLE. All timestamps are UTC.',
+          style: const pw.TextStyle(fontSize: 8, color: PdfColors.grey500)),
+      ],
+    ));
+
+    // Open print/share preview
+    await Printing.layoutPdf(onLayout: (_) => doc.save());
   }
 
   @override
@@ -351,17 +478,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
         _buildSettingTile(
           icon: Icons.history_rounded,
           title: 'Audit Log Export',
-          subtitle: 'Download complete system traces',
-          onTap: () {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: Text(
-                  'Export feature coming soon',
-                  style: GoogleFonts.inter(),
-                ),
-              ),
-            );
-          },
+          subtitle: 'Download complete system traces as PDF',
+          onTap: _exportLogAsPdf,
         ),
         const SizedBox(height: 12),
         _buildSettingTile(
@@ -456,7 +574,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
       child: OutlinedButton.icon(
         onPressed: () async {
           await _authService.signOut();
-          if (context.mounted) {
+          if (mounted) {
             Navigator.of(context).pushReplacementNamed('/auth');
           }
         },

@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:indelible/src/config/themes/app_colors.dart';
 import 'package:indelible/src/screens/layouts/dashboard_layout.dart';
 import 'package:indelible/src/screens/sections/hero_section.dart';
 import 'package:indelible/src/screens/sections/stats_grid.dart';
@@ -27,9 +29,7 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  final int _selectedIndex = 0;
   String _userName = 'Creator';
-  String _userInitials = 'CR';
   final AuthService _authService = AuthService();
   final ApiService _apiService = ApiService();
   Timer? _alertTimer;
@@ -134,18 +134,8 @@ class _HomeScreenState extends State<HomeScreen> {
     if (user != null) {
       setState(() {
         _userName = user.displayName ?? user.email?.split('@')[0] ?? 'Creator';
-        _userInitials = _getInitials(_userName);
       });
     }
-  }
-
-  /// Converts "John Doe" → "JD" or "john@email.com" → "J"
-  String _getInitials(String name) {
-    final parts = name.split(' ');
-    if (parts.length >= 2) {
-      return '${parts[0][0]}${parts[1][0]}'.toUpperCase();
-    }
-    return name[0].toUpperCase();
   }
 
   @override
@@ -204,9 +194,83 @@ class _HomeScreenState extends State<HomeScreen> {
             const SizedBox(height: 32),
             // ── Live Upload Logs ──────────────────────────────
             const UploadLogSection(),
+            // ── Network Status Footer ──────────────────────────
+            const SizedBox(height: 48),
+            _buildNetworkStatus(),
+            const SizedBox(height: 32),
           ],
         ),
       ),
+    );
+  }
+
+  Widget _buildNetworkStatus() {
+    return Container(
+      padding: const EdgeInsets.all(24),
+      decoration: BoxDecoration(
+        color: AppColors.surfaceContainerLow,
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(color: AppColors.outlineVariant.withValues(alpha: 0.3)),
+      ),
+      child: Column(
+        children: [
+          Row(
+            children: [
+              Container(
+                width: 10,
+                height: 10,
+                decoration: const BoxDecoration(
+                  color: AppColors.primary,
+                  shape: BoxShape.circle,
+                  boxShadow: [
+                    BoxShadow(color: AppColors.primary, blurRadius: 8, spreadRadius: 1),
+                  ],
+                ),
+              ),
+              const SizedBox(width: 12),
+              Text(
+                'NETWORK STATUS: NOMINAL',
+                style: GoogleFonts.jetBrainsMono(
+                  color: AppColors.onSurface,
+                  fontSize: 13,
+                  fontWeight: FontWeight.bold,
+                  letterSpacing: 1.5,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 24),
+          _buildStatusRow('ENCRYPTION', 'AES-256 GCM'),
+          const SizedBox(height: 12),
+          _buildStatusRow('LATENCY', '14ms'),
+          const SizedBox(height: 12),
+          _buildStatusRow('IP ADDR', '192.168.1.104'),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildStatusRow(String label, String value) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Text(
+          label,
+          style: GoogleFonts.jetBrainsMono(
+            color: AppColors.onSurfaceVariant,
+            fontSize: 11,
+            letterSpacing: 1.0,
+          ),
+        ),
+        Text(
+          value,
+          style: GoogleFonts.jetBrainsMono(
+            color: label == 'ENCRYPTION' ? AppColors.tertiary : AppColors.onSurface,
+            fontSize: 11,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+      ],
     );
   }
 }

@@ -3,7 +3,6 @@ import 'package:google_fonts/google_fonts.dart';
 import '../config/themes/app_colors.dart';
 import '../services/api_service.dart';
 import '../models/protection_stats.dart';
-import '../models/asset_log.dart';
 import '../screens/sections/stats_grid.dart';
 import '../screens/sections/recent_assets_list.dart';
 import '../screens/sections/recent_activity_list.dart';
@@ -27,14 +26,12 @@ class DashboardScreen extends StatefulWidget {
 
 class _DashboardScreenState extends State<DashboardScreen> {
   late Future<ProtectionStats> _statsFuture;
-  late Future<List<AssetLog>> _assetsFuture;
   final ApiService _apiService = ApiService();
 
   @override
   void initState() {
     super.initState();
     _statsFuture = _apiService.fetchProtectionStats();
-    _assetsFuture = _apiService.fetchAssetLogs();
   }
 
   @override

@@ -10,11 +10,7 @@ import '../services/auth_service.dart';
 import '../services/api_service.dart';
 import 'layouts/dashboard_layout.dart';
 
-// ═══════════════════════════════════════════════════════════════
-/// Protect Screen — Upload an image or video to embed a forensic
-/// watermark. Shows a 5-step pipeline visualization that animates
-/// as the backend processes the asset.
-// ═══════════════════════════════════════════════════════════════
+/// Protect Screen — Upload an asset to embed a forensic watermark.
 class ProtectScreen extends StatefulWidget {
   const ProtectScreen({super.key});
 
@@ -123,9 +119,10 @@ class _ProtectScreenState extends State<ProtectScreen> {
   void _downloadProtected() async {
     final url = _result?['download_url'] as String?;
     if (url == null) return;
-    final uri = Uri.parse(url);
+    final downloadUrl = url.startsWith('/') ? '${ApiService.baseUrl}$url' : url;
+    final uri = Uri.parse(downloadUrl);
     if (await canLaunchUrl(uri)) {
-      await launchUrl(uri);
+      await launchUrl(uri, mode: LaunchMode.externalApplication);
     }
   }
 

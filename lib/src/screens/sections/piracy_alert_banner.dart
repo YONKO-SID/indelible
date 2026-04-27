@@ -19,13 +19,13 @@ class PiracyAlertBanner extends StatelessWidget {
       margin: const EdgeInsets.only(bottom: 24),
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: Colors.red.withOpacity(0.1),
+        color: Colors.red.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: Colors.red.withOpacity(0.3), width: 1.5),
+        border: Border.all(color: Colors.red.withValues(alpha: 0.3), width: 1.5),
         gradient: LinearGradient(
           colors: [
-            Colors.red.withOpacity(0.15),
-            Colors.red.withOpacity(0.05),
+            Colors.red.withValues(alpha: 0.15),
+            Colors.red.withValues(alpha: 0.05),
           ],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
@@ -36,7 +36,7 @@ class PiracyAlertBanner extends StatelessWidget {
           Container(
             padding: const EdgeInsets.all(12),
             decoration: BoxDecoration(
-              color: Colors.red.withOpacity(0.2),
+              color: Colors.red.withValues(alpha: 0.2),
               shape: BoxShape.circle,
             ),
             child: const Icon(
@@ -72,7 +72,7 @@ class PiracyAlertBanner extends StatelessWidget {
                 Text(
                   'Source: ${alert.sourceUrl}',
                   style: TextStyle(
-                    color: Colors.white.withOpacity(0.6),
+                    color: Colors.white.withValues(alpha: 0.6),
                     fontSize: 13,
                   ),
                   maxLines: 1,
@@ -100,7 +100,7 @@ class PiracyAlertBanner extends StatelessWidget {
                 onPressed: onDismiss,
                 child: Text(
                   'Dismiss',
-                  style: TextStyle(color: Colors.white.withOpacity(0.5)),
+                  style: TextStyle(color: Colors.white.withValues(alpha: 0.5)),
                 ),
               ),
             ],
