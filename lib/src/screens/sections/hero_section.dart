@@ -2,10 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../config/themes/app_colors.dart';
 
-// ═══════════════════════════════════════════════════════════
-/// Hero section displaying welcome message and user access level.
-/// Features the signature "Pulse Monitor" atmospheric glow.
-// ═══════════════════════════════════════════════════════════
+/// Hero section for the dashboard.
 class HeroSection extends StatefulWidget {
   final String userName;
   final String accessLevel;

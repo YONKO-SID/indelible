@@ -152,7 +152,7 @@ async def get_upload_logs():
             "protected_at": datetime.utcfromtimestamp(file_stat.st_mtime).isoformat()
             + "Z",
             "size_kb": round(file_stat.st_size / 1024, 1),
-            "download_url": f"http://127.0.0.1:8000/download/{fname}",
+            "download_url": f"/download/{fname}",
             "creator_fingerprint": "unknown",
             "watermark_timestamp": None,
         }
@@ -244,7 +244,7 @@ async def protect_asset(
             "payload_hash": hashlib.sha256(payload_str.encode()).hexdigest()[:16],
             "timestamp": datetime.utcnow().isoformat(),
             "blockchain_tx": f"0x{hashlib.sha256(payload_str.encode()).hexdigest()[:40]}",
-            "download_url": f"http://127.0.0.1:8000/download/{out_filename}",
+            "download_url": f"/download/{out_filename}",
             "rs_bits_embedded": len(rs_bits),
             "message": "Asset protected with DWT-DCT + QIM and HMAC signed.",
         }

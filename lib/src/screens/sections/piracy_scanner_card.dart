@@ -5,15 +5,7 @@ import 'dart:convert';
 import '../../config/themes/app_colors.dart';
 import '../../services/api_service.dart';
 
-// ═══════════════════════════════════════════════════════════
-/// AI-powered piracy scanner card.
-///
-/// INPUTS: A URL entered by the user (e.g. a social media post).
-/// OUTPUT: Gemini AI classification (is_pirated, confidence, reasoning)
-///         and an auto-generated DMCA takedown notice if piracy is detected.
-///
-/// Calls the backend POST /scan-piracy endpoint.
-// ═══════════════════════════════════════════════════════════
+/// AI-powered piracy scanner.
 class PiracyScannerCard extends StatefulWidget {
   const PiracyScannerCard({super.key});
 

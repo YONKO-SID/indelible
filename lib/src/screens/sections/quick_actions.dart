@@ -8,13 +8,7 @@ import 'package:url_launcher/url_launcher.dart';
 import '../../config/themes/app_colors.dart';
 import '../../services/api_service.dart';
 
-// ═══════════════════════════════════════════════════════════
-/// Primary action buttons for core app functions.
-///
-/// Sends user's Firebase UID to the backend so that a unique
-/// cryptographic fingerprint (INDL-XXXX-XXXX-XXXX) is generated
-/// and embedded into the DWT-DCT watermark payload.
-// ═══════════════════════════════════════════════════════════
+/// Action buttons for primary app functions like protecting assets.
 class QuickActions extends StatefulWidget {
   const QuickActions({super.key});
 
@@ -80,11 +74,11 @@ class _QuickActionsState extends State<QuickActions> {
     }
   }
 
-  /// Triggers a real browser download using an anchor element.
   void _downloadFile(String url) async {
-    final uri = Uri.parse(url);
+    final downloadUrl = url.startsWith('/') ? '${ApiService.baseUrl}$url' : url;
+    final uri = Uri.parse(downloadUrl);
     if (await canLaunchUrl(uri)) {
-      await launchUrl(uri);
+      await launchUrl(uri, mode: LaunchMode.externalApplication);
     }
   }
 

@@ -7,14 +7,7 @@ import '../config/themes/app_colors.dart';
 import '../services/api_service.dart';
 import 'layouts/dashboard_layout.dart';
 
-// ═══════════════════════════════════════════════════════════════
 /// Activity Screen — Audit trail, upload graphs, and live logs.
-///
-/// Sections:
-///   1. Bar chart — assets protected per day (last 7 days)
-///   2. Key metric cards (total uploads, verifications, size)
-///   3. Full audit log table from /logs endpoint
-// ═══════════════════════════════════════════════════════════════
 class ActivityScreen extends StatefulWidget {
   const ActivityScreen({super.key});
 

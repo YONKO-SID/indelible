@@ -4,18 +4,7 @@ import '../../config/themes/app_colors.dart';
 import '../../services/api_service.dart';
 import '../../models/asset_log.dart';
 
-// ═══════════════════════════════════════════════════════════
-/// Horizontal scrollable gallery of recently protected assets.
-///
-/// Fetches real data from the backend /logs endpoint via ApiService.
-/// Each asset card shows:
-/// - File type icon with colored background
-/// - File name and size
-/// - Protection timestamp (relative, e.g. "2m ago")
-/// - Creator fingerprint badge (if watermark verified)
-///
-/// States: loading (shimmer) / error / empty / data.
-// ═══════════════════════════════════════════════════════════
+/// Horizontal gallery of recently protected assets.
 class RecentAssetsList extends StatefulWidget {
   const RecentAssetsList({super.key});
 

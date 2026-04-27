@@ -5,10 +5,7 @@ import 'dart:async';
 import '../../config/themes/app_colors.dart';
 import '../../services/auth_service.dart';
 import '../../services/api_service.dart';
-// ═══════════════════════════════════════════════════════════
-/// Top application bar matching FlareLine style.
-/// Displays search bar, status indicators, and profile menu.
-// ═══════════════════════════════════════════════════════════
+/// Top application bar with status indicators and profile menu.
 class TopAppBar extends StatefulWidget implements PreferredSizeWidget {
   const TopAppBar({super.key});
 
@@ -60,7 +57,7 @@ class _TopAppBarState extends State<TopAppBar> {
 
     return Container(
       height: widget.preferredSize.height,
-      padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+      padding: const EdgeInsets.only(left: 16.0, right: 16.0, top: 12.0, bottom: 8.0),
       decoration: BoxDecoration(
         color: AppColors.surface,
         border: Border(bottom: BorderSide(color: AppColors.outlineVariant.withValues(alpha: 0.5))),

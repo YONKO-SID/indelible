@@ -6,11 +6,7 @@ import '../services/api_service.dart';
 import '../models/asset_log.dart';
 import 'layouts/dashboard_layout.dart';
 
-// ═══════════════════════════════════════════════════════════════
-/// Archive Screen — Full paginated list of all protected assets.
-///
-/// Reached via the "VIEW ARCHIVE" button in the Recent Assets card.
-// ═══════════════════════════════════════════════════════════════
+/// Archive Screen — Full list of all protected assets.
 class ArchiveScreen extends StatefulWidget {
   const ArchiveScreen({super.key});
 
@@ -30,8 +26,15 @@ class _ArchiveScreenState extends State<ArchiveScreen> {
   }
 
   void _download(String url) async {
+    // Handle relative URLs
+    if (url.startsWith('/')) {
+      url = '${ApiService.baseUrl}$url';
+    }
+
     final uri = Uri.parse(url);
-    if (await canLaunchUrl(uri)) await launchUrl(uri);
+    if (await canLaunchUrl(uri)) {
+      await launchUrl(uri, mode: LaunchMode.externalApplication);
+    }
   }
 
   @override

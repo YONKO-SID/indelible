@@ -7,16 +7,7 @@ import '../config/themes/app_colors.dart';
 import '../services/api_service.dart';
 import 'layouts/dashboard_layout.dart';
 
-// ═══════════════════════════════════════════════════════════════
-/// Verify Screen — Upload a suspected piracy copy or your own
-/// protected file to run HMAC forensic verification.
-///
-/// Pipeline:
-///   1. DWT extraction of embedded bits
-///   2. Reed-Solomon error correction
-///   3. HMAC-SHA256 signature check
-///   4. Creator registry lookup
-// ═══════════════════════════════════════════════════════════════
+/// Verify Screen — HMAC forensic verification for assets.
 class VerifyScreen extends StatefulWidget {
   const VerifyScreen({super.key});
 
