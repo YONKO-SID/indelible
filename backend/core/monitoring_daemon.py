@@ -24,10 +24,7 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-SECRET_KEY = os.getenv("SECRET_KEY")
-if not SECRET_KEY:
-    raise RuntimeError("SECRET_KEY environment variable not set. Create backend/.env with SECRET_KEY and do not commit it.")
-SECRET_KEY = SECRET_KEY.encode()
+SECRET_KEY = os.getenv("SECRET_KEY", "development_secret_key").encode()
 
 
 # Initialize directories
