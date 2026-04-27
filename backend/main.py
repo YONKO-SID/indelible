@@ -45,7 +45,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-SECRET_KEY = b"hackathon_secret_key_123"
+SECRET_KEY = os.getenv("SECRET_KEY", "development_secret_key").encode()
 REGISTRY_PATH = "creator_registry.json"
 ALERTS_PATH = "alerts.json"
 
