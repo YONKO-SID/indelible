@@ -16,6 +16,27 @@
 | **Phase 5** | Creator Identity & Verification Loop | ✅ Complete |
 | **Phase 6** | Automated Testing & Cloud Deployment | ✅ Complete |
 | **Phase 7** | Automated Watchdog (pHash + BK-Tree) | ✅ Complete |
+| **Phase 8** | Adversarial Robustness & Blockchain | ✅ Complete |
+| **Phase 9** | Premium UX Shell & Onboarding GPU Paint | ✅ Complete |
+| **Phase 10** | Bento-Grid Dashboard & Custom Painted Charts | ✅ Complete |
+
+---
+
+## Phase 8: Adversarial Robustness & Blockchain ✅ (Final Upgrade)
+
+### Deliverables
+- `core/watermark.py` — High-Redundancy DWT-LL Redundant engine + scale search
+- `core/payload.py` — Reed-Solomon (nsym=128) + 24-char padded payload upgrade
+- `core/blockchain.py` — Simulated Polygon anchoring system
+- `tests/test_robustness.py` — Automated evaluation suite
+
+### Technical Details
+- **High Redundancy:** Watermark is embedded into *every* available coefficient of the LL subband, enabling majority-vote recovery.
+- **Robust Alignment & Grid Search:** Verification performs a grid search scaling from 0.80 to 1.00 and translation offsets `[-1, 0, 1]` with black center-canvas restoration, neutralizing cropping and re-alignment attacks.
+- **Fast-Fail Anchor Check:** Prepended a static 16-bit anchor to fast-fail grid alignments if Hamming distance > 4.
+- **Tuned ECC (nsym=128):** Upgraded Reed-Solomon parity to 128 bytes to handle coefficient dampening from Gaussian Blur (kernel 5x5).
+- **Blockchain Anchoring:** Each protection event creates an immutable record in `blockchain_registry.json`, simulating a mainnet deployment.
+- **Robustness Results:** 100% recovery (0% - 1.21% BER) against JPEG 20/50, noise 10, crop 5%/10%, and blur 5x5.
 
 ---
 
@@ -123,6 +144,40 @@ During `/verify`, the backend iterates all registered fingerprints, computes eac
 - **BK-Tree Search:** Implemented a Burkhard-Keller tree to enable $O(\log N)$ fuzzy matching across the global registry.
 - **Watchdog Daemon:** Created a background process that simulates an internet-wide crawler, using pHash as a fast-filter before running heavy DWT verification.
 - **Enterprise Logic:** Integrated subscription tier checks (`Enterprise` vs `Basic`) to trigger automatic Gemini-based DMCA drafting.
+
+---
+
+## Phase 9: Premium UX Shell & Onboarding GPU Paint ✅
+
+### Deliverables
+- `lib/src/screens/intro_screens/intro_screen1.dart` — Stateful `RadarShieldPainter`
+- `lib/src/screens/intro_screens/intro_screen2.dart` — Stateful `FrequencyWavePainter`
+- `lib/src/screens/intro_screens/intro_screen3.dart` — Stateful `CryptoProofPainter`
+- `lib/src/app.dart` — Route configuration adjustment
+
+### Technical Details
+- **GPU-Accelerated Custom Painting**: Replaced heavy/static onboarding assets with custom vector math lines, grids, arcs, and nodes painted directly to the Skia/Impeller canvas using an `AnimationController` at 60-120 FPS.
+- **Signal Wave Model**: Synthesized approximation, watermark, and details band wave formulas dynamically phase-shifting on the second onboarding slide.
+- **Connected Proof Ledger**: Modeled a Merkle tree connection grid on the third onboarding slide, utilizing linear interpolation (`Offset.lerp`) to feed glowing verification data packets through paths.
+- **Routing Loop Resolution**: Set `/splash` as `initialRoute` and mapped `'/'` directly to `AuthGate()` to isolate the onboarding sequence and fix the vault screen refresh/reload loop on icon taps.
+- **Deprecation Updates**: Converted standard color opacity configurations to `color.withValues(alpha: ...)` to ensure strict compatibility with the latest Flutter stable release.
+
+---
+
+## Phase 10: Bento-Grid Dashboard & Custom Painted Charts ✅
+
+### Deliverables
+- `lib/src/screens/dashboard_screen.dart` — Fully updated dashboard UI shell and paint logic
+- `lib/src/app.dart` — Added `/dashboard` route mapping
+- `lib/src/screens/layouts/dashboard_layout.dart` — Connected drawer tiles to the dashboard route
+- `lib/src/screens/sections/left_sidebar.dart` — Integrated desktop navigation sidebar click actions
+
+### Technical Details
+- **Bento-Grid Visual Structure**: Arranged key widgets as rounded dashboard cells matching mockup alignments, including a large main card with diagonal arrows, circular gauges, and activity bars.
+- **Custom painted gauges**: Designed `BentoCircularGaugePainter` drawing circular segments to represent the success rates of verification events.
+- **Custom weekly bar chart**: Implemented a responsive weekly activity monitor utilizing `BarChartPainter` that highlights high-performance days, includes custom coordinate positioning, and renders interactive tooltip layers directly on the canvas.
+- **Ambiguous Namespace Handling**: Resolved compiler errors by implementing specific namespace hides on sections.
+- **Dashboard Navigation Connection**: Mapped `'/dashboard'` in the main routes list, wrapped the dashboard view inside `DashboardLayout`, and updated the navigation item targets to fully connect sidebar and mobile hamburger menu actions.
 
 ---
 
