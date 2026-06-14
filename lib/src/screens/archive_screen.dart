@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:url_launcher/url_launcher.dart';
 import '../config/themes/app_colors.dart';
 import '../services/api_service.dart';
+import '../services/download_service.dart';
 import '../models/asset_log.dart';
 import 'layouts/dashboard_layout.dart';
 
@@ -26,15 +26,9 @@ class _ArchiveScreenState extends State<ArchiveScreen> {
   }
 
   void _download(String url) async {
-    // Handle relative URLs
-    if (url.startsWith('/')) {
-      url = '${ApiService.baseUrl}$url';
-    }
-
-    final uri = Uri.parse(url);
-    if (await canLaunchUrl(uri)) {
-      await launchUrl(uri, mode: LaunchMode.externalApplication);
-    }
+    final downloadUrl = url.startsWith('/') ? '${ApiService.baseUrl}$url' : url;
+    final fileName = downloadUrl.split('/').last;
+    DownloadService.downloadAndSave(context, downloadUrl, fileName);
   }
 
   @override

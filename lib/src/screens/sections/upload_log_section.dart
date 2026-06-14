@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
-import 'package:url_launcher/url_launcher.dart';
 import '../../config/themes/app_colors.dart';
 import '../../services/api_service.dart';
+import '../../services/download_service.dart';
 
 // ═══════════════════════════════════════════════════════════
 /// Live upload log fetched from the FastAPI /logs endpoint.
@@ -75,10 +75,8 @@ class _UploadLogSectionState extends State<UploadLogSection> {
 
   void _downloadFile(String url) async {
     final downloadUrl = url.startsWith('/') ? '${ApiService.baseUrl}$url' : url;
-    final uri = Uri.parse(downloadUrl);
-    if (await canLaunchUrl(uri)) {
-      await launchUrl(uri, mode: LaunchMode.externalApplication);
-    }
+    final fileName = downloadUrl.split('/').last;
+    DownloadService.downloadAndSave(context, downloadUrl, fileName);
   }
 
   @override

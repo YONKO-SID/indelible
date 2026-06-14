@@ -13,7 +13,11 @@ import '../models/alert.dart';
 /// - Error handling and caching
 /// - Base URL management
 class ApiService {
-  static const String baseUrl = 'https://indelible.up.railway.app';
+  // only uncomment it for testing on local machine
+
+  static const String baseUrl = 'http://localhost:8000';
+
+  // static const String baseUrl = 'https://indelible.up.railway.app';
 
   // Simple in-memory cache
   static final Map<String, _CacheEntry> _cache = {};
@@ -21,10 +25,12 @@ class ApiService {
   /// Fetch all protected assets from the backend
   Future<List<AssetLog>> fetchAssetLogs() async {
     try {
-      final response = await http.get(
-        Uri.parse('$baseUrl/logs'),
-        headers: {'Accept': 'application/json'},
-      ).timeout(const Duration(seconds: 10));
+      final response = await http
+          .get(
+            Uri.parse('$baseUrl/logs'),
+            headers: {'Accept': 'application/json'},
+          )
+          .timeout(const Duration(seconds: 10));
 
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
@@ -46,7 +52,7 @@ class ApiService {
     try {
       // For now, return computed stats from asset logs
       final logs = await fetchAssetLogs();
-      
+
       return ProtectionStats(
         totalAssets: logs.length,
         successfulVerifications: (logs.length * 0.95).toInt(),
@@ -78,17 +84,16 @@ class ApiService {
             subtitle: 'File "${log.displayFilename}" secured with watermark',
             timestamp: log.protectedAt,
             type: ActivityType.protection,
-            metadata: {
-              'filename': log.filename,
-              'size_kb': log.sizeKb,
-            },
+            metadata: {'filename': log.filename, 'size_kb': log.sizeKb},
           ),
         );
       }
 
       // Sort by timestamp descending
-      events.sort((a, b) => DateTime.parse(b.timestamp)
-          .compareTo(DateTime.parse(a.timestamp)));
+      events.sort(
+        (a, b) =>
+            DateTime.parse(b.timestamp).compareTo(DateTime.parse(a.timestamp)),
+      );
 
       return events.take(limit).toList();
     } catch (e) {
@@ -99,10 +104,12 @@ class ApiService {
   /// Fetch piracy alerts for the current user
   Future<List<PiracyAlert>> fetchAlerts(String userUid) async {
     try {
-      final response = await http.get(
-        Uri.parse('$baseUrl/alerts/$userUid'),
-        headers: {'Accept': 'application/json'},
-      ).timeout(const Duration(seconds: 10));
+      final response = await http
+          .get(
+            Uri.parse('$baseUrl/alerts/$userUid'),
+            headers: {'Accept': 'application/json'},
+          )
+          .timeout(const Duration(seconds: 10));
 
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
@@ -115,6 +122,44 @@ class ApiService {
       }
     } catch (e) {
       throw Exception('Error fetching alerts: $e');
+    }
+  }
+
+  /// Fetch real weekly activity bar chart data from /dashboard-stats
+  Future<Map<String, dynamic>> fetchDashboardStats() async {
+    try {
+      final response = await http
+          .get(
+            Uri.parse('$baseUrl/dashboard-stats'),
+            headers: {'Accept': 'application/json'},
+          )
+          .timeout(const Duration(seconds: 10));
+
+      if (response.statusCode == 200) {
+        return jsonDecode(response.body) as Map<String, dynamic>;
+      }
+      return {'labels': ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'], 'bars': [0,0,0,0,0,0,0], 'total_events': 0};
+    } catch (e) {
+      return {'labels': ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'], 'bars': [0,0,0,0,0,0,0], 'total_events': 0};
+    }
+  }
+
+  /// Fetch crawl-scan results — leaked asset detections from the web crawler
+  Future<Map<String, dynamic>> fetchCrawlResults({String userUid = 'anonymous'}) async {
+    try {
+      final response = await http
+          .get(
+            Uri.parse('$baseUrl/crawl-scan?user_uid=$userUid'),
+            headers: {'Accept': 'application/json'},
+          )
+          .timeout(const Duration(seconds: 15));
+
+      if (response.statusCode == 200) {
+        return jsonDecode(response.body) as Map<String, dynamic>;
+      }
+      return {'leaks': [], 'leaks_found': 0};
+    } catch (e) {
+      return {'leaks': [], 'leaks_found': 0};
     }
   }
 

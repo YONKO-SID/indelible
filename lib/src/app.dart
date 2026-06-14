@@ -8,6 +8,8 @@ import 'screens/verify_screen.dart';
 import 'screens/activity_screen.dart';
 import 'screens/archive_screen.dart';
 import 'screens/settings_screen.dart';
+import 'screens/dashboard_screen.dart';
+import 'screens/home_screen.dart';
 import 'config/themes/app_colors.dart';
 
 /// Root widget of the INDELIBLE application.
@@ -51,10 +53,14 @@ class IndelibleApp extends StatelessWidget {
         ),
         textTheme: GoogleFonts.interTextTheme(ThemeData.dark().textTheme),
       ),
-      // Always starts at splash, hands off to auth route
-      home: const SplashScreen(),
+      // Always starts at splash via initialRoute, root route maps directly to AuthGate to avoid refreshing
+      initialRoute: '/splash',
       routes: {
+        '/': (context) => const AuthGate(),
+        '/splash': (context) => const SplashScreen(),
         '/auth': (context) => const AuthGate(),
+        '/dashboard': (context) => const DashboardScreen(),
+        '/vault': (context) => const HomeScreen(),
         '/profile': (context) => const ProfileScreen(),
         '/protect': (context) => const ProtectScreen(),
         '/verify': (context) => const VerifyScreen(),

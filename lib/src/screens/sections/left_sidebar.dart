@@ -46,8 +46,15 @@ class LeftSidebar extends StatelessWidget {
                   context: context,
                   title: 'Dashboard',
                   icon: Icons.dashboard_outlined,
-                  route: '/',
-                  isActive: currentRoute == '/',
+                  route: '/dashboard',
+                  isActive: currentRoute == '/dashboard',
+                ),
+                _buildNavItem(
+                  context: context,
+                  title: 'Vault',
+                  icon: Icons.shield_outlined,
+                  route: '/vault',
+                  isActive: currentRoute == '/vault',
                 ),
                 _buildNavItem(
                   context: context,
@@ -153,8 +160,8 @@ class LeftSidebar extends StatelessWidget {
             return;
           }
           if (!isActive) {
-            if (route == '/') {
-               Navigator.of(context).pushNamedAndRemoveUntil('/', (r) => false);
+            if (route == '/vault') {
+               Navigator.of(context).pushNamedAndRemoveUntil('/vault', (r) => false);
             } else {
                Navigator.of(context).pushReplacementNamed(route);
             }

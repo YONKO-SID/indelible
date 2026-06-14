@@ -1,17 +1,17 @@
 import asyncio
-import os
 import glob
-import shutil
 import json
 import logging
+import os
+import shutil
 from datetime import datetime
-from PIL import Image
-import imagehash
 
-from core.bktree_index import index as bktree_index
-from core.watermark import extract_watermark_dct
-from core.payload import verify_payload
+import imagehash
 from core.ai_engine import IndelibleAIEngine
+from core.bktree_index import index as bktree_index
+from core.payload import verify_payload, create_payload
+from core.watermark import extract_watermark_dct, extract_watermark_robust
+from PIL import Image
 
 logger = logging.getLogger("IndelibleDaemon")
 
@@ -20,6 +20,7 @@ PROCESSED_DIR = os.path.join(PIRATE_DIR, "processed")
 ALERTS_FILE = "alerts.json"
 REGISTRY_FILE = "creator_registry.json"
 import os
+
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -30,6 +31,7 @@ SECRET_KEY = os.getenv("SECRET_KEY", "development_secret_key").encode()
 # Initialize directories
 os.makedirs(PIRATE_DIR, exist_ok=True)
 os.makedirs(PROCESSED_DIR, exist_ok=True)
+
 
 class MonitoringDaemon:
     def __init__(self):
@@ -65,40 +67,42 @@ class MonitoringDaemon:
         images = glob.glob(os.path.join(PIRATE_DIR, "*.*"))
         # Filter out directories
         images = [img for img in images if os.path.isfile(img)]
-        
+
         if not images:
             return
 
         logger.info(f"Daemon found {len(images)} new files to scan.")
-        
+
         for img_path in images:
             try:
                 filename = os.path.basename(img_path)
                 logger.info(f"Scanning {filename} with pHash filter...")
-                
+
                 # 1. pHash Fast Filter
                 matches = bktree_index.find_matches(img_path, tolerance=5)
-                
+
                 if matches:
                     closest_dist, possible_fingerprint = matches[0]
-                    logger.info(f"⚠️ pHash match found! Dist: {closest_dist}. Suspected owner: {possible_fingerprint}")
-                    
+                    logger.info(
+                        f"⚠️ pHash match found! Dist: {closest_dist}. Suspected owner: {possible_fingerprint}"
+                    )
+
                     # 2. Heavy DWT Extraction (Cryptographic Proof)
-                    # For the demo, we use 1408 bits which matches our RS-64 payload
-                    extracted_bits = extract_watermark_dct(img_path, num_bits=1408, delta=80)
-                    verify_result = verify_payload(extracted_bits, SECRET_KEY)
-                    
+                    verify_result = extract_watermark_robust(img_path, SECRET_KEY, delta=80)
+
                     if verify_result.get("verified"):
                         actual_fingerprint = verify_result.get("creator_id")
-                        logger.info(f"🚨 DWT Cryptographic proof successful for {actual_fingerprint}")
-                        
+                        logger.info(
+                            f"🚨 DWT Cryptographic proof successful for {actual_fingerprint}"
+                        )
+
                         # 3. Check Subscription & Route Action
                         tier = self._get_creator_tier(actual_fingerprint)
                         dmca_draft = None
-                        
+
                         if tier == "Enterprise":
                             logger.info("Enterprise tier detected. Generating DMCA...")
-                            # Since this is a background daemon, we use mock reasoning for the DMCA to save API calls, 
+                            # Since this is a background daemon, we use mock reasoning for the DMCA to save API calls,
                             # or we can call Gemini. Let's call Gemini.
                             try:
                                 # Mock reasoning to save API latency in background
@@ -106,12 +110,12 @@ class MonitoringDaemon:
                                 dmca_draft = self.ai_engine.generate_takedown_notice(
                                     creator_id=actual_fingerprint,
                                     reasoning=mock_reasoning,
-                                    platform_url=f"https://pirate.mock.web/{filename}"
+                                    platform_url=f"https://pirate.mock.web/{filename}",
                                 )
                             except Exception as e:
                                 logger.error(f"Failed to generate DMCA: {e}")
                                 dmca_draft = "Failed to generate DMCA draft."
-                        
+
                         # 4. Generate Alert
                         alerts = self._load_alerts()
                         alert = {
@@ -122,11 +126,13 @@ class MonitoringDaemon:
                             "confidence": "100%",
                             "tier": tier,
                             "dmca_draft": dmca_draft,
-                            "status": "unread"
+                            "status": "unread",
                         }
                         alerts.append(alert)
                         self._save_alerts(alerts)
-                        logger.info(f"Alert generated and saved for {actual_fingerprint}")
+                        logger.info(
+                            f"Alert generated and saved for {actual_fingerprint}"
+                        )
                     else:
                         logger.info("DWT extraction failed. False positive from pHash.")
                 else:
@@ -149,10 +155,11 @@ class MonitoringDaemon:
                 await self.scan_cycle()
             except Exception as e:
                 logger.error(f"Daemon scan cycle error: {e}")
-            await asyncio.sleep(15) # Scan every 15 seconds
+            await asyncio.sleep(15)  # Scan every 15 seconds
 
     def stop(self):
         self.is_running = False
         logger.info("Automated Monitoring Daemon stopped.")
+
 
 daemon = MonitoringDaemon()

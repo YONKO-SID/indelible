@@ -63,7 +63,7 @@ class AuthGate extends StatelessWidget {
             // Route based on onboarding and auth state
             if (!hasSeen) return const OnBoardingScreen();
             if (user == null) return const LoginScreen();
-            return const HomeScreen();
+            return const HomeScreen(); // Vault is the first screen after login
           },
         );
       },
