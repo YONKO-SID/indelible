@@ -173,17 +173,22 @@ class _RecentActivityListState extends State<RecentActivityList> {
   }
 
   Widget _buildActivityCard(ActivityEvent event) {
+    const surfaceColor = Color(0xFF161618);
+    const borderColor = Color(0xFF2C2C2E);
+
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: AppColors.surfaceContainer,
-        borderRadius: BorderRadius.circular(12),
-        border: Border(
-          left: BorderSide(
-            color: event.color.withValues(alpha: 0.6),
-            width: 4,
+        color: surfaceColor,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: borderColor),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.3),
+            blurRadius: 12,
+            offset: const Offset(0, 6),
           ),
-        ),
+        ],
       ),
       child: Row(
         children: [

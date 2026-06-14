@@ -95,8 +95,8 @@ fingerprint = f"INDL-{digest[:4]}-{digest[4:8]}-{digest[8:12]}"
 ```
 
 - **Stored in** `creator_registry.json` with registration timestamp
-- **Embedded** into every watermark payload as the `creator_id` field
-- **Verified** during `/verify` by checking HMAC with the same key
+- **Embedded** into every watermark payload as the `creator_id` field (padded to 24 characters to standardize the bitstream block size at exactly 1656 bits)
+- **Verified** during `/verify` by checking HMAC with the same key (supports both padded and legacy unpadded validation)
 
 ---
 
@@ -168,15 +168,21 @@ graph TD
 We use `pytest` for automated test suites.
 
 ```bash
+# From the root directory:
+$env:PYTHONPATH="backend"  # For Windows PowerShell
+.venv\Scripts\pytest -v
+
 # From backend/ with venv active:
-$env:PYTHONPATH="."  # For Windows PowerShell
-pytest tests/ -v
+$env:PYTHONPATH="."
+.venv\Scripts\pytest -v
 ```
 
 This runs:
 - `test_payload.py` (HMAC signing + Reed-Solomon recovery)
 - `test_watermark.py` (DWT-QIM embedding + blind extraction math)
 - `test_api.py` (FastAPI TestClient end-to-end endpoints)
+- `test_robustness.py` (Simulates geometric cropping, blur, noise, and JPEG attacks)
+- `test_watchdog.py` (Asynchronous watchdog scanning pipeline test)
 
 ---
 
@@ -210,3 +216,24 @@ The watchdog system ensures passive protection without user intervention.
 - **`core/monitoring_daemon.py`**: A background task that runs every 15 seconds. It simulates an internet crawler by scanning target directories.
 - **Flow**: `New Image` → `pHash Match (BK-Tree)` → `DWT Verification` → `Subscription Check` → `Alert Generation`.
 - **Alerts**: Stored in `alerts.json` and served via `/alerts/{user_uid}` for the Flutter polling system.
+
+---
+
+## 13. Onboarding Screens Custom Painters & Navigation Routing
+
+### Custom Painters Visual Architecture
+To provide interactive animations without heavy Lottie JSONs, the onboarding flows utilize GPU-accelerated custom paint components:
+1.  **`RadarShieldPainter` (`intro_screen1.dart`)**:
+    - Animates a sweep line vector needle and concentric rings to simulate a secure radar scan.
+    - Draws a glowing security shield outline and checkmark in the center of the viewport.
+2.  **`FrequencyWavePainter` (`intro_screen2.dart`)**:
+    - Synthesizes and renders three distinct overlapping frequency wave equations (approximation band, target watermark band, high-frequency details band).
+    - Phase shifting dynamically mimics the Discrete Cosine/Wavelet Transform (DWT-DCT) operation.
+3.  **`CryptoProofPainter` (`intro_screen3.dart`)**:
+    - Visualizes a connected cryptographic node ledger/Merkle tree structure.
+    - Draws a pulsing central verification root block and interpolates glowing data packets moving between parent and child nodes to visually represent verification.
+
+### Navigation Routing Rules
+- **Initial Sequence**: The application launches directly into `/splash` which loads the multi-page onboarding screens.
+- **Root Mapping**: Route `'/'` maps directly to `AuthGate()` in `app.dart`. Once onboarded/authenticated, navigation triggers dashboard actions without resetting back to the splash screens (which solves the vault refresh bug).
+- **Compliance**: Opacity methods use `color.withValues(alpha: ...)` to ensure strict compatibility with the latest Flutter stable analyzer specs.

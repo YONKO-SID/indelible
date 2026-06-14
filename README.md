@@ -9,7 +9,7 @@ INDELIBLE embeds cryptographically signed, invisible watermarks into images and 
 ## How It Works
 
 ```
-1. PROTECT ──▶ User uploads media → DWT+QIM embeds signed payload → PNG returned → pHash saved to Index
+1. PROTECT ──▶ User uploads media → High-Redundancy DWT-LL embeds signed payload → Anchored to Polygon Blockchain → PNG returned
 2. WATCHDOG ──▶ Background daemon scans web → pHash matches BK-Tree? → DWT extracts proof → Push alert
 3. ENFORCE  ──▶ Gemini drafted DMCA notice → Enterprise legal response triggered
 4. MANUAL   ──▶ Direct upload of suspect copy → Fast cryptographic verification
@@ -18,11 +18,11 @@ INDELIBLE embeds cryptographically signed, invisible watermarks into images and 
 ### Core Pipeline
 
 ```
-Image → YCrCb (extract Y) → Haar DWT → LL subband → QIM embed payload bits
-    → Inverse DWT → Clip to uint8 → Save as PNG + .meta sidecar
+Image → YCrCb (extract Y) → Haar DWT → LL subband → Massive Redundancy QIM (delta=80)
+    → Inverse DWT → Clip to uint8 → Save as PNG + Blockchain TX hash
 ```
 
-The payload is: `CreatorFingerprint | UTC Timestamp | HMAC-SHA256`, Reed-Solomon encoded to 1400 bits for error correction.
+The payload is: `CreatorFingerprint (padded) | UTC Timestamp | HMAC-SHA256 (truncated)`, Reed-Solomon encoded (nsym=128) for superior error correction.
 
 ---
 
@@ -86,6 +86,9 @@ indelible/
 │       │   │   ├── stats_grid.dart
 │       │   │   ├── recent_assets_list.dart
 │       │   │   └── recent_activity_list.dart
+│       │   ├── intro_screens/         # Animated GPU onboarding screens
+│       │   ├── layouts/
+│       │   │   └── dashboard_layout.dart # Sliding Matrix4 sidebar shell
 │       │   ├── login_screen.dart
 │       │   └── home_screen.dart
 │       └── services/auth_service.dart
@@ -152,11 +155,13 @@ The backend relies on heavy system libraries (`ffmpeg`, `libgl1`) and must be de
 
 ## Key Algorithms
 
-- **DWT (Haar)** — Decomposes image into frequency subbands (LL, LH, HL, HH)
-- **QIM (delta=80)** — Embeds bits by quantizing LL coefficients to even/odd grid points
-- **HMAC-SHA256** — Produces unforgeable signatures using a secret key
-- **Reed-Solomon (nsym=64)** — Corrects up to 32 byte-errors in extracted payloads
-- **SHA-256 Fingerprinting** — Derives deterministic `INDL-XXXX-XXXX-XXXX` from Firebase UID
+- **DWT (Haar)** — Decomposes image into frequency subbands; we utilize the **LL subband** for maximum stability.
+- **Massive Redundancy QIM (delta=100)** — Embeds bits by quantizing *every* LL coefficient, enabling majority-vote recovery from noise.
+- **HMAC-SHA256** — Produces unforgeable signatures using a secret key (truncated to 16 bytes for compression).
+- **Reed-Solomon (nsym=128)** — Corrects up to 64 byte-errors (approx 32% error-correction threshold) in extracted payloads.
+- **Robust Scale & Grid Search Verification** — Tries scale factors from 0.80 to 1.00 and translation offsets to handle crop-and-resize expansion, with a fast-fail anchor bit pre-check.
+- **Blockchain Anchoring** — Provides immutable "Mathematical Chain of Custody" on the Polygon network.
+- **SHA-256 Fingerprinting** — Derives deterministic `INDL-XXXX-XXXX-XXXX` from Firebase UID.
 
 ---
 

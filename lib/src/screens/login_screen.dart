@@ -82,8 +82,8 @@ class _LoginScreenState extends State<LoginScreen> {
         // SIGN IN FLOW
         await _authService.signInWithEmail(email: email, password: password);
       }
-      // If we get here, auth succeeded — navigate to dashboard
-      _navigateToDashboard();
+      // If we get here, auth succeeded — navigate to vault
+      _navigateToVault();
     } catch (e) {
       // Firebase throws specific error messages like:
       //   "The email address is already in use"
@@ -103,7 +103,7 @@ class _LoginScreenState extends State<LoginScreen> {
     try {
       final user = await _authService.signInWithGoogle();
       if (user != null) {
-        _navigateToDashboard();
+        _navigateToVault();
       }
     } catch (e) {
       _showError(_getFirebaseErrorMessage(e));
@@ -112,8 +112,8 @@ class _LoginScreenState extends State<LoginScreen> {
     }
   }
 
-  /// Navigate to dashboard and remove login from the stack
-  void _navigateToDashboard() {
+  /// Navigate to Vault (HomeScreen) and remove login from the stack
+  void _navigateToVault() {
     if (!mounted) return;
     Navigator.of(context).pushAndRemoveUntil(
       MaterialPageRoute(builder: (_) => const HomeScreen()),

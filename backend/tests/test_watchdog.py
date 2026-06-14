@@ -1,10 +1,11 @@
+import pytest
 import os
 import shutil
 import time
 import asyncio
 import cv2
 import numpy as np
-from core.watermark import embed_watermark_dct, extract_watermark_dct
+from core.watermark import embed_watermark_dct, extract_watermark_dct, extract_watermark_robust
 from core.payload import create_payload
 from core.bktree_index import index as bktree_index
 from core.monitoring_daemon import daemon
@@ -18,6 +19,7 @@ TEST_IMG = "test_source.png"
 PROTECTED_IMG = "test_protected.png"
 PIRATE_DIR = "dummy_pirate_web"
 
+@pytest.mark.anyio
 async def test_watchdog_pipeline():
     print("--- Starting Watchdog Pipeline Test ---")
     
@@ -43,11 +45,11 @@ async def test_watchdog_pipeline():
     
     # 5. Run one scan cycle manually
     print("Step 4: Running daemon scan cycle...")
-    # Manually run the extraction to see BER
+    # Manually run the extraction to see if verified
     print(f"DEBUG: Payload bits length: {len(rs_bits)}")
-    extracted = extract_watermark_dct(pirate_copy, num_bits=len(rs_bits), delta=80)
-    errors = np.sum(extracted != rs_bits)
-    print(f"DEBUG: Blind extraction BER: {errors/len(rs_bits)*100:.2f}% ({errors} errors)")
+    verify_result = extract_watermark_robust(pirate_copy, SECRET_KEY, delta=80)
+    print(f"DEBUG: Robust verification result: {verify_result}")
+    assert verify_result.get("verified") is True
     
     await daemon.scan_cycle()
     

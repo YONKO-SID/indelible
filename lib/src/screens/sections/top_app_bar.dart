@@ -7,7 +7,9 @@ import '../../services/auth_service.dart';
 import '../../services/api_service.dart';
 /// Top application bar with status indicators and profile menu.
 class TopAppBar extends StatefulWidget implements PreferredSizeWidget {
-  const TopAppBar({super.key});
+  final VoidCallback? onMenuPressed;
+
+  const TopAppBar({super.key, this.onMenuPressed});
 
   @override
   State<TopAppBar> createState() => _TopAppBarState();
@@ -67,7 +69,7 @@ class _TopAppBarState extends State<TopAppBar> {
           // Logo or Hamburger
           if (isMobile)
             IconButton(
-              onPressed: () => Scaffold.of(context).openDrawer(),
+              onPressed: widget.onMenuPressed ?? () => Scaffold.of(context).openDrawer(),
               icon: const Icon(Icons.menu, color: AppColors.onSurface),
             )
           else

@@ -4,9 +4,9 @@ import 'package:file_picker/file_picker.dart';
 import 'package:http/http.dart' as http;
 import 'package:firebase_auth/firebase_auth.dart';
 import 'dart:convert';
-import 'package:url_launcher/url_launcher.dart';
 import '../../config/themes/app_colors.dart';
 import '../../services/api_service.dart';
+import '../../services/download_service.dart';
 
 /// Action buttons for primary app functions like protecting assets.
 class QuickActions extends StatefulWidget {
@@ -76,10 +76,8 @@ class _QuickActionsState extends State<QuickActions> {
 
   void _downloadFile(String url) async {
     final downloadUrl = url.startsWith('/') ? '${ApiService.baseUrl}$url' : url;
-    final uri = Uri.parse(downloadUrl);
-    if (await canLaunchUrl(uri)) {
-      await launchUrl(uri, mode: LaunchMode.externalApplication);
-    }
+    final fileName = downloadUrl.split('/').last;
+    DownloadService.downloadAndSave(context, downloadUrl, fileName);
   }
 
   void _showResultDialog(String actionName, Map<String, dynamic> data) {
