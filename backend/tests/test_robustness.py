@@ -45,8 +45,8 @@ def test_robustness():
     creator_fp = "INDL-TEST-0001"
     payload_str, _, rs_bits = create_payload(creator_fp, SECRET_KEY)
 
-    # Create a dummy image
-    dummy_img = np.zeros((512, 512, 3), dtype=np.uint8)
+    # Create a dummy image (using mid-gray to prevent clipping in black regions)
+    dummy_img = np.ones((512, 512, 3), dtype=np.uint8) * 128
     cv2.putText(
         dummy_img,
         "Indelible Test",
@@ -96,77 +96,55 @@ def test_robustness():
         num_bits = len(rs_bits)
 
         if verified:
-            # Re-extract with the detected parameters to compute BER for the report
-            scale = result.get("scale_detected", 1.0)
-            dx_offset, dy_offset = result.get("shift_detected", (0, 0))
+            # Re-extract with the detected parameters to compute BER for the report using DWT-DCT
+            dx, dy = result.get("shift_detected", (0, 0))
 
             img_bgr = cv2.imread(path)
             h, w = img_bgr.shape[:2]
-            h_restored = int(h * scale)
-            w_restored = int(w * scale)
-            img_restored = cv2.resize(img_bgr, (w_restored, h_restored), interpolation=cv2.INTER_CUBIC)
+            
+            # Apply shift detected
+            M = np.float32([[1, 0, dx], [0, 1, dy]])
+            shifted_bgr = cv2.warpAffine(img_bgr, M, (w, h))
 
-            base_dy = (h - h_restored) // 2
-            base_dx = (w - w_restored) // 2
-            dy = base_dy + dy_offset
-            dx = base_dx + dx_offset
+            # Standard Extraction Math
+            img_ycrcb = cv2.cvtColor(shifted_bgr, cv2.COLOR_BGR2YCrCb)
+            Y = img_ycrcb[:, :, 0]
 
-            canvas = np.zeros((h, w, 3), dtype=np.uint8)
-            canvas[dy : dy + h_restored, dx : dx + w_restored] = img_restored
-
-            img_ycrcb = cv2.cvtColor(canvas, cv2.COLOR_BGR2YCrCb)
-            y_channel = np.float64(img_ycrcb[:, :, 0])
-
-            coeffs = pywt.dwt2(y_channel, "haar")
-            ll, _ = coeffs[0], coeffs[1]
-            ll_h, ll_w = ll.shape
-
-            r_start = dy // 2
-            r_end = (dy + h_restored) // 2
-            c_start = dx // 2
-            c_end = (dx + w_restored) // 2
-
-            votes = [[] for _ in range(num_bits)]
-
-            for r in range(r_start, r_end):
-                for c in range(c_start, c_end):
-                    if r >= ll_h or c >= ll_w:
-                        continue
-                    coef = ll[r, c]
-
-                    orig_idx = r * ll_w + c
-                    bit_idx = orig_idx % num_bits
-
-                    nearest_multiple = np.round(coef / 100) * 100
-                    distance = abs(coef - nearest_multiple)
-
-                    bit = 1 if distance > 25 else 0
-                    votes[bit_idx].append(bit)
+            coeffs = pywt.dwt2(np.float32(Y), "haar")
+            LL, _ = coeffs
+            dct_LL = cv2.dct(LL)
 
             extracted_bits = []
-            for i in range(num_bits):
-                if not votes[i]:
-                    extracted_bits.append(0)
-                    continue
-                extracted_bits.append(1 if np.mean(votes[i]) > 0.5 else 0)
+            rows, cols = dct_LL.shape
+
+            for i in range(4, min(100, rows)):
+                for j in range(4, min(100, cols)):
+                    if len(extracted_bits) >= num_bits:
+                        break
+                    coeff = dct_LL[i, j]
+                    quantized = round(coeff / 100)
+                    extracted_bits.append(int(quantized) % 2)
 
             extracted_bits = np.array(extracted_bits, dtype=np.uint8)
             best_ber = np.mean(extracted_bits != rs_bits)
         else:
-            # If not verified, try to extract at original scale (1.0, 0, 0) just to print a BER baseline
+            # If not verified, try to extract at original scale (1.0, 0, 0) just to print a BER baseline using DWT-DCT
             try:
                 img_bgr = cv2.imread(path)
                 img_ycrcb = cv2.cvtColor(img_bgr, cv2.COLOR_BGR2YCrCb)
-                y_channel = np.float64(img_ycrcb[:, :, 0])
-                coeffs = pywt.dwt2(y_channel, "haar")
-                ll, _ = coeffs[0], coeffs[1]
-                ll_flat = ll.flatten()
+                Y = img_ycrcb[:, :, 0]
+                coeffs = pywt.dwt2(np.float32(Y), "haar")
+                LL, _ = coeffs
+                dct_LL = cv2.dct(LL)
                 extracted_bits = []
-                for i in range(num_bits):
-                    coef = ll_flat[i]
-                    nearest_multiple = np.round(coef / 100) * 100
-                    distance = abs(coef - nearest_multiple)
-                    extracted_bits.append(1 if distance > 25 else 0)
+                rows, cols = dct_LL.shape
+                for i in range(4, min(100, rows)):
+                    for j in range(4, min(100, cols)):
+                        if len(extracted_bits) >= num_bits:
+                            break
+                        coeff = dct_LL[i, j]
+                        quantized = round(coeff / 100)
+                        extracted_bits.append(int(quantized) % 2)
                 extracted_bits = np.array(extracted_bits, dtype=np.uint8)
                 best_ber = np.mean(extracted_bits != rs_bits)
             except Exception:

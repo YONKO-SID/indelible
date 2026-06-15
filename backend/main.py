@@ -223,7 +223,7 @@ async def protect_asset(
                 print(f"[*] Visual collision detected (Distance: {matches[0][0]}). Running deep forensic scan...")
                 
                 # 2. Deep Forensic Check: Does it actually contain our math?
-                verify_result = extract_watermark_robust(temp_in, delta=100)
+                verify_result = extract_watermark_robust(temp_in, SECRET_KEY, delta=100)
                 
                 if verify_result.get("verified"):
                     # 3. Abort: It is already protected.
@@ -324,7 +324,7 @@ async def verify_asset(file: UploadFile = File(...)):
         # Run the robust brute-force extractor directly on the raw files
         for frame in frames_to_check:
             delta_to_use = 50 if is_video else 100
-            result = extract_watermark_robust(frame, delta=delta_to_use) # Ensure signature matches your core_engine
+            result = extract_watermark_robust(frame, SECRET_KEY, delta=delta_to_use) # Ensure signature matches your core_engine
             if result.get("verified"):
                 verification = result
                 break

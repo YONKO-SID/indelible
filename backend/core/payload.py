@@ -6,7 +6,7 @@ import numpy as np
 import reedsolo
 
 
-ANCHOR_BITS = np.array([1, 0, 1, 0, 1, 0, 1, 0, 1, 1, 1, 1, 0, 0, 0, 0], dtype=np.uint8)
+ANCHOR_BITS = np.array([1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0], dtype=np.uint8)
 
 
 def string_to_bits(s: str) -> np.ndarray:
