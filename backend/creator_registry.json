@@ -9,9 +9,6 @@
   },
   "INDL-2F18-3A4E-6449": {
     "uid_hash": "2f183a4e64493af3f377f745eda502363cd3e7ef6e4d266d444758de0a85fcc8",
-<<<<<<< HEAD
-    "registered_at": "2026-06-14T23:22:27.356638",
-=======
     "registered_at": "2026-06-14T23:28:49.749758",
     "tier": "Enterprise"
   },
@@ -993,7 +990,11 @@
   "INDL-664A-FAF4-73F4": {
     "uid_hash": "664afaf473f40a45b8f5178ec40cf6ae3c77d487d86d643a2c002927c66a79f9",
     "registered_at": "2026-06-14T23:57:15.567033",
->>>>>>> 0e365716fdd71b30225c64406ca9a544a71c52b8
+    "tier": "Enterprise"
+  },
+  "INDL-E5F1-B126-4FFF": {
+    "uid_hash": "e5f1b1264ffffbfa73511c91c32af427ad96f45b03f67591b724e6fd3c2f1563",
+    "registered_at": "2026-06-15T19:52:57.784678+00:00",
     "tier": "Enterprise"
   }
 }
