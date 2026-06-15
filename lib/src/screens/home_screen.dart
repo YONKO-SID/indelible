@@ -162,8 +162,16 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   }
 
   void _scrollToPlans() {
-    // Simple nav — push to protect for now
-    _goTo('/protect');
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(
+          'Detailed plans comparison coming soon!',
+          style: GoogleFonts.inter(color: AppColors.onSurface),
+        ),
+        backgroundColor: AppColors.surfaceContainerHigh,
+        behavior: SnackBarBehavior.floating,
+      ),
+    );
   }
 }
 
@@ -439,7 +447,18 @@ class _FeatureCardsRow extends StatelessWidget {
               title: 'Know Plans',
               body: 'Free tier, Pro (1K images/mo), Enterprise (unlimited + DMCA auto-send).',
               cta: 'See Pricing',
-              onTap: () {},
+              onTap: () {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text(
+                      'Detailed plans comparison coming soon!',
+                      style: GoogleFonts.inter(color: AppColors.onSurface),
+                    ),
+                    backgroundColor: AppColors.surfaceContainerHigh,
+                    behavior: SnackBarBehavior.floating,
+                  ),
+                );
+              },
             ),
             _FeatureCard(
               icon: Icons.shield_outlined,
