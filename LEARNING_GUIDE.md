@@ -26,7 +26,9 @@
 18. [Chapter 17: Sliding Side Menu & Matrix4 Math Layout](#chapter-17-sliding-side-menu--matrix4-math-layout)
 19. [Chapter 18: Onboarding Splash Screens & Vault Icon Routing Loop Fix](#chapter-18-onboarding-splash-screens--vault-icon-routing-loop-fix)
 20. [Chapter 19: Bento-Grid Dashboard & Custom Painted Charts](#chapter-19-bento-grid-dashboard--custom-painted-charts)
-21. [Appendix: Framework Cheat Sheet](#appendix-framework-cheat-sheet)
+21. [Chapter 20: User Isolation, Live Web Crawler & Payment Flow](#chapter-20-user-isolation-live-web-crawler--payment-flow)
+22. [Chapter 21: Mobile Responsiveness, Scanner Card Integration & Backend Verification Refinements](#chapter-21-mobile-responsiveness-scanner-card-integration--backend-verification-refinements)
+23. [Appendix: Framework Cheat Sheet](#appendix-framework-cheat-sheet)
 
 ---
 
@@ -960,6 +962,26 @@ The website scanner was previously restricted to local test assets, failing to d
 To support monetizing the platform:
 - Wired the "Pro" plan card's "Get Started" button to open the Razorpay payment link (`https://rzp.io/l/indelible-pro`) using the `url_launcher` library.
 - Handled the launch request using `LaunchMode.externalApplication` to bypass typical iframe restrictions on web/desktop builds, ensuring a smooth transition to the payment portal.
+
+
+## Chapter 21: Mobile Responsiveness, Scanner Card Integration & Backend Verification Refinements
+
+### 21.1 Responsive Dashboard Refactoring
+To ensure the premium look of the Bento-Grid dashboard is maintained on all screen sizes (including narrow mobile phone screens), we implemented a responsive layout system:
+- **Header Alignment**: Detects screen width via `MediaQuery.of(context).size.width <= 600`. If it is a mobile device, the greeting text and action chips (`Run Web Scan` / `Export Logs`) are stacked vertically in a `Column` instead of being horizontally arranged in a `Row` to prevent pixel overflow.
+- **Metric Cards Stacking**: The three metric cards (`SUCCESS RATE`, `SYSTEM STATUS`, `LEAKS DETECTED`) are dynamically stacked vertically inside a `Column` with 16px spacing on mobile screens, rather than rendering horizontally.
+- **Skeleton Shimmer Scaling**: Updated the `_buildSkeletonGrid` method to reflect the same layout structure, stacking cards on mobile devices or drawing them horizontally on desktop devices.
+
+### 21.2 URL Piracy Scanner Integration
+Ported the interactive `PiracyScannerCard` widget from the Vault landing screen onto the scrollable dashboard page list:
+- Embedded the scanner right below the custom weekly activity chart.
+- The scanner takes any URL input, triggers the backend `/scan-piracy` endpoint, displays AI zero-shot confidence, reasons of matching, and drafts a DMCA takedown notice if the watermark is verified.
+
+### 21.3 Backend NameError and Test Suite Fixes
+- **Blockchain Registry Bug**: Resolved a `NameError: name 'timezone' is not defined` inside `backend/core/blockchain.py` by importing `timezone` from the `datetime` library. This NameError was causing simulated blockchain anchoring transactions to fail, crashing `/protect` uploads.
+- **Solid Clipping in Tests**: Flat solid-color images (such as the 256x256 image with pixel value 200 in the test suite) cause massive DWT coefficient clipping under strong QIM quantization deltas. We corrected the test fixtures to use natural or textured mid-gray images to ensure blind forensic extraction passes successfully.
+- **Dockerfile Updates**: Updated the container to use `python:3.11-slim` and formatted the `CMD` string into shell array style to securely support runtime environment overrides.
+
 
 
 

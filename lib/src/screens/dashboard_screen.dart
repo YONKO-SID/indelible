@@ -10,6 +10,7 @@ import '../models/alert.dart';
 import '../widgets/animations/animation_builders.dart';
 import 'layouts/dashboard_layout.dart';
 import 'sections/recent_assets_list.dart' hide Shimmer;
+import 'sections/piracy_scanner_card.dart';
 
 /// Bento-Grid Dashboard — powered entirely by real backend data
 class DashboardScreen extends StatefulWidget {
@@ -128,6 +129,50 @@ class _DashboardScreenState extends State<DashboardScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final bool isMobile = MediaQuery.of(context).size.width <= 600;
+
+    final Widget headerTitle = Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          'Overview',
+          style: GoogleFonts.spaceGrotesk(
+            fontSize: 36,
+            fontWeight: FontWeight.bold,
+            letterSpacing: -1.0,
+            color: AppColors.onSurface,
+          ),
+        ),
+        const SizedBox(height: 4),
+        Text(
+          'Welcome back, $_displayName.',
+          style: GoogleFonts.inter(
+            fontSize: 14,
+            color: AppColors.onSurfaceVariant,
+          ),
+        ),
+      ],
+    );
+
+    final Widget actionChips = Wrap(
+      spacing: 12,
+      runSpacing: 8,
+      children: [
+        _ActionChip(
+          label: 'Run Web Scan',
+          icon: Icons.radar_outlined,
+          color: AppColors.secondary,
+          onTap: _runCrawlScan,
+        ),
+        _ActionChip(
+          label: 'Export Logs',
+          icon: Icons.download_outlined,
+          color: AppColors.primary,
+          onTap: _exportFullLogs,
+        ),
+      ],
+    );
+
     return DashboardLayout(
       currentRoute: '/dashboard',
       child: SingleChildScrollView(
@@ -137,54 +182,23 @@ class _DashboardScreenState extends State<DashboardScreen> {
           children: [
             // ── HEADER ────────────────────────────────────────────────
             FadeInAnimation(
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  Expanded(
-                    child: Column(
+              child: isMobile
+                  ? Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(
-                          'Overview',
-                          style: GoogleFonts.spaceGrotesk(
-                            fontSize: 36,
-                            fontWeight: FontWeight.bold,
-                            letterSpacing: -1.0,
-                            color: AppColors.onSurface,
-                          ),
-                        ),
-                        const SizedBox(height: 4),
-                        Text(
-                          'Welcome back, $_displayName.',
-                          style: GoogleFonts.inter(
-                            fontSize: 14,
-                            color: AppColors.onSurfaceVariant,
-                          ),
-                        ),
+                        headerTitle,
+                        const SizedBox(height: 16),
+                        actionChips,
+                      ],
+                    )
+                  : Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        Expanded(child: headerTitle),
+                        actionChips,
                       ],
                     ),
-                  ),
-                  // Crawl + Export buttons
-                  Wrap(
-                    spacing: 12,
-                    children: [
-                      _ActionChip(
-                        label: 'Run Web Scan',
-                        icon: Icons.radar_outlined,
-                        color: AppColors.secondary,
-                        onTap: _runCrawlScan,
-                      ),
-                      _ActionChip(
-                        label: 'Export Logs',
-                        icon: Icons.download_outlined,
-                        color: AppColors.primary,
-                        onTap: _exportFullLogs,
-                      ),
-                    ],
-                  ),
-                ],
-              ),
             ),
             const SizedBox(height: 32),
 
@@ -193,7 +207,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
               future: _bundle ??= _loadAll(),
               builder: (context, snap) {
                 if (snap.connectionState == ConnectionState.waiting) {
-                  return _buildSkeletonGrid();
+                  return _buildSkeletonGrid(context);
                 }
                 if (snap.hasError || !snap.hasData) {
                   return _buildError(snap.error.toString());
@@ -207,7 +221,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                       children: [
                         _buildHeroCard(b.stats),
                         const SizedBox(height: 16),
-                        _buildMetricRow(b.stats, b.alerts.length),
+                        _buildMetricRow(context, b.stats, b.alerts.length),
                       ],
                     ),
                     const SizedBox(height: 24),
@@ -217,7 +231,14 @@ class _DashboardScreenState extends State<DashboardScreen> {
                       duration: const Duration(milliseconds: 600),
                       child: _RealBarChartCard(chartData: b.chartData),
                     ),
-                    const SizedBox(height: 32),
+                    const SizedBox(height: 24),
+
+                    // Website Piracy Scanner (Takes a URL input, parses & runs defacement scanner)
+                    SlideInAnimation(
+                      duration: const Duration(milliseconds: 650),
+                      child: const PiracyScannerCard(),
+                    ),
+                    const SizedBox(height: 24),
 
                     // Leak detection activity timeline (max 4)
                     SlideInAnimation(
@@ -362,46 +383,61 @@ class _DashboardScreenState extends State<DashboardScreen> {
     );
   }
 
-  Widget _buildMetricRow(ProtectionStats stats, int alertCount) {
+  Widget _buildMetricRow(BuildContext context, ProtectionStats stats, int alertCount) {
+    final bool isMobile = MediaQuery.of(context).size.width <= 600;
+
+    final List<Widget> cards = [
+      _MetricCard(
+        title: 'SUCCESS RATE',
+        value: '${stats.successRate.toStringAsFixed(0)}%',
+        color: AppColors.secondary,
+        icon: Icons.verified_outlined,
+      ),
+      _MetricCard(
+        title: 'SYSTEM STATUS',
+        value: '${stats.uptimePercentage.toStringAsFixed(1)}%',
+        color: AppColors.tertiary,
+        icon: Icons.speed_outlined,
+        subtitle: 'Uptime',
+      ),
+      _MetricCard(
+        title: 'LEAKS DETECTED',
+        value: alertCount.toString(),
+        color: alertCount > 0
+            ? AppColors.errorContainer
+            : AppColors.success,
+        icon: alertCount > 0
+            ? Icons.warning_amber_rounded
+            : Icons.check_circle_outline,
+        subtitle: alertCount > 0 ? 'Action needed' : 'All clear',
+      ),
+    ];
+
+    if (isMobile) {
+      return Column(
+        children: [
+          cards[0],
+          const SizedBox(height: 16),
+          cards[1],
+          const SizedBox(height: 16),
+          cards[2],
+        ],
+      );
+    }
+
     return Row(
       children: [
-        Expanded(
-          child: _MetricCard(
-            title: 'SUCCESS RATE',
-            value: '${stats.successRate.toStringAsFixed(0)}%',
-            color: AppColors.secondary,
-            icon: Icons.verified_outlined,
-          ),
-        ),
+        Expanded(child: cards[0]),
         const SizedBox(width: 16),
-        Expanded(
-          child: _MetricCard(
-            title: 'SYSTEM STATUS',
-            value: '${stats.uptimePercentage.toStringAsFixed(1)}%',
-            color: AppColors.tertiary,
-            icon: Icons.speed_outlined,
-            subtitle: 'Uptime',
-          ),
-        ),
+        Expanded(child: cards[1]),
         const SizedBox(width: 16),
-        Expanded(
-          child: _MetricCard(
-            title: 'LEAKS DETECTED',
-            value: alertCount.toString(),
-            color: alertCount > 0
-                ? AppColors.errorContainer
-                : AppColors.success,
-            icon: alertCount > 0
-                ? Icons.warning_amber_rounded
-                : Icons.check_circle_outline,
-            subtitle: alertCount > 0 ? 'Action needed' : 'All clear',
-          ),
-        ),
+        Expanded(child: cards[2]),
       ],
     );
   }
 
-  Widget _buildSkeletonGrid() {
+  Widget _buildSkeletonGrid(BuildContext context) {
+    final bool isMobile = MediaQuery.of(context).size.width <= 600;
     return Column(
       children: [
         Container(
@@ -414,23 +450,52 @@ class _DashboardScreenState extends State<DashboardScreen> {
           child: const DashboardShimmer(),
         ),
         const SizedBox(height: 16),
-        Row(
-          children: [
-            for (int i = 0; i < 3; i++) ...[
-              Expanded(
-                child: Container(
-                  height: 132,
-                  decoration: BoxDecoration(
-                    color: AppColors.surfaceContainer,
-                    borderRadius: BorderRadius.circular(24),
+        if (isMobile) ...[
+          Container(
+            height: 132,
+            decoration: BoxDecoration(
+              color: AppColors.surfaceContainer,
+              borderRadius: BorderRadius.circular(24),
+            ),
+            child: const DashboardShimmer(),
+          ),
+          const SizedBox(height: 16),
+          Container(
+            height: 132,
+            decoration: BoxDecoration(
+              color: AppColors.surfaceContainer,
+              borderRadius: BorderRadius.circular(24),
+            ),
+            child: const DashboardShimmer(),
+          ),
+          const SizedBox(height: 16),
+          Container(
+            height: 132,
+            decoration: BoxDecoration(
+              color: AppColors.surfaceContainer,
+              borderRadius: BorderRadius.circular(24),
+            ),
+            child: const DashboardShimmer(),
+          ),
+        ] else ...[
+          Row(
+            children: [
+              for (int i = 0; i < 3; i++) ...[
+                Expanded(
+                  child: Container(
+                    height: 132,
+                    decoration: BoxDecoration(
+                      color: AppColors.surfaceContainer,
+                      borderRadius: BorderRadius.circular(24),
+                    ),
+                    child: const DashboardShimmer(),
                   ),
-                  child: const DashboardShimmer(),
                 ),
-              ),
-              if (i < 2) const SizedBox(width: 16),
+                if (i < 2) const SizedBox(width: 16),
+              ],
             ],
-          ],
-        ),
+          ),
+        ],
       ],
     );
   }

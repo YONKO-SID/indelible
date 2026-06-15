@@ -13,11 +13,12 @@ import '../models/alert.dart';
 /// - Error handling and caching
 /// - Base URL management
 class ApiService {
-  // only uncomment it for testing on local machine
+  /*
+   // only uncomment it for testing on local machine
 
-  // static const String baseUrl = 'http://localhost:8000';
-
-  static const String baseUrl = 'https://indelible-backend-production.up.railway.app';
+  static const String baseUrl = 'http://localhost:8000';
+  */
+   static const baseUrl = String.fromEnvironment('BASE_URL');
 
   // Simple in-memory cache
   static final Map<String, _CacheEntry> _cache = {};
