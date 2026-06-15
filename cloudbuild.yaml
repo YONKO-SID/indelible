@@ -1,0 +1,50 @@
+steps:
+  # Pull the previous image to use as cache (speeds up ffmpeg/pip layers)
+  - name: 'gcr.io/cloud-builders/docker'
+    entrypoint: 'bash'
+    args:
+      - '-c'
+      - |
+        docker pull gcr.io/$PROJECT_ID/indelible:latest || exit 0
+
+  # Build using the cached image
+  - name: 'gcr.io/cloud-builders/docker'
+    args:
+      - 'build'
+      - '--cache-from'
+      - 'gcr.io/$PROJECT_ID/indelible:latest'
+      - '-t'
+      - 'gcr.io/$PROJECT_ID/indelible:$COMMIT_SHA'
+      - '-t'
+      - 'gcr.io/$PROJECT_ID/indelible:latest'
+      - '-f'
+      - 'backend/Dockerfile'
+      - '.'
+
+  # Push both tags
+  - name: 'gcr.io/cloud-builders/docker'
+    args: ['push', 'gcr.io/$PROJECT_ID/indelible:$COMMIT_SHA']
+
+  - name: 'gcr.io/cloud-builders/docker'
+    args: ['push', 'gcr.io/$PROJECT_ID/indelible:latest']
+
+  # Deploy to Cloud Run
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+    entrypoint: gcloud
+    args:
+      - 'run'
+      - 'deploy'
+      - 'indelible'
+      - '--image'
+      - 'gcr.io/$PROJECT_ID/indelible:$COMMIT_SHA'
+      - '--region'
+      - 'europe-west1'
+      - '--platform'
+      - 'managed'
+
+images:
+  - 'gcr.io/$PROJECT_ID/indelible:$COMMIT_SHA'
+  - 'gcr.io/$PROJECT_ID/indelible:latest'
+
+options:
+  logging: CLOUD_LOGGING_ONLY
