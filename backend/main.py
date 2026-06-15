@@ -65,14 +65,23 @@ async def startup_event():
 # --- Creator Fingerprint System ---
 def _load_registry() -> dict:
     if os.path.exists(REGISTRY_PATH):
-        with open(REGISTRY_PATH, "r") as f:
-            return json.load(f)
+        try:
+            with open(REGISTRY_PATH, "r") as f:
+                return json.load(f)
+        except (json.JSONDecodeError, OSError) as e:
+            # Corrupt or unreadable registry — return empty dict rather than crashing
+            print(f"[!] Warning: Could not load registry: {e}")
     return {}
 
 
 def _save_registry(registry: dict):
-    with open(REGISTRY_PATH, "w") as f:
-        json.dump(registry, f, indent=2)
+    try:
+        with open(REGISTRY_PATH, "w") as f:
+            json.dump(registry, f, indent=2)
+    except (OSError, PermissionError) as e:
+        # Cloud Run containers have a read-only image layer — writes may fail.
+        # This is non-fatal: the fingerprint is still computed and returned correctly.
+        print(f"[!] Warning: Could not save registry (read-only fs?): {e}")
 
 
 def generate_creator_fingerprint(user_uid: str) -> str:
@@ -80,19 +89,21 @@ def generate_creator_fingerprint(user_uid: str) -> str:
     Generates a unique, reproducible INDL-XXXX-XXXX-XXXX fingerprint
     from the user's Firebase UID using SHA-256.
     """
-    if user_uid == "anonymous" or not user_uid.strip():
-        user_uid = f"guest_{uuid.uuid4().hex}"
+    # FIXED: Use a stable deterministic string for anonymous users instead of
+    # uuid4(), which created a brand-new registry entry on every single request.
+    if not user_uid or user_uid == "anonymous" or not user_uid.strip():
+        user_uid = "anonymous_user"
 
     digest = hashlib.sha256(user_uid.encode()).hexdigest().upper()
     fingerprint = f"INDL-{digest[:4]}-{digest[4:8]}-{digest[8:12]}"
 
-    # Persist mapping: fingerprint -> uid
+    # Persist mapping: fingerprint -> uid (best-effort — may fail on read-only fs)
     registry = _load_registry()
     if fingerprint not in registry:
         registry[fingerprint] = {
             "uid_hash": hashlib.sha256(user_uid.encode()).hexdigest(),
-            "registered_at": datetime.now(timezone.utc).isoformat(),
-            "tier": "Enterprise",  # Defaulting to Enterprise for hackathon demo
+            "registered_at": datetime.now(timezone.utc).isoformat().replace("+00:00", "Z"),
+            "tier": "Enterprise",
         }
         _save_registry(registry)
     return fingerprint
