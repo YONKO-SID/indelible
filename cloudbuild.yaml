@@ -1,32 +1,13 @@
 steps:
-  # Pull the previous image to use as cache (speeds up ffmpeg/pip layers)
-  - name: 'gcr.io/cloud-builders/docker'
-    entrypoint: 'bash'
+  # Build and push using Kaniko for fast, natively-supported layer caching
+  - name: 'gcr.io/kaniko-project/executor:latest'
     args:
-      - '-c'
-      - |
-        docker pull gcr.io/$PROJECT_ID/indelible:latest || exit 0
-
-  # Build using the cached image
-  - name: 'gcr.io/cloud-builders/docker'
-    args:
-      - 'build'
-      - '--cache-from'
-      - 'gcr.io/$PROJECT_ID/indelible:latest'
-      - '-t'
-      - 'gcr.io/$PROJECT_ID/indelible:$COMMIT_SHA'
-      - '-t'
-      - 'gcr.io/$PROJECT_ID/indelible:latest'
-      - '-f'
-      - 'backend/Dockerfile'
-      - '.'
-
-  # Push both tags
-  - name: 'gcr.io/cloud-builders/docker'
-    args: ['push', 'gcr.io/$PROJECT_ID/indelible:$COMMIT_SHA']
-
-  - name: 'gcr.io/cloud-builders/docker'
-    args: ['push', 'gcr.io/$PROJECT_ID/indelible:latest']
+      - '--destination=gcr.io/$PROJECT_ID/indelible:$COMMIT_SHA'
+      - '--destination=gcr.io/$PROJECT_ID/indelible:latest'
+      - '--cache=true'
+      - '--cache-ttl=99h'
+      - '--dockerfile=backend/Dockerfile'
+      - '--context=dir://.'
 
   # Deploy to Cloud Run
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
