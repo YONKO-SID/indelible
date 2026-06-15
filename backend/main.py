@@ -154,47 +154,56 @@ async def get_upload_logs(user_uid: str = "anonymous"):
             if not fname.endswith(".png") and not fname.endswith(".mp4"):
                 continue
 
-            file_path = os.path.join(outputs_dir, fname)
-            meta_path = file_path + ".meta"
-            file_stat = os.stat(file_path)
+            try:
+                file_path = os.path.join(outputs_dir, fname)
+                meta_path = file_path + ".meta"
+                # FIXED: Guard against race condition where the monitoring daemon
+                # deletes a file between os.listdir() and os.stat(). Without this,
+                # a FileNotFoundError here would crash the entire request (500).
+                file_stat = os.stat(file_path)
 
-            entry = {
-                "filename": fname,
-                "protected_at": datetime.fromtimestamp(file_stat.st_mtime, tz=timezone.utc).isoformat().replace("+00:00", "Z"),
-                "size_kb": round(file_stat.st_size / 1024, 1),
-                "download_url": f"/download/{fname}",
-                "creator_fingerprint": "unknown",
-                "watermark_timestamp": None,
-            }
+                entry = {
+                    "filename": fname,
+                    "protected_at": datetime.fromtimestamp(file_stat.st_mtime, tz=timezone.utc).isoformat().replace("+00:00", "Z"),
+                    "size_kb": round(file_stat.st_size / 1024, 1),
+                    "download_url": f"/download/{fname}",
+                    "creator_fingerprint": "unknown",
+                    "watermark_timestamp": None,
+                }
 
-            # Read sidecar metadata if available
-            if os.path.exists(meta_path):
-                try:
-                    with open(meta_path, "r") as f:
-                        meta = json.load(f)
+                # Read sidecar metadata if available
+                if os.path.exists(meta_path):
+                    try:
+                        with open(meta_path, "r") as f:
+                            meta = json.load(f)
 
-                    # Use verify_payload to extract fingerprint from bits
-                    bits = np.array(meta.get("payload_bits", []), dtype=np.uint8)
-                    if len(bits) > 0:
-                        result = verify_payload(bits, SECRET_KEY)
-                        if result.get("verified"):
-                            asset_fp = result.get("creator_id", "unknown")
-                            # Filter by fingerprint (unless "all" is requested for admin/debug)
-                            if user_uid != "all" and asset_fp != fingerprint:
-                                continue
-                            entry["creator_fingerprint"] = asset_fp
-                            entry["watermark_timestamp"] = result.get("timestamp")
+                        # Use verify_payload to extract fingerprint from bits
+                        bits = np.array(meta.get("payload_bits", []), dtype=np.uint8)
+                        if len(bits) > 0:
+                            result = verify_payload(bits, SECRET_KEY)
+                            if result.get("verified"):
+                                asset_fp = result.get("creator_id", "unknown")
+                                # Filter by fingerprint (unless "all" is requested for admin/debug)
+                                if user_uid != "all" and asset_fp != fingerprint:
+                                    continue
+                                entry["creator_fingerprint"] = asset_fp
+                                entry["watermark_timestamp"] = result.get("timestamp")
+                            else:
+                                if user_uid != "all":
+                                    continue
                         else:
                             if user_uid != "all":
                                 continue
-                    else:
+                    except Exception:
                         if user_uid != "all":
                             continue
-                except Exception:
-                    if user_uid != "all":
-                        continue
 
-            logs.append(entry)
+                logs.append(entry)
+
+            except Exception as e:
+                # If daemon deleted the file mid-scan or metadata is corrupt, skip it.
+                print(f"[!] Warning: Could not process '{fname}' for logs: {e}")
+                continue
 
         return {"logs": logs, "total": len(logs)}
     except Exception as e:
