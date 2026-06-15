@@ -38,22 +38,26 @@ class SmartScraper:
             if response.status_code == 200:
                 soup = BeautifulSoup(response.text, 'html.parser')
                 
+                from urllib.parse import urljoin
+                
                 # Find images (in real world we'd look for video streams/m3u8)
                 images = soup.find_all('img')
                 
-                for img in images[:3]: # Limit to 3 for demo
+                for img in images[:5]: # Limit to 5 for demo
                     src = img.get('src')
-                    if src and src.startswith('http'):
-                        filename = f"{uuid.uuid4().hex[:8]}.jpg"
-                        filepath = os.path.join(self.temp_dir, filename)
-                        
-                        # Download asset
-                        async with httpx.AsyncClient() as dl_client:
-                            img_resp = await dl_client.get(src)
-                            if img_resp.status_code == 200:
-                                with open(filepath, 'wb') as f:
-                                    f.write(img_resp.content)
-                                result["assets_found"].append(filepath)
+                    if src:
+                        absolute_src = urljoin(url, src)
+                        if absolute_src.startswith('http'):
+                            filename = f"{uuid.uuid4().hex[:8]}.jpg"
+                            filepath = os.path.join(self.temp_dir, filename)
+                            
+                            # Download asset
+                            async with httpx.AsyncClient(follow_redirects=True) as dl_client:
+                                img_resp = await dl_client.get(absolute_src)
+                                if img_resp.status_code == 200:
+                                    with open(filepath, 'wb') as f:
+                                        f.write(img_resp.content)
+                                    result["assets_found"].append(filepath)
                 
                 if result["assets_found"]:
                     result["status"] = "success"

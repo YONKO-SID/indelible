@@ -28,6 +28,7 @@ class AppColors {
   static const Color tertiary = Color(0xFF34D399);
   /// Forgery / tamper alert red
   static const Color errorContainer = Color(0xFFF87171);
+  static const Color error = Color(0xFFEF4444);
 
   static const Color onPrimary = Color(0xFF0E111A);
 
@@ -38,6 +39,7 @@ class AppColors {
   // --- Typography Hierarchy ---
   /// Bright, crisp off-white for primary headings
   static const Color onSurface = Color(0xFFF8FAFC);
+  static const Color onBackground = Color(0xFFF8FAFC);
   /// Soft white for body text
   static const Color onSurfaceVariant = Color(0xFF64748B);
 

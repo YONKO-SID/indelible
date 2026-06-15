@@ -109,8 +109,9 @@ class MonitoringDaemon:
                                 mock_reasoning = f"Cryptographic watermark (HMAC-SHA256) extracted and verified with 100% confidence matching creator {actual_fingerprint}."
                                 dmca_draft = self.ai_engine.generate_takedown_notice(
                                     creator_id=actual_fingerprint,
-                                    reasoning=mock_reasoning,
                                     platform_url=f"https://pirate.mock.web/{filename}",
+                                    proof_hash=verify_result.get("signature", "N/A"),
+                                    reasoning=mock_reasoning,
                                 )
                             except Exception as e:
                                 logger.error(f"Failed to generate DMCA: {e}")
@@ -119,9 +120,9 @@ class MonitoringDaemon:
                         # 4. Generate Alert
                         alerts = self._load_alerts()
                         alert = {
-                            "id": datetime.utcnow().strftime("%Y%m%d%H%M%S"),
+                            "id": datetime.now(timezone.utc).strftime("%Y%m%d%H%M%S"),
                             "creator_fingerprint": actual_fingerprint,
-                            "timestamp": datetime.utcnow().isoformat(),
+                            "timestamp": datetime.now(timezone.utc).isoformat(),
                             "source_url": f"https://pirate.mock.web/{filename}",
                             "confidence": "100%",
                             "tier": tier,
