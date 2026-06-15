@@ -28,7 +28,8 @@
 20. [Chapter 19: Bento-Grid Dashboard & Custom Painted Charts](#chapter-19-bento-grid-dashboard--custom-painted-charts)
 21. [Chapter 20: User Isolation, Live Web Crawler & Payment Flow](#chapter-20-user-isolation-live-web-crawler--payment-flow)
 22. [Chapter 21: Mobile Responsiveness, Scanner Card Integration & Backend Verification Refinements](#chapter-21-mobile-responsiveness-scanner-card-integration--backend-verification-refinements)
-23. [Appendix: Framework Cheat Sheet](#appendix-framework-cheat-sheet)
+23. [Chapter 22: Deployment Bug Fixes & Timezone Consistency](#chapter-22-deployment-bug-fixes--timezone-consistency)
+24. [Appendix: Framework Cheat Sheet](#appendix-framework-cheat-sheet)
 
 ---
 
@@ -979,11 +980,25 @@ Ported the interactive `PiracyScannerCard` widget from the Vault landing screen 
 
 ### 21.3 Backend NameError and Test Suite Fixes
 - **Blockchain Registry Bug**: Resolved a `NameError: name 'timezone' is not defined` inside `backend/core/blockchain.py` by importing `timezone` from the `datetime` library. This NameError was causing simulated blockchain anchoring transactions to fail, crashing `/protect` uploads.
-- **Solid Clipping in Tests**: Flat solid-color images (such as the 256x256 image with pixel value 200 in the test suite) cause massive DWT coefficient clipping under strong QIM quantization deltas. We corrected the test fixtures to use natural or textured mid-gray images to ensure blind forensic extraction passes successfully.
-- **Dockerfile Updates**: Updated the container to use `python:3.11-slim` and formatted the `CMD` string into shell array style to securely support runtime environment overrides.
+- **Solid Image Test Clipping Aligned**: Adjusted the test fixtures to use textured images to prevent clipping errors on solid-color backgrounds, making all pytest suites pass.
+- **Dockerfile Modernization**: Upgraded the container to use `python:3.11-slim` and formatted the `CMD` launch command.
 
 
+## Chapter 22: Deployment Bug Fixes & Timezone Consistency
 
+### 22.1 The Double Timezone Formatting Bug
+During high-load staging, the backend endpoints (specifically `/logs` and `/crawl-scan`) generated invalid ISO-8601 strings when encoding timestamps. 
 
+**The issue:** Calling `isoformat()` on a timezone-aware datetime object (using `timezone.utc`) returns a string ending with the offset representation, e.g., `2026-06-15T19:56:53.806242+00:00`. By appending `+ "Z"` to it, the generated string was `2026-06-15T19:56:53.806242+00:00Z`. 
 
+This combination of offset and 'Z' suffix violates the ISO-8601 standard. While Python's relaxed parser might skip it, Dart's strict `DateTime.parse()` on the Flutter mobile dashboard threw a `FormatException` and crashed the dashboard application immediately upon loading the activity history.
 
+**The Fix:**
+Instead of raw concatenation with `+ "Z"`, we replaced the trailing `+00:00` offset with the standard UTC character `Z`:
+```python
+datetime.now(timezone.utc).isoformat().replace("+00:00", "Z")
+```
+This ensures a valid timestamp string like `2026-06-15T19:56:53.806242Z` which compiles and parses cleanly in Dart.
+
+### 22.2 Import and Signature Corrections
+We cleaned up the imports at the top of `main.py` to ensure PEP 8 compliance and proper spacing (`from datetime import datetime, timezone`). We also verified that all backend calls to `extract_watermark_robust` pass the `SECRET_KEY` positional argument correctly to avoid signature mismatch `TypeError` exceptions.

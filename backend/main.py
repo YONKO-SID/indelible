@@ -4,7 +4,7 @@ import json
 import os
 import shutil
 import tempfile
-from datetime import datetime , timezone
+from datetime import datetime, timezone
 import uuid
 
 import numpy as np
@@ -160,8 +160,7 @@ async def get_upload_logs(user_uid: str = "anonymous"):
 
             entry = {
                 "filename": fname,
-                "protected_at": datetime.fromtimestamp(file_stat.st_mtime, tz=timezone.utc).isoformat()
-                + "Z",
+                "protected_at": datetime.fromtimestamp(file_stat.st_mtime, tz=timezone.utc).isoformat().replace("+00:00", "Z"),
                 "size_kb": round(file_stat.st_size / 1024, 1),
                 "download_url": f"/download/{fname}",
                 "creator_fingerprint": "unknown",
@@ -476,7 +475,7 @@ async def crawl_scan(user_uid: str = "anonymous", target_url: str = None):
                                     "creator_fingerprint": confirmed_creator,
                                     "phash_distance": dist,
                                     "confidence": "HIGH",
-                                    "timestamp": datetime.now(timezone.utc).isoformat() + "Z",
+                                    "timestamp": datetime.now(timezone.utc).isoformat().replace("+00:00", "Z"),
                                     "status": "confirmed_leak",
                                 })
                                 
@@ -543,7 +542,7 @@ async def crawl_scan(user_uid: str = "anonymous", target_url: str = None):
                                 ),
                                 "phash_distance": dist,
                                 "confidence": "HIGH",
-                                "timestamp": datetime.now(timezone.utc).isoformat() + "Z",
+                                "timestamp": datetime.now(timezone.utc).isoformat().replace("+00:00", "Z"),
                                 "status": "confirmed_leak",
                             }
                         )
@@ -601,7 +600,7 @@ async def crawl_scan(user_uid: str = "anonymous", target_url: str = None):
         "protected_assets_indexed": registered_count,
         "leaks_found": len(results),
         "leaks": results,
-        "timestamp": datetime.now(timezone.utc).isoformat() + "Z",
+        "timestamp": datetime.now(timezone.utc).isoformat().replace("+00:00", "Z"),
     }
 
 

@@ -77,7 +77,8 @@ The Flutter application flawlessly communicates with the Python engine via the F
 ### 6. Backend Stability & Verification Fixes
 - **Blockchain NameError Resolved**: Fixed a NameError on `timezone` inside `blockchain.py` that crashed simulated Polygon anchoring.
 - **Solid Image Test Clipping Aligned**: Adjusted the test fixtures to use textured images to prevent clipping errors on solid-color backgrounds, making all pytest suites pass.
-- **Dockerfile Modernization**: Upgraded the Dockerfile base image to `python:3.11-slim` and formatted the `CMD` launch command.
+- **Dockerfile Modernization**: Upgraded the container to use `python:3.11-slim` and formatted the `CMD` launch command.
+- **Double Timezone and Import Fixes**: Resolved invalid double-timezone suffixes (`+00:00Z` -> `Z`) on backend-generated ISO datetimes that caused Dart runtime parser exceptions (`FormatException` in `DateTime.parse()`) and crashed the dashboard. Cleaned up `datetime` imports for compliance and verified all robust extraction signatures.
 
 ---
 
