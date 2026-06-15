@@ -18,7 +18,10 @@ class ApiService {
 
   static const String baseUrl = 'http://localhost:8000';
   */
-   static const baseUrl = String.fromEnvironment('BASE_URL');
+   static const baseUrl = String.fromEnvironment(
+     'BASE_URL',
+     defaultValue: 'https://indelible-324321620920.europe-west1.run.app',
+   );
 
   // Simple in-memory cache
   static final Map<String, _CacheEntry> _cache = {};
