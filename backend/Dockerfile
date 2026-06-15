@@ -24,8 +24,8 @@ RUN pip install --no-cache-dir -r requirements.txt
 # Copy the backend code into the container
 COPY . .
 
-# Expose port (Railway dynamically injects $PORT, but we set a default)
-ENV PORT=8000
+# Expose port (Cloud Run defaults to 8080, Railway injects dynamically)
+ENV PORT=8080
 EXPOSE $PORT
 
 # Start the FastAPI app using Uvicorn
