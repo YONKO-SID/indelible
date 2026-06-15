@@ -15,9 +15,9 @@ import '../models/alert.dart';
 class ApiService {
   // only uncomment it for testing on local machine
 
-  static const String baseUrl = 'http://localhost:8000';
+  // static const String baseUrl = 'http://localhost:8000';
 
-  // static const String baseUrl = 'https://indelible.up.railway.app';
+  static const String baseUrl = 'https://indelible-backend-production.up.railway.app';
 
   // Simple in-memory cache
   static final Map<String, _CacheEntry> _cache = {};

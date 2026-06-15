@@ -6,5 +6,10 @@
   "INDL-5196-DA40-749B": {
     "uid_hash": "5196da40749b5940694f7359f41c239f9f5b8e56cb4ff6af95ccb95dc84f1e42",
     "registered_at": "2026-04-25T08:37:47.783985"
+  },
+  "INDL-2F18-3A4E-6449": {
+    "uid_hash": "2f183a4e64493af3f377f745eda502363cd3e7ef6e4d266d444758de0a85fcc8",
+    "registered_at": "2026-06-14T23:22:27.356638",
+    "tier": "Enterprise"
   }
 }
