@@ -1,6 +1,6 @@
 import hashlib
 import hmac
-from datetime import datetime
+from datetime import datetime , timezone
 
 import numpy as np
 import reedsolo
@@ -33,7 +33,7 @@ def create_payload(creator_id: str, secret_key: bytes) -> tuple:
     # Pad creator_id to exactly 24 characters to ensure fixed block length
     creator_id_padded = creator_id.ljust(24)
     # Use second-resolution timestamp to save characters (19 chars vs 26 chars)
-    timestamp = datetime.utcnow().strftime("%Y-%m-%dT%H:%M:%S")
+    timestamp = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%S")
     message = f"{creator_id_padded}|{timestamp}"
     # Use first 16 bytes of HMAC-SHA256 (32 hex characters vs 64 hex characters)
     signature = hmac.new(secret_key, message.encode("utf-8"), hashlib.sha256).digest()[:16]

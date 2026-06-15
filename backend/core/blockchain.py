@@ -16,13 +16,13 @@ def anchor_to_blockchain(payload_hash: str, creator_fingerprint: str):
         with open(BLOCKCHAIN_DB, "r") as f:
             db = json.load(f)
 
-    tx_hash = f"0x{hashlib.sha256((payload_hash + str(datetime.utcnow())).encode()).hexdigest()}"
+    tx_hash = f"0x{hashlib.sha256((payload_hash + str(datetime.now(timezone.utc))).encode()).hexdigest()}"
 
     entry = {
         "tx_hash": tx_hash,
         "payload_hash": payload_hash,
         "creator_fingerprint": creator_fingerprint,
-        "timestamp": datetime.utcnow().isoformat(),
+        "timestamp": datetime.now(timezone.utc).isoformat(),
         "network": "Polygon PoS (Mainnet)",
         "status": "Confirmed",
         "confirmations": 12,

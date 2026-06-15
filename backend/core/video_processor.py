@@ -55,5 +55,9 @@ def stitch_video(frames_dir: str, original_video_path: str, output_video_path: s
         output_video_path
     ]
     
-    subprocess.run(command, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, check=True)
+    try:
+        subprocess.run(command, stdout=subprocess.DEVNULL, stderr=subprocess.PIPE, check=True, text=True)
+    except subprocess.CalledProcessError as e:
+        print(f"[!] FFmpeg Error: {e.stderr}")
+        raise
 

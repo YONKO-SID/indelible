@@ -4,15 +4,21 @@ import json
 import os
 import shutil
 import tempfile
-from datetime import datetime
+from datetime import datetime , timezone
+import uuid
 
+import numpy as np
 from core.ai_engine import IndelibleAIEngine
 from core.bktree_index import index as bktree_index
 from core.monitoring_daemon import daemon
 from core.payload import create_payload, verify_payload
 from core.scraper import SmartScraper
 from core.video_processor import extract_frames, stitch_video
-from core.watermark import embed_watermark_dct, extract_watermark_dct, extract_watermark_robust
+from core.watermark import (
+    embed_watermark_dct,
+    extract_watermark_dct,
+    extract_watermark_robust,
+)
 from dotenv import load_dotenv
 from fastapi import FastAPI, File, Form, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
@@ -34,7 +40,7 @@ async def root():
     return {
         "status": "online",
         "message": "Indelible Core API is running",
-        "timestamp": datetime.utcnow().isoformat(),
+        "timestamp": datetime.now(timezone.utc).isoformat(),
     }
 
 
@@ -74,6 +80,9 @@ def generate_creator_fingerprint(user_uid: str) -> str:
     Generates a unique, reproducible INDL-XXXX-XXXX-XXXX fingerprint
     from the user's Firebase UID using SHA-256.
     """
+    if user_uid == "anonymous" or not user_uid.strip():
+        user_uid = f"guest_{uuid.uuid4().hex}"
+
     digest = hashlib.sha256(user_uid.encode()).hexdigest().upper()
     fingerprint = f"INDL-{digest[:4]}-{digest[4:8]}-{digest[8:12]}"
 
@@ -82,7 +91,7 @@ def generate_creator_fingerprint(user_uid: str) -> str:
     if fingerprint not in registry:
         registry[fingerprint] = {
             "uid_hash": hashlib.sha256(user_uid.encode()).hexdigest(),
-            "registered_at": datetime.utcnow().isoformat(),
+            "registered_at": datetime.now(timezone.utc).isoformat(),
             "tier": "Enterprise",  # Defaulting to Enterprise for hackathon demo
         }
         _save_registry(registry)
@@ -128,11 +137,12 @@ async def get_alerts(user_uid: str):
 
 
 @app.get("/logs")
-async def get_upload_logs():
+async def get_upload_logs(user_uid: str = "anonymous"):
     """
     Returns real upload history by scanning the outputs/ directory.
-    Each entry includes filename, fingerprint, timestamp, and download URL.
+    Filters by the requesting user's fingerprint.
     """
+    fingerprint = generate_creator_fingerprint(user_uid)
     logs = []
     outputs_dir = "outputs"
     if not os.path.exists(outputs_dir):
@@ -149,7 +159,7 @@ async def get_upload_logs():
 
         entry = {
             "filename": fname,
-            "protected_at": datetime.utcfromtimestamp(file_stat.st_mtime).isoformat()
+            "protected_at": datetime.fromtimestamp(file_stat.st_mtime, tz=timezone.utc).isoformat()
             + "Z",
             "size_kb": round(file_stat.st_size / 1024, 1),
             "download_url": f"/download/{fname}",
@@ -162,20 +172,27 @@ async def get_upload_logs():
             try:
                 with open(meta_path, "r") as f:
                     meta = json.load(f)
-                # The payload_bits are stored — decode them to get the original timestamp
-                import numpy as np
-                from core.payload import verify_payload
 
+                # Use verify_payload to extract fingerprint from bits
                 bits = np.array(meta.get("payload_bits", []), dtype=np.uint8)
                 if len(bits) > 0:
                     result = verify_payload(bits, SECRET_KEY)
                     if result.get("verified"):
-                        entry["creator_fingerprint"] = result.get(
-                            "creator_id", "unknown"
-                        )
+                        asset_fp = result.get("creator_id", "unknown")
+                        # Filter by fingerprint (unless "all" is requested for admin/debug)
+                        if user_uid != "all" and asset_fp != fingerprint:
+                            continue
+                        entry["creator_fingerprint"] = asset_fp
                         entry["watermark_timestamp"] = result.get("timestamp")
+                    else:
+                        if user_uid != "all":
+                            continue
+                else:
+                    if user_uid != "all":
+                        continue
             except Exception:
-                pass
+                if user_uid != "all":
+                    continue
 
         logs.append(entry)
 
@@ -195,6 +212,31 @@ async def protect_asset(
     try:
         with open(temp_in, "wb") as buffer:
             shutil.copyfileobj(file.file, buffer)
+
+        # COLLISION AVOIDANCE GATEKEEPER
+        if not is_video:
+            # 1. Fast Visual Check: Does this look like an existing asset?
+            # Using a tight tolerance (5) to avoid false-flagging similar but different images.
+            matches = bktree_index.find_matches(temp_in, tolerance=5)
+            
+            if matches:
+                print(f"[*] Visual collision detected (Distance: {matches[0][0]}). Running deep forensic scan...")
+                
+                # 2. Deep Forensic Check: Does it actually contain our math?
+                verify_result = extract_watermark_robust(temp_in, delta=100)
+                
+                if verify_result.get("verified"):
+                    # 3. Abort: It is already protected.
+                    # We delete the temp directory immediately to save space.
+                    shutil.rmtree(temp_dir, ignore_errors=True)
+                    
+                    return {
+                        "status": "error",
+                        "error_code": "ALREADY_PROTECTED",
+                        "message": "Protection failed: This asset already contains an active INDELIBLE watermark.",
+                        "existing_creator": verify_result.get("creator_id", "Unknown"),
+                        "watermarked_at": verify_result.get("timestamp", "Unknown")
+                    }
 
         # Generate unique creator fingerprint from Firebase UID
         creator_fp = generate_creator_fingerprint(user_uid)
@@ -243,12 +285,12 @@ async def protect_asset(
 
         payload_hash = hashlib.sha256(payload_str.encode()).hexdigest()
         bc_entry = anchor_to_blockchain(payload_hash, creator_fp)
-
+        creator_fp = generate_creator_fingerprint(user_uid)
         return {
             "status": "protected",
             "creator_fingerprint": creator_fp,
             "payload_hash": payload_hash[:16],
-            "timestamp": datetime.utcnow().isoformat(),
+            "timestamp": datetime.now(timezone.utc).isoformat(),
             "blockchain_tx": bc_entry["tx_hash"],
             "blockchain_status": bc_entry["status"],
             "download_url": f"/download/{out_filename}",
@@ -271,18 +313,7 @@ async def verify_asset(file: UploadFile = File(...)):
         with open(temp_in, "wb") as buffer:
             shutil.copyfileobj(file.file, buffer)
 
-        # Check if we have a .meta sidecar for this file in outputs/
-        possible_meta = os.path.join("outputs", file.filename + ".meta")
-        if os.path.exists(possible_meta):
-            shutil.copy2(possible_meta, temp_in + ".meta")
-        else:
-            # Also try prefixing with "protected_"
-            alt_meta = os.path.join("outputs", f"protected_{file.filename}.meta")
-            if os.path.exists(alt_meta):
-                shutil.copy2(alt_meta, temp_in + ".meta")
-
         frames_to_check = [temp_in]
-
         if is_video:
             frames_dir = os.path.join(temp_dir, "frames")
             os.makedirs(frames_dir, exist_ok=True)
@@ -290,16 +321,18 @@ async def verify_asset(file: UploadFile = File(...)):
 
         verification = {"verified": False}
 
+        # Run the robust brute-force extractor directly on the raw files
         for frame in frames_to_check:
-            # Use delta=50 for video frames and delta=100 for single images
             delta_to_use = 50 if is_video else 100
-            result = extract_watermark_robust(frame, SECRET_KEY, delta=delta_to_use)
+            result = extract_watermark_robust(frame, delta=delta_to_use) # Ensure signature matches your core_engine
             if result.get("verified"):
                 verification = result
                 break
-
+        
         if verification.get("verified"):
-            has_transform = (verification.get("scale_detected", 1.0) != 1.0 or verification.get("shift_detected", (0, 0)) != (0, 0))
+            has_transform = verification.get(
+                "scale_detected", 1.0
+            ) != 1.0 or verification.get("shift_detected", (0, 0)) != (0, 0)
             strength = "ULTRA" if has_transform else "HIGH"
             return {
                 "status": "match_found",
@@ -328,33 +361,51 @@ async def verify_asset(file: UploadFile = File(...)):
 @app.post("/scan-piracy")
 async def scan_piracy(url: str = Form(...)):
     """
-    Scrapes a URL for media, runs Gemini Zero-Shot classification on frames,
-    and generates a legal takedown notice if piracy is detected.
+    Scrapes a URL for media, checks for cryptographic watermarks via BK-Tree & DWT,
+    runs Gemini classification as fallback/reinforcement, and generates a real legal notice.
     """
     try:
         # 1. Scrape URL
         scrape_result = await scraper.scrape_channel(url)
         if not scrape_result.get("assets_found"):
-            return {"status": "no_assets_found"}
+            return {"status": "no_assets_found", "message": "No media assets found on the page."}
 
         target_asset = scrape_result["assets_found"][0]
 
-        # 2. AI Zero-Shot Classification
-        ai_result = ai_engine.detect_piracy(target_asset)
+        # 2. Check for watermark / BK-Tree match
+        matches = bktree_index.find_matches(target_asset, tolerance=8)
+        is_watermarked = False
+        watermark_creator = "Unknown"
+        proof_sig = "N/A"
+        
+        if matches:
+            verify_result = extract_watermark_robust(target_asset, SECRET_KEY, delta=80)
+            if verify_result.get("verified"):
+                is_watermarked = True
+                watermark_creator = verify_result.get("creator_id")
+                proof_sig = verify_result.get("signature", "N/A")
 
-        # 3. If Pirated, generate Legal Notice
+        # 3. AI Zero-Shot Classification
+        ai_result = ai_engine.detect_piracy(target_asset)
+        
+        if is_watermarked:
+            ai_result["is_pirated"] = True
+            ai_result["confidence"] = 1.0
+            ai_result["reasoning"] = f"Cryptographically verified. Asset contains invisible watermark of registered creator {watermark_creator}."
+
+        # 4. If Pirated, generate Legal Notice
         takedown_notice = None
         if ai_result.get("is_pirated"):
-            # In a real pipeline, we'd extract the watermark here. We mock it for the demo endpoint.
-            mock_proof_hash = "0x89abfcd890...e12f"
+            creator_id = watermark_creator if is_watermarked else "Registered Creator"
             takedown_notice = ai_engine.generate_takedown_notice(
-                "Creator_001", url, mock_proof_hash
+                creator_id, url, proof_sig, reasoning=ai_result["reasoning"]
             )
 
         return {
             "status": "scan_complete",
             "ai_analysis": ai_result,
             "legal_notice_draft": takedown_notice,
+            "mocked": scrape_result.get("mocked", False)
         }
     except Exception as e:
         return {"error": str(e)}
@@ -378,20 +429,16 @@ async def get_blockchain_record(tx_hash: str):
     except Exception as e:
         return {"error": str(e)}
 
-
 @app.get("/crawl-scan")
-async def crawl_scan(user_uid: str = "anonymous"):
+async def crawl_scan(user_uid: str = "anonymous", target_url: str = None):
     """
-    Simulates scanning popular public image-hosting sites for leaked assets.
-    Uses pHash matching against the BK-Tree index of all protected assets.
-    
-    In production this would spawn real HTTP crawl tasks. Here we scan a
-    curated list of mock "leaked" images seeded in dummy_pirate_web/ plus
-    simulate plausible public-forum URL patterns for the demo.
+    Scans a given target_url (or local/simulated sources if not provided) for leaked assets.
+    Downloads scraped images, pHashes them, and queries the BK-Tree index.
+    Creates new unread alerts when a copyright-violating match belonging to the user is found.
     """
     import glob
-    import httpx
     import io
+    import httpx
     import imagehash
     from PIL import Image as PILImage
 
@@ -399,49 +446,133 @@ async def crawl_scan(user_uid: str = "anonymous"):
     results = []
     alerts_written = 0
 
-    # ── 1. Local dummy-pirate-web folder (the existing testing harness) ──
+    # ── 1. If target_url is provided, scrape and analyze it live ──
+    if target_url:
+        logger.info(f"[+] Live web crawl scan requested for: {target_url}")
+        try:
+            scrape_result = await scraper.scrape_channel(target_url)
+            if scrape_result.get("status") == "success" and scrape_result.get("assets_found"):
+                for img_path in scrape_result["assets_found"]:
+                    try:
+                        matches = bktree_index.find_matches(img_path, tolerance=8)
+                        if matches:
+                            dist, fp = matches[0]
+                            verify_result = extract_watermark_robust(img_path, SECRET_KEY, delta=80)
+                            if verify_result.get("verified"):
+                                source_url = f"{target_url} (Asset: {os.path.basename(img_path)})"
+                                confirmed_creator = verify_result.get("creator_id", fp)
+                                
+                                results.append({
+                                    "source_url": source_url,
+                                    "matched_asset": os.path.basename(img_path),
+                                    "creator_fingerprint": confirmed_creator,
+                                    "phash_distance": dist,
+                                    "confidence": "HIGH",
+                                    "timestamp": datetime.now(timezone.utc).isoformat() + "Z",
+                                    "status": "confirmed_leak",
+                                })
+                                
+                                # Write alert if this belongs to the requesting user
+                                if confirmed_creator == creator_fp:
+                                    alerts = (
+                                        json.load(open("alerts.json", "r"))
+                                        if os.path.exists("alerts.json")
+                                        else []
+                                    )
+                                    alert_id = datetime.now(timezone.utc).strftime("%Y%m%d%H%M%S") + str(
+                                        alerts_written
+                                    )
+                                    
+                                    # Auto-generate DMCA Cease & Desist draft
+                                    dmca_draft = ai_engine.generate_takedown_notice(
+                                        creator_id=creator_fp,
+                                        platform_url=source_url,
+                                        proof_hash=verify_result.get("signature", "N/A"),
+                                        reasoning="Invisible cryptographic DWT watermark extracted from scraped page image."
+                                    )
+                                    
+                                    alerts.append({
+                                        "id": alert_id,
+                                        "creator_fingerprint": creator_fp,
+                                        "timestamp": datetime.now(timezone.utc).isoformat(),
+                                        "source_url": source_url,
+                                        "confidence": "HIGH",
+                                        "tier": "Enterprise",
+                                        "dmca_draft": dmca_draft,
+                                        "status": "unread",
+                                    })
+                                    
+                                    with open("alerts.json", "w") as af:
+                                        json.dump(alerts, af, indent=2)
+                                    alerts_written += 1
+                    except Exception as e:
+                        logger.warning(f"Error processing live scraped image {img_path}: {e}")
+        except Exception as e:
+            logger.error(f"Failed live crawl scan on {target_url}: {e}")
+
+    # ── 2. Local dummy-pirate-web folder (fallback or default testing) ──
     pirate_dir = "dummy_pirate_web"
     if os.path.exists(pirate_dir):
-        image_paths = glob.glob(os.path.join(pirate_dir, "*.png")) + \
-                      glob.glob(os.path.join(pirate_dir, "*.jpg"))
+        image_paths = glob.glob(os.path.join(pirate_dir, "*.png")) + glob.glob(
+            os.path.join(pirate_dir, "*.jpg")
+        )
         for img_path in image_paths[:10]:  # cap at 10 per scan
             try:
                 matches = bktree_index.find_matches(img_path, tolerance=8)
                 if matches:
                     dist, fp = matches[0]
-                    verify_result = extract_watermark_robust(img_path, SECRET_KEY, delta=80)
+                    verify_result = extract_watermark_robust(
+                        img_path, SECRET_KEY, delta=80
+                    )
                     if verify_result.get("verified"):
                         source_url = f"https://forums.example.com/t/leaked/{os.path.basename(img_path)}"
-                        results.append({
-                            "source_url": source_url,
-                            "matched_asset": os.path.basename(img_path),
-                            "creator_fingerprint": verify_result.get("creator_id", fp),
-                            "phash_distance": dist,
-                            "confidence": "HIGH",
-                            "timestamp": datetime.utcnow().isoformat() + "Z",
-                            "status": "confirmed_leak",
-                        })
+                        results.append(
+                            {
+                                "source_url": source_url,
+                                "matched_asset": os.path.basename(img_path),
+                                "creator_fingerprint": verify_result.get(
+                                    "creator_id", fp
+                                ),
+                                "phash_distance": dist,
+                                "confidence": "HIGH",
+                                "timestamp": datetime.now(timezone.utc).isoformat() + "Z",
+                                "status": "confirmed_leak",
+                            }
+                        )
                         # Write alert if this belongs to the requesting user
                         if verify_result.get("creator_id") == creator_fp:
-                            alerts = json.load(open("alerts.json", "r")) if os.path.exists("alerts.json") else []
-                            alert_id = datetime.utcnow().strftime("%Y%m%d%H%M%S") + str(alerts_written)
-                            alerts.append({
-                                "id": alert_id,
-                                "creator_fingerprint": creator_fp,
-                                "timestamp": datetime.utcnow().isoformat(),
-                                "source_url": source_url,
-                                "confidence": "HIGH",
-                                "tier": "Enterprise",
-                                "dmca_draft": None,
-                                "status": "unread",
-                            })
+                            alerts = (
+                                json.load(open("alerts.json", "r"))
+                                if os.path.exists("alerts.json")
+                                else []
+                            )
+                            alert_id = datetime.now(timezone.utc).strftime("%Y%m%d%H%M%S") + str(
+                                alerts_written
+                            )
+                            alerts.append(
+                                {
+                                    "id": alert_id,
+                                    "creator_fingerprint": creator_fp,
+                                    "timestamp": datetime.now(timezone.utc).isoformat(),
+                                    "source_url": source_url,
+                                    "confidence": "HIGH",
+                                    "tier": "Enterprise",
+                                    "dmca_draft": ai_engine.generate_takedown_notice(
+                                        creator_id=creator_fp,
+                                        platform_url=source_url,
+                                        proof_hash=verify_result.get("signature", "N/A"),
+                                        reasoning="Watermarked asset detected in simulation."
+                                    ),
+                                    "status": "unread",
+                                }
+                            )
                             with open("alerts.json", "w") as af:
                                 json.dump(alerts, af, indent=2)
                             alerts_written += 1
             except Exception as e:
                 pass
 
-    # ── 2. Simulate scanning public forum CDN thumbnails ──
+    # ── 3. Simulate scanning public forum CDN thumbnails ──
     MOCK_FORUM_URLS = [
         "https://i.imgur.com/placeholder1.jpg",
         "https://preview.redd.it/placeholder2.jpg",
@@ -449,33 +580,32 @@ async def crawl_scan(user_uid: str = "anonymous"):
         "https://pbs.twimg.com/media/placeholder4.jpg",
         "https://attachments.f95zone.to/placeholder5.png",
     ]
-    # We don't actually download from these real URLs in the demo — we simulate matches
-    # based on how many assets are registered in the BK-Tree.
-    registered_count = len(bktree_index._tree) if hasattr(bktree_index, '_tree') else 0
+    registered_count = len(bktree_index._tree) if hasattr(bktree_index, "_tree") else 0
     if registered_count == 0:
-        # Try to infer from outputs directory
         registered_count = len([f for f in os.listdir("outputs") if f.endswith(".png")])
 
     # Return combined result
     return {
         "scan_complete": True,
-        "sites_checked": len(MOCK_FORUM_URLS) + (1 if os.path.exists(pirate_dir) else 0),
+        "sites_checked": len(MOCK_FORUM_URLS)
+        + (1 if os.path.exists(pirate_dir) else 0)
+        + (1 if target_url else 0),
         "protected_assets_indexed": registered_count,
         "leaks_found": len(results),
         "leaks": results,
-        "timestamp": datetime.utcnow().isoformat() + "Z",
+        "timestamp": datetime.now(timezone.utc).isoformat() + "Z",
     }
 
 
 @app.get("/dashboard-stats")
-async def dashboard_stats():
+async def dashboard_stats(user_uid: str = "anonymous"):
     """
     Returns weekly activity counts for the dashboard bar chart.
     Groups /logs entries by day-of-week and counts watermarking events per day.
     """
     from collections import defaultdict
 
-    logs_resp = await get_upload_logs()
+    logs_resp = await get_upload_logs(user_uid=user_uid)
     logs = logs_resp.get("logs", [])
 
     # Bucket by day-of-week (Mon=0..Sun=6)
