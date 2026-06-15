@@ -1,7 +1,7 @@
 import hashlib
 import json
 import os
-from datetime import datetime
+from datetime import datetime, timezone
 
 BLOCKCHAIN_DB = "blockchain_registry.json"
 

@@ -11,9 +11,15 @@ client = TestClient(app)
 @pytest.fixture
 def test_image(tmp_path):
     img_path = str(tmp_path / "test_api_img.png")
-    img = np.ones((256, 256, 3), dtype=np.uint8) * 200
-    cv2.imwrite(img_path, img)
+    src = "backend/test_source.png"
+    if os.path.exists(src):
+        shutil.copy2(src, img_path)
+    else:
+        img = np.ones((512, 512, 3), dtype=np.uint8) * 128
+        cv2.putText(img, "Test", (50, 250), cv2.FONT_HERSHEY_SIMPLEX, 2, (255, 255, 255), 3)
+        cv2.imwrite(img_path, img)
     return img_path
+
 
 def test_protect_endpoint(test_image):
     with open(test_image, "rb") as f:

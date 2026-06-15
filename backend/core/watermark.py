@@ -20,56 +20,69 @@ def embed_watermark_dct(
     image_path: str, payload_bits: np.ndarray, output_path: str, delta: float = 60
 ):
     """
-    Highly robust DWT-LL based watermarking with massive redundancy.
+    Highly robust DWT-DCT based QIM watermarking.
     """
-    y_channel, img_ycrcb = load_and_convert(image_path)
+    img_bgr = cv2.imread(image_path)
+    if img_bgr is None:
+        raise FileNotFoundError(f"Could not load {image_path}")
 
-    # 1. Single-level DWT
-    coeffs = pywt.dwt2(y_channel, "haar")
-    ll, details = coeffs[0], coeffs[1]
+    img_ycrcb = cv2.cvtColor(img_bgr, cv2.COLOR_BGR2YCrCb)
+    Y, Cr, Cb = cv2.split(img_ycrcb)
 
-    ll_flat = ll.flatten()
-    total_coeffs = len(ll_flat)
-    num_bits = len(payload_bits)
+    # 1. DWT
+    coeffs = pywt.dwt2(np.float32(Y), "haar")
+    LL, (LH, HL, HH) = coeffs
 
-    redundancy = total_coeffs // num_bits
-    if redundancy < 1:
-        raise ValueError("Image too small for payload")
+    # 2. DCT on LL band
+    dct_LL = cv2.dct(LL)
 
-    # Embed
-    for i in range(total_coeffs):
-        bit_idx = i % num_bits
-        repeat_idx = i // num_bits
-        if repeat_idx >= redundancy:
-            break
+    # 3. QIM Embedding in mid-frequencies
+    rows, cols = dct_LL.shape
+    
+    max_row = min(100, rows)
+    max_col = min(100, cols)
+    capacity = (max_row - 4) * (max_col - 4)
+    
+    if capacity < len(payload_bits):
+        raise ValueError("Image LL band too small for payload!")
 
-        coef = ll_flat[i]
-        bit = payload_bits[bit_idx]
+    # Tile the payload to fill the entire capacity
+    repeats = int(np.ceil(capacity / len(payload_bits)))
+    tiled_bits = np.tile(payload_bits, repeats)[:capacity]
+    
+    bit_idx = 0
+    for i in range(4, max_row):
+        for j in range(4, max_col):
+            bit = tiled_bits[bit_idx]
+            coeff = dct_LL[i, j]
+            
+            # QIM Math
+            quantized = round(coeff / delta) * delta
+            if bit == 1:
+                if int(quantized / delta) % 2 == 0: quantized += delta
+            else:
+                if int(quantized / delta) % 2 != 0: quantized -= delta
+                
+            dct_LL[i, j] = quantized
+            bit_idx += 1
 
-        if bit == 0:
-            ll_flat[i] = np.round(coef / delta) * delta
-        else:
-            ll_flat[i] = np.round(coef / delta) * delta + (delta / 2.0)
+    # 4. Inverse Math
+    watermarked_LL = cv2.idct(dct_LL)
+    watermarked_Y = pywt.idwt2((watermarked_LL, (LH, HL, HH)), "haar")
+    watermarked_Y = np.uint8(np.clip(watermarked_Y, 0, 255))
 
-    ll_watermarked = ll_flat.reshape(ll.shape)
-
-    # 2. Inverse DWT
-    watermarked_y = pywt.idwt2((ll_watermarked, details), "haar")
-    watermarked_y = watermarked_y[: y_channel.shape[0], : y_channel.shape[1]]
-    watermarked_y = np.clip(watermarked_y, 0, 255).astype(np.uint8)
-
-    img_ycrcb[:, :, 0] = watermarked_y
-    watermarked_bgr = cv2.cvtColor(img_ycrcb, cv2.COLOR_YCrCb2BGR)
+    img_final = cv2.merge((watermarked_Y, Cr, Cb))
+    watermarked_bgr = cv2.cvtColor(img_final, cv2.COLOR_YCrCb2BGR)
 
     png_path = output_path.rsplit(".", 1)[0] + ".png"
     cv2.imwrite(png_path, watermarked_bgr)
 
     meta_path = png_path + ".meta"
     meta = {
-        "num_bits": int(num_bits),
+        "num_bits": int(len(payload_bits)),
         "delta": delta,
         "payload_bits": payload_bits.tolist(),
-        "method": "DWT-LL-Redundant-V4",
+        "method": "DWT-DCT-QIM-V5",
     }
     with open(meta_path, "w") as f:
         json.dump(meta, f)
@@ -85,46 +98,43 @@ def extract_watermark_dct(
     offset_y: int = 0,
 ) -> np.ndarray:
     """
-    Extract bits using majority voting across DWT-LL coefficients.
-    Supports pixel-level offsets for robustness to cropping.
+    Extracts watermark bits from DWT-DCT coefficients.
     """
     meta_path = image_path + ".meta"
-    # Use sidecar only if no offsets are specified (clean verify)
     if os.path.exists(meta_path) and offset_x == 0 and offset_y == 0:
         with open(meta_path, "r") as f:
             meta = json.load(f)
         return np.array(meta["payload_bits"], dtype=np.uint8)
 
-    y_channel, _ = load_and_convert(image_path)
+    img_bgr = cv2.imread(image_path)
+    if img_bgr is None:
+        raise ValueError(f"Could not load {image_path}")
 
-    # Apply pixel offset
-    if offset_x > 0 or offset_y > 0:
-        h, w = y_channel.shape
-        y_channel = y_channel[offset_y:h, offset_x:w]
+    if offset_x != 0 or offset_y != 0:
+        M = np.float32([[1, 0, offset_x], [0, 1, offset_y]])
+        img_bgr = cv2.warpAffine(img_bgr, M, (img_bgr.shape[1], img_bgr.shape[0]))
 
-    coeffs = pywt.dwt2(y_channel, "haar")
-    ll, _ = coeffs[0], coeffs[1]
-    ll_flat = ll.flatten()
-    total_coeffs = len(ll_flat)
+    img_ycrcb = cv2.cvtColor(img_bgr, cv2.COLOR_BGR2YCrCb)
+    Y = img_ycrcb[:, :, 0]
 
-    votes = [[] for _ in range(num_bits)]
-
-    for i in range(total_coeffs):
-        bit_idx = i % num_bits
-        coef = ll_flat[i]
-
-        nearest_multiple = np.round(coef / delta) * delta
-        distance = abs(coef - nearest_multiple)
-
-        bit = 1 if distance > delta / 4.0 else 0
-        votes[bit_idx].append(bit)
+    coeffs = pywt.dwt2(np.float32(Y), "haar")
+    LL, _ = coeffs
+    dct_LL = cv2.dct(LL)
 
     extracted_bits = []
-    for i in range(num_bits):
-        if not votes[i]:
-            extracted_bits.append(0)
-            continue
-        extracted_bits.append(1 if np.mean(votes[i]) > 0.5 else 0)
+    rows, cols = dct_LL.shape
+
+    # Total bits to extract is num_bits
+    for i in range(4, min(100, rows)):
+        for j in range(4, min(100, cols)):
+            if len(extracted_bits) >= num_bits:
+                break
+            coeff = dct_LL[i, j]
+            quantized = round(coeff / delta)
+            extracted_bits.append(int(quantized) % 2)
+
+    while len(extracted_bits) < num_bits:
+        extracted_bits.append(0)
 
     return np.array(extracted_bits, dtype=np.uint8)
 
@@ -135,13 +145,10 @@ def extract_watermark_robust(
     delta: float = 100,
 ) -> dict:
     """
-    Extract bits using majority voting across DWT-LL coefficients.
-    Supports a scale and translation search space to undo cropping and scaling attacks.
-    Fast-fails using a 16-bit synchronization anchor.
+    Brute forces spatial alignment to recover the payload using DWT-DCT QIM.
+    Supports pixel translation search to undo cropping/translation attacks.
     """
     from core.payload import ANCHOR_BITS, verify_payload
-
-    num_bits = 1656  # 16 (anchor) + 1640 (rs bits)
 
     # 1. First try sidecar metadata if available (instant verification)
     meta_path = image_path + ".meta"
@@ -150,107 +157,66 @@ def extract_watermark_robust(
             with open(meta_path, "r") as f:
                 meta = json.load(f)
             full_bits = np.array(meta["payload_bits"], dtype=np.uint8)
-            payload_rs_bits = full_bits[16:]
+            payload_rs_bits = full_bits[len(ANCHOR_BITS):]
             result = verify_payload(payload_rs_bits, secret_key)
             if result.get("verified"):
                 return result
         except Exception:
             pass
 
-    # 2. Blind Robust search
     img_bgr = cv2.imread(image_path)
     if img_bgr is None:
         return {"verified": False, "error": f"Image could not be loaded from {image_path}"}
 
+    payload_length = 1640  # 1656 - 16 anchor = 1640 RS bits
+    anchor_len = len(ANCHOR_BITS)
+    target_extract_len = anchor_len + payload_length
+
     h, w = img_bgr.shape[:2]
 
-    # Try scale factors (from 1.0 down to 0.80, corresponding to 0% to 10% crop)
-    scales = [1.0, 0.98, 0.96, 0.94, 0.92, 0.90, 0.88, 0.86, 0.84, 0.82, 0.80]
+    # Brute force search grid: -10 to +10 pixels in both X and Y
+    # We step by 2 to halve CPU time, as DWT is somewhat resilient to 1px shifts
+    for dx in range(-10, 11, 2):
+        for dy in range(-10, 11, 2):
+            # Translate the matrix (Shift the image)
+            M = np.float32([[1, 0, dx], [0, 1, dy]])
+            shifted_bgr = cv2.warpAffine(img_bgr, M, (w, h))
 
-    # Translation search around the center coordinates
-    offsets = [-1, 0, 1]
+            # Standard Extraction Math
+            img_ycrcb = cv2.cvtColor(shifted_bgr, cv2.COLOR_BGR2YCrCb)
+            Y = img_ycrcb[:, :, 0]
 
-    for scale in scales:
-        h_restored = int(h * scale)
-        w_restored = int(w * scale)
-        if h_restored <= 0 or w_restored <= 0:
-            continue
+            coeffs = pywt.dwt2(np.float32(Y), "haar")
+            LL, _ = coeffs
+            dct_LL = cv2.dct(LL)
 
-        # Resize to restore scale
-        img_restored = cv2.resize(img_bgr, (w_restored, h_restored), interpolation=cv2.INTER_CUBIC)
+            extracted_bits = []
+            rows, cols = dct_LL.shape
 
-        # Base centering coordinates
-        base_dy = (h - h_restored) // 2
-        base_dx = (w - w_restored) // 2
+            for i in range(4, min(100, rows)):
+                for j in range(4, min(100, cols)):
+                    if len(extracted_bits) >= target_extract_len:
+                        break
+                    coeff = dct_LL[i, j]
+                    quantized = round(coeff / delta)
+                    extracted_bits.append(int(quantized) % 2)
 
-        for dy_offset in offsets:
-            for dx_offset in offsets:
-                dy = base_dy + dy_offset
-                dx = base_dx + dx_offset
+            if len(extracted_bits) < target_extract_len:
+                continue
 
-                # Bounds check
-                if dy < 0 or dx < 0 or (dy + h_restored) > h or (dx + w_restored) > w:
-                    continue
+            extracted_bits = np.array(extracted_bits, dtype=np.uint8)
 
-                # Place in canvas
-                canvas = np.zeros((h, w, 3), dtype=np.uint8)
-                canvas[dy : dy + h_restored, dx : dx + w_restored] = img_restored
+            # Fast-Fail Check on Anchor
+            extracted_anchor = extracted_bits[:anchor_len]
+            hamming_distance = np.sum(extracted_anchor != ANCHOR_BITS)
 
-                # Convert canvas to YCrCb
-                img_ycrcb = cv2.cvtColor(canvas, cv2.COLOR_BGR2YCrCb)
-                y_channel = np.float64(img_ycrcb[:, :, 0])
-
-                # Extract bits from active region coefficients
-                coeffs = pywt.dwt2(y_channel, "haar")
-                ll, _ = coeffs[0], coeffs[1]
-                ll_h, ll_w = ll.shape
-
-                # Active bounds in LL subband
-                r_start = dy // 2
-                r_end = (dy + h_restored) // 2
-                c_start = dx // 2
-                c_end = (dx + w_restored) // 2
-
-                votes = [[] for _ in range(num_bits)]
-
-                for r in range(r_start, r_end):
-                    for c in range(c_start, c_end):
-                        if r >= ll_h or c >= ll_w:
-                            continue
-                        coef = ll[r, c]
-
-                        # Original flat index mapping
-                        orig_idx = r * ll_w + c
-                        bit_idx = orig_idx % num_bits
-
-                        nearest_multiple = np.round(coef / delta) * delta
-                        distance = abs(coef - nearest_multiple)
-
-                        bit = 1 if distance > delta / 4.0 else 0
-                        votes[bit_idx].append(bit)
-
-                # Extract block
-                extracted_bits = []
-                for i in range(num_bits):
-                    if not votes[i]:
-                        extracted_bits.append(0)
-                        continue
-                    extracted_bits.append(1 if np.mean(votes[i]) > 0.5 else 0)
-
-                extracted_bits = np.array(extracted_bits, dtype=np.uint8)
-
-                # Fast-Fail Check on Anchor
-                extracted_anchor = extracted_bits[:16]
-                hamming_dist = np.sum(extracted_anchor != ANCHOR_BITS)
-                if hamming_dist > 4:
-                    continue
-
-                # Deep Check (verify payload with RS and HMAC)
-                payload_rs_bits = extracted_bits[16:]
-                result = verify_payload(payload_rs_bits, secret_key)
+            # If distance <= 3, we found the exact geometric alignment
+            if hamming_distance <= 3:
+                payload_only = extracted_bits[anchor_len:target_extract_len]
+                result = verify_payload(payload_only, secret_key)
                 if result.get("verified"):
-                    result["scale_detected"] = scale
-                    result["shift_detected"] = (dx_offset, dy_offset)
+                    result["scale_detected"] = 1.0
+                    result["shift_detected"] = (dx, dy)
                     return result
 
     return {"verified": False, "error": "No valid watermark detected after robust grid search."}
