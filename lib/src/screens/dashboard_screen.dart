@@ -32,8 +32,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
   Future<_DashboardBundle> _loadAll() async {
     final uid = FirebaseAuth.instance.currentUser?.uid ?? 'anonymous';
     final results = await Future.wait([
-      _api.fetchProtectionStats(),
-      _api.fetchDashboardStats(),
+      _api.fetchProtectionStats(userUid: uid),
+      _api.fetchDashboardStats(userUid: uid),
       _api.fetchAlerts(uid),
     ]);
     return _DashboardBundle(
@@ -65,8 +65,9 @@ class _DashboardScreenState extends State<DashboardScreen> {
 
   Future<void> _exportFullLogs() async {
     try {
+      final uid = FirebaseAuth.instance.currentUser?.uid ?? 'anonymous';
       final response = await http
-          .get(Uri.parse('${ApiService.baseUrl}/logs'))
+          .get(Uri.parse('${ApiService.baseUrl}/logs?user_uid=$uid'))
           .timeout(const Duration(seconds: 10));
       if (!mounted) return;
       if (response.statusCode == 200) {

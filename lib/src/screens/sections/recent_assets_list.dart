@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import '../../config/themes/app_colors.dart';
 import '../../services/api_service.dart';
 import '../../models/asset_log.dart';
@@ -19,7 +20,8 @@ class _RecentAssetsListState extends State<RecentAssetsList> {
   @override
   void initState() {
     super.initState();
-    _assetsFuture = _apiService.fetchAssetLogs();
+    final uid = FirebaseAuth.instance.currentUser?.uid ?? 'anonymous';
+    _assetsFuture = _apiService.fetchAssetLogs(userUid: uid);
   }
 
   @override

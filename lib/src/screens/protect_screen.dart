@@ -93,8 +93,33 @@ class _ProtectScreenState extends State<ProtectScreen> {
       if (!mounted) return;
 
       if (response.statusCode == 200) {
+        final jsonMap = jsonDecode(body) as Map<String, dynamic>;
+
+        // COLLISION GATEKEEPER INTERCEPT
+        if (jsonMap['status'] == 'error') {
+          setState(() {
+            _currentStep = -1;
+            _isProcessing = false;
+          });
+
+          if (jsonMap['error_code'] == 'ALREADY_PROTECTED') {
+            _showCollisionWarning(
+              jsonMap['existing_creator'] ?? 'Unknown',
+              jsonMap['watermarked_at'] ?? 'Unknown',
+            );
+          } else {
+            // Handle generic python errors (like ValueError)
+            setState(() {
+              _error = jsonMap['message'] ?? jsonMap['error'] ?? 'Unknown error';
+            });
+          }
+          return;
+        }
+        // ------------------------------------------
+
+        // Standard Success
         setState(() {
-          _result = jsonDecode(body) as Map<String, dynamic>;
+          _result = jsonMap;
           _currentStep = 5; // all complete
           _isProcessing = false;
         });
@@ -134,6 +159,79 @@ class _ProtectScreenState extends State<ProtectScreen> {
     });
   }
 
+// ── Collision Warning Dialog ───────────────────────────────
+  void _showCollisionWarning(String creator, String time) {
+    // Format the raw ISO timestamp nicely
+    String formattedTime = time;
+    try {
+      final dt = DateTime.parse(time).toLocal();
+      formattedTime = '${dt.year}-${dt.month.toString().padLeft(2, '0')}-${dt.day.toString().padLeft(2, '0')} at ${dt.hour.toString().padLeft(2, '0')}:${dt.minute.toString().padLeft(2, '0')}';
+    } catch (_) {}
+
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        backgroundColor: AppColors.surfaceContainerHigh,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(24),
+          side: BorderSide(color: AppColors.error.withValues(alpha: 0.5), width: 1.5),
+        ),
+        title: Row(
+          children: [
+            const Icon(Icons.warning_amber_rounded, color: AppColors.error),
+            const SizedBox(width: 12),
+            Text(
+              "Asset Collision",
+              style: GoogleFonts.spaceGrotesk(
+                color: AppColors.onBackground,
+                fontWeight: FontWeight.bold,
+                fontSize: 20,
+              ),
+            ),
+          ],
+        ),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              "This asset is already locked in the registry. Re-watermarking will destroy the original forensic payload.",
+              style: GoogleFonts.inter(color: AppColors.onSurfaceVariant, height: 1.5),
+            ),
+            const SizedBox(height: 16),
+            Container(
+              padding: const EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                color: AppColors.surface,
+                borderRadius: BorderRadius.circular(8),
+                border: Border.all(color: AppColors.outlineVariant),
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  _DataRow('Original Creator', creator, mono: true, highlight: true),
+                  _DataRow('Watermarked', formattedTime),
+                ],
+              ),
+            ),
+          ],
+        ),
+        actions: [
+          FilledButton(
+            onPressed: () {
+              Navigator.pop(context);
+              _reset(); // Reset the UI so they can upload a different file
+            },
+            style: FilledButton.styleFrom(
+              backgroundColor: AppColors.error,
+              foregroundColor: AppColors.onBackground,
+            ),
+            child: const Text("Acknowledge & Clear"),
+          ),
+        ],
+      ),
+    );
+  }
   // ── Build ──────────────────────────────────────────────────
   @override
   Widget build(BuildContext context) {

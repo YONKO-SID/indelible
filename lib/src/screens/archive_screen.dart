@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import '../config/themes/app_colors.dart';
 import '../services/api_service.dart';
 import '../services/download_service.dart';
@@ -22,7 +23,8 @@ class _ArchiveScreenState extends State<ArchiveScreen> {
   @override
   void initState() {
     super.initState();
-    _future = _api.fetchAssetLogs();
+    final uid = FirebaseAuth.instance.currentUser?.uid ?? 'anonymous';
+    _future = _api.fetchAssetLogs(userUid: uid);
   }
 
   void _download(String url) async {
@@ -52,7 +54,10 @@ class _ArchiveScreenState extends State<ArchiveScreen> {
                   color: AppColors.onSurface, fontSize: 22, fontWeight: FontWeight.bold)),
               const Spacer(),
               IconButton(
-                onPressed: () => setState(() => _future = _api.fetchAssetLogs()),
+                onPressed: () {
+                  final uid = FirebaseAuth.instance.currentUser?.uid ?? 'anonymous';
+                  setState(() => _future = _api.fetchAssetLogs(userUid: uid));
+                },
                 icon: const Icon(Icons.refresh, color: AppColors.onSurfaceVariant),
                 tooltip: 'Refresh',
               ),

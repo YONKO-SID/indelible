@@ -8,6 +8,7 @@ import 'package:indelible/src/services/api_service.dart';
 import 'package:indelible/src/models/alert.dart';
 import 'package:indelible/src/screens/sections/piracy_alert_banner.dart';
 import 'dart:async';
+import 'package:url_launcher/url_launcher.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -161,8 +162,16 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   }
 
   void _scrollToPlans() {
-    // Simple nav — push to protect for now
-    _goTo('/protect');
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(
+          'Detailed plans comparison coming soon!',
+          style: GoogleFonts.inter(color: AppColors.onSurface),
+        ),
+        backgroundColor: AppColors.surfaceContainerHigh,
+        behavior: SnackBarBehavior.floating,
+      ),
+    );
   }
 }
 
@@ -438,7 +447,18 @@ class _FeatureCardsRow extends StatelessWidget {
               title: 'Know Plans',
               body: 'Free tier, Pro (1K images/mo), Enterprise (unlimited + DMCA auto-send).',
               cta: 'See Pricing',
-              onTap: () {},
+              onTap: () {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text(
+                      'Detailed plans comparison coming soon!',
+                      style: GoogleFonts.inter(color: AppColors.onSurface),
+                    ),
+                    backgroundColor: AppColors.surfaceContainerHigh,
+                    behavior: SnackBarBehavior.floating,
+                  ),
+                );
+              },
             ),
             _FeatureCard(
               icon: Icons.shield_outlined,
@@ -760,7 +780,22 @@ class _PlanCard extends StatelessWidget {
           SizedBox(
             width: double.infinity,
             child: GestureDetector(
-              onTap: () {},
+              onTap: () async {
+                if (name == 'Pro') {
+                  final url = Uri.parse('https://rzp.io/l/indelible-pro');
+                  if (await canLaunchUrl(url)) {
+                    await launchUrl(url, mode: LaunchMode.externalApplication);
+                  }
+                } else if (name == 'Enterprise') {
+                  final url = Uri.parse('mailto:sales@indelible.security?subject=Enterprise%20Inquiry');
+                  if (await canLaunchUrl(url)) {
+                    await launchUrl(url);
+                  }
+                } else {
+                  // Free plan, just scroll up to protect asset / dashboard
+                  // Let's scroll or navigate
+                }
+              },
               child: Container(
                 padding: const EdgeInsets.symmetric(vertical: 12),
                 decoration: BoxDecoration(

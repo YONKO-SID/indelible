@@ -23,11 +23,14 @@ class ApiService {
   static final Map<String, _CacheEntry> _cache = {};
 
   /// Fetch all protected assets from the backend
-  Future<List<AssetLog>> fetchAssetLogs() async {
+  Future<List<AssetLog>> fetchAssetLogs({String? userUid}) async {
     try {
+      final url = userUid != null
+          ? '$baseUrl/logs?user_uid=$userUid'
+          : '$baseUrl/logs';
       final response = await http
           .get(
-            Uri.parse('$baseUrl/logs'),
+            Uri.parse(url),
             headers: {'Accept': 'application/json'},
           )
           .timeout(const Duration(seconds: 10));
@@ -48,11 +51,11 @@ class ApiService {
 
   /// Fetch protection statistics
   /// Returns mocked stats until backend provides an endpoint
-  Future<ProtectionStats> fetchProtectionStats() async {
+  Future<ProtectionStats> fetchProtectionStats({String? userUid}) async {
     try {
       // For now, return computed stats from asset logs
-      final logs = await fetchAssetLogs();
-
+      final logs = await fetchAssetLogs(userUid: userUid);
+      
       return ProtectionStats(
         totalAssets: logs.length,
         successfulVerifications: (logs.length * 0.95).toInt(),
@@ -69,9 +72,9 @@ class ApiService {
 
   /// Fetch recent activity events
   /// Returns activity based on asset logs and simulated events
-  Future<List<ActivityEvent>> fetchActivityEvents({int limit = 10}) async {
+  Future<List<ActivityEvent>> fetchActivityEvents({int limit = 10, String? userUid}) async {
     try {
-      final logs = await fetchAssetLogs();
+      final logs = await fetchAssetLogs(userUid: userUid);
       final events = <ActivityEvent>[];
 
       // Convert asset logs to protection events
@@ -126,11 +129,14 @@ class ApiService {
   }
 
   /// Fetch real weekly activity bar chart data from /dashboard-stats
-  Future<Map<String, dynamic>> fetchDashboardStats() async {
+  Future<Map<String, dynamic>> fetchDashboardStats({String? userUid}) async {
     try {
+      final url = userUid != null
+          ? '$baseUrl/dashboard-stats?user_uid=$userUid'
+          : '$baseUrl/dashboard-stats';
       final response = await http
           .get(
-            Uri.parse('$baseUrl/dashboard-stats'),
+            Uri.parse(url),
             headers: {'Accept': 'application/json'},
           )
           .timeout(const Duration(seconds: 10));
