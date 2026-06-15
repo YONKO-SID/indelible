@@ -142,61 +142,69 @@ async def get_upload_logs(user_uid: str = "anonymous"):
     Returns real upload history by scanning the outputs/ directory.
     Filters by the requesting user's fingerprint.
     """
-    fingerprint = generate_creator_fingerprint(user_uid)
-    logs = []
-    outputs_dir = "outputs"
-    if not os.path.exists(outputs_dir):
-        return {"logs": []}
+    try:
+        fingerprint = generate_creator_fingerprint(user_uid)
+        logs = []
+        outputs_dir = "outputs"
+        if not os.path.exists(outputs_dir):
+            return {"logs": []}
 
-    for fname in sorted(os.listdir(outputs_dir), reverse=True):
-        # Only list actual protected assets (not .meta sidecars)
-        if not fname.endswith(".png") and not fname.endswith(".mp4"):
-            continue
+        for fname in sorted(os.listdir(outputs_dir), reverse=True):
+            # Only list actual protected assets (not .meta sidecars)
+            if not fname.endswith(".png") and not fname.endswith(".mp4"):
+                continue
 
-        file_path = os.path.join(outputs_dir, fname)
-        meta_path = file_path + ".meta"
-        file_stat = os.stat(file_path)
+            file_path = os.path.join(outputs_dir, fname)
+            meta_path = file_path + ".meta"
+            file_stat = os.stat(file_path)
 
-        entry = {
-            "filename": fname,
-            "protected_at": datetime.fromtimestamp(file_stat.st_mtime, tz=timezone.utc).isoformat()
-            + "Z",
-            "size_kb": round(file_stat.st_size / 1024, 1),
-            "download_url": f"/download/{fname}",
-            "creator_fingerprint": "unknown",
-            "watermark_timestamp": None,
-        }
+            entry = {
+                "filename": fname,
+                "protected_at": datetime.fromtimestamp(file_stat.st_mtime, tz=timezone.utc).isoformat()
+                + "Z",
+                "size_kb": round(file_stat.st_size / 1024, 1),
+                "download_url": f"/download/{fname}",
+                "creator_fingerprint": "unknown",
+                "watermark_timestamp": None,
+            }
 
-        # Read sidecar metadata if available
-        if os.path.exists(meta_path):
-            try:
-                with open(meta_path, "r") as f:
-                    meta = json.load(f)
+            # Read sidecar metadata if available
+            if os.path.exists(meta_path):
+                try:
+                    with open(meta_path, "r") as f:
+                        meta = json.load(f)
 
-                # Use verify_payload to extract fingerprint from bits
-                bits = np.array(meta.get("payload_bits", []), dtype=np.uint8)
-                if len(bits) > 0:
-                    result = verify_payload(bits, SECRET_KEY)
-                    if result.get("verified"):
-                        asset_fp = result.get("creator_id", "unknown")
-                        # Filter by fingerprint (unless "all" is requested for admin/debug)
-                        if user_uid != "all" and asset_fp != fingerprint:
-                            continue
-                        entry["creator_fingerprint"] = asset_fp
-                        entry["watermark_timestamp"] = result.get("timestamp")
+                    # Use verify_payload to extract fingerprint from bits
+                    bits = np.array(meta.get("payload_bits", []), dtype=np.uint8)
+                    if len(bits) > 0:
+                        result = verify_payload(bits, SECRET_KEY)
+                        if result.get("verified"):
+                            asset_fp = result.get("creator_id", "unknown")
+                            # Filter by fingerprint (unless "all" is requested for admin/debug)
+                            if user_uid != "all" and asset_fp != fingerprint:
+                                continue
+                            entry["creator_fingerprint"] = asset_fp
+                            entry["watermark_timestamp"] = result.get("timestamp")
+                        else:
+                            if user_uid != "all":
+                                continue
                     else:
                         if user_uid != "all":
                             continue
-                else:
+                except Exception:
                     if user_uid != "all":
                         continue
-            except Exception:
-                if user_uid != "all":
-                    continue
 
-        logs.append(entry)
+            logs.append(entry)
 
-    return {"logs": logs, "total": len(logs)}
+        return {"logs": logs, "total": len(logs)}
+    except Exception as e:
+        import traceback
+        return {
+            "status": "error",
+            "error": str(e),
+            "traceback": traceback.format_exc()
+        }
 
 
 @app.post("/protect")
